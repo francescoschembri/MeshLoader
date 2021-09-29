@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="File di origine">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="File di intestazione">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="File di risorse">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="File di risorse\Shaders">
+      <UniqueIdentifier>{4552c963-3d0d-4dde-aa08-b2d0c14edf8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di risorse\Textures">
+      <UniqueIdentifier>{97ff4c8d-41a2-4671-aeeb-05c0a4109e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di risorse\objects">
+      <UniqueIdentifier>{8f292df2-35bf-426c-b724-b329c869fbe7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di risorse\objects\backpack">
+      <UniqueIdentifier>{d800aa57-fb68-4710-9198-7831584e2ce4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="glad.c">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="VBO.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="EBO.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderClass.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="VAO.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="default.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="4.1.vshader.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="4.1.fshader.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="blur.frag">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="default.frag">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="default.geom">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="default.vert">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="framebuffer.frag">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="framebuffer.vert">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="1.model_loading.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="1.model_loading.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\awesomeface.png">
+      <Filter>File di risorse\Textures</Filter>
+    </Image>
+    <Image Include="Textures\container.jpg">
+      <Filter>File di risorse\Textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="EBO.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderClass.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="VAO.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="VBO.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
