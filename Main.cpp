@@ -5,9 +5,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "shaderClass.h"
+#include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Animator.h"
 
 #include <filesystem>
 #include <iostream>
@@ -34,7 +35,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // shortcuts
-std::bitset<3> keys("000");
+std::bitset<5> keys("11000");
 
 
 int main()
@@ -52,7 +53,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Mesh Loader", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Animated Mesh Loader", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -84,11 +85,13 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("1.model_loading.vs", "1.model_loading.fs");
+    Shader ourShader("animated_model_loading.vs", "animated_model_loading.fs");
 
     // load models
     // -----------
-    Model ourModel(filesystem::path("./backpack/backpack.obj").string());
+    Model ourModel(filesystem::path("./Capoeira/Capoeira.dae").string());
+    Animation danceAnimation(filesystem::path("./Capoeira/Capoeira.dae").string(), ourModel);
+    Animator animator(&danceAnimation);
 
 
     // draw in wireframe
@@ -107,6 +110,7 @@ int main()
         // input
         // -----
         processInput(window);
+        if(keys[3]) animator.UpdateAnimation(deltaTime);
 
         // render
         // ------
@@ -121,6 +125,11 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
+
+        // pass bones matrices to the shader
+        auto transforms = animator.GetFinalBoneMatrices();
+        for (int i = 0; i < transforms.size(); ++i)
+            ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
@@ -182,7 +191,15 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         camera.Reset();
     }
+
+    // pause animation
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS && keys[4]) {
+        keys[3] = !keys[3];
+        keys[4] = false;
+    }
+    keys[4] = glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE;
 }
+
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------

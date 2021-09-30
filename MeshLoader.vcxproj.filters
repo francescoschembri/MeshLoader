@@ -57,42 +57,24 @@
     <ClCompile Include="VAO.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.vs">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="default.fs">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="4.1.vshader.vs">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="4.1.fshader.fs">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="blur.frag">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="default.frag">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="default.geom">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="default.vert">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="framebuffer.frag">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
-    <None Include="framebuffer.vert">
-      <Filter>File di risorse\Shaders</Filter>
-    </None>
     <None Include="1.model_loading.vs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
     <None Include="1.model_loading.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="animated_model_loading.fs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -117,7 +99,7 @@
     <ClInclude Include="Model.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="shaderClass.h">
+    <ClInclude Include="Shader.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="VAO.h">
@@ -126,5 +108,25 @@
     <ClInclude Include="VBO.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimData.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="assimp_glm_helpers.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="animated_model_loading.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

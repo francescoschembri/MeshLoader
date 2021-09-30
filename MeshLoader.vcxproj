@@ -147,6 +147,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="glad.c" />
@@ -161,29 +164,28 @@
   <ItemGroup>
     <None Include="1.model_loading.fs" />
     <None Include="1.model_loading.vs" />
-    <None Include="4.1.fshader.fs" />
-    <None Include="4.1.vshader.vs" />
-    <None Include="blur.frag" />
-    <None Include="default.frag" />
-    <None Include="default.fs" />
-    <None Include="default.geom" />
-    <None Include="default.vert" />
-    <None Include="default.vs" />
-    <None Include="framebuffer.frag" />
-    <None Include="framebuffer.vert" />
+    <None Include="animated_model_loading.fs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png" />
     <Image Include="Textures\container.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="Animator.h" />
+    <ClInclude Include="AnimData.h" />
+    <ClInclude Include="assimp_glm_helpers.h" />
+    <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="shaderClass.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="animated_model_loading.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
