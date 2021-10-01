@@ -7,10 +7,10 @@
 	}
 
 	// draws the model, and thus all its meshes
-	void Model::Draw(Shader& shader)
+	void Model::Draw(Shader& shader, bool faces, bool lines)
 	{
 		for (unsigned int i = 0; i < meshes.size(); i++)
-			meshes[i].Draw(shader);
+			meshes[i].Draw(shader, faces, lines);
 	}
 
 	std::map<std::string, BoneInfo> Model::GetBoneInfoMap() { return m_BoneInfoMap; }

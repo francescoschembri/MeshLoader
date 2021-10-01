@@ -35,7 +35,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // shortcuts
-std::bitset<5> keys("11000");
+std::bitset<7> keys("1111000");
 
 
 int main()
@@ -114,7 +114,7 @@ int main()
 
         // render
         // ------
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
@@ -136,7 +136,7 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+        ourModel.Draw(ourShader, keys[1], keys[6]);
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -169,15 +169,19 @@ void processInput(GLFWwindow* window)
 
     //wireframe mode on/off
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE) 
+        keys[5] = false;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && !keys[5]) {
+        keys[5] = true;
+        keys[6] = !keys[6];
+    }
+
+    // activate/deactivate hidden line mode for wireframe
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_RELEASE)
         keys[0] = false;
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && !keys[0]) {
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS && !keys[0]) {
         keys[0] = true;
         keys[1] = !keys[1];
     }
-    if (keys[1])
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    else
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     if (keys[2] = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
     {

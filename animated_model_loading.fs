@@ -9,9 +9,13 @@ uniform sampler2D texture_diffuse3;
 uniform sampler2D texture_specular1;
 uniform sampler2D texture_specular2;
 uniform sampler2D texture_specular3;
+uniform bool wireframe;
 
 void main()
 {    
-    FragColor = texture(texture_diffuse1, TexCoords);
+    if(wireframe)
+        FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    else
+        FragColor = texture(texture_diffuse1, TexCoords);
 }
 

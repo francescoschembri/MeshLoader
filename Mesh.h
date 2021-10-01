@@ -48,7 +48,7 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     // render the mesh
-    void Draw(Shader& shader);
+    void Draw(Shader& shader, bool faces = true, bool lines = false);
 
 private:
     // render data 

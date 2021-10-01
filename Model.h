@@ -37,7 +37,7 @@ public:
 	// constructor, expects a filepath to a 3D model.
 	Model(std::string const& path, bool gamma = false);
 	// draws the model, and thus all its meshes
-	void Draw(Shader& shader);
+	void Draw(Shader& shader, bool faces = true, bool lines = false);
 
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
 	int& GetBoneCount();

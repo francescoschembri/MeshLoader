@@ -12,7 +12,7 @@
     }
 
     // render the mesh
-    void Mesh::Draw(Shader& shader)
+    void Mesh::Draw(Shader& shader, bool faces, bool lines)
     {
         // bind appropriate textures
         unsigned int diffuseNr = 1;
@@ -40,12 +40,28 @@
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
 
-        // draw mesh
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        //draw lines
+        if (lines) {
+            shader.use();
+            shader.wireframeMode(true);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        }
+
+        // draw mesh aka faces
+        if (faces || !lines) { //we want to draw at least something
+            shader.use();
+            shader.wireframeMode(false);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(1.0, 1.0);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        }
 
         // always good practice to set everything back to defaults once configured.
+        glBindVertexArray(0);
         glActiveTexture(GL_TEXTURE0);
     }
 
