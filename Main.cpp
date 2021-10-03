@@ -19,7 +19,7 @@ namespace filesystem = std::filesystem;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, Animator* animator, Animation animations[]);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -35,8 +35,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // shortcuts
-std::bitset<7> keys("1111000");
-
+std::bitset<8> keys("11111000");
+int anim_index = 0;
 
 int main()
 {
@@ -91,11 +91,13 @@ int main()
     // -----------
     Model ourModel(filesystem::path("./Capoeira/Capoeira.dae").string());
     Animation danceAnimation(filesystem::path("./Capoeira/Capoeira.dae").string(), ourModel);
-    Animator animator(&danceAnimation);
+    Animation flairAnimation(filesystem::path("./Flair/Flair.dae").string(), ourModel);
+    Animation sillyAnimation(filesystem::path("./Silly Dancing/Silly Dancing.dae").string(), ourModel);
+
+    Animation animations[] = { danceAnimation, flairAnimation, sillyAnimation };
 
 
-    // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    Animator animator(&animations[2]);
 
     // render loop
     // -----------
@@ -109,7 +111,7 @@ int main()
 
         // input
         // -----
-        processInput(window);
+        processInput(window, &animator, animations);
         if(keys[3]) animator.UpdateAnimation(deltaTime);
 
         // render
@@ -138,7 +140,6 @@ int main()
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader, keys[1], keys[6]);
 
-
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -153,7 +154,7 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, Animator* animator, Animation animations[])
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -202,6 +203,15 @@ void processInput(GLFWwindow* window)
         keys[4] = false;
     }
     keys[4] = glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE;
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && keys[7]) {
+        keys[7] = false;
+        anim_index++;
+        animator->PlayAnimation(&animations[anim_index%3]);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
+        keys[7] = true;
+    }
 }
 
 
