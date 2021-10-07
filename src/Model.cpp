@@ -104,11 +104,15 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 		vertices.push_back(vertex);
 	}
+	std::vector<Face> faces;
+	faces.reserve(mesh->mNumFaces);
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
+		Face f;
 		aiFace face = mesh->mFaces[i];
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
+			f.indices[j] = face.mIndices[j];
+		faces.push_back(f);
 	}
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
@@ -123,7 +127,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 	ExtractBoneWeightForVertices(vertices, mesh, scene);
 
-	return Mesh(vertices, indices, textures);
+	return Mesh(std::move(vertices), std::move(faces), std::move(textures));
 }
 
 void Model::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
