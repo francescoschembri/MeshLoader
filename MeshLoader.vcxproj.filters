@@ -65,7 +65,7 @@
     <ClInclude Include="Libraries\include\reskinner\Animator.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\AnimData.h">
+    <ClInclude Include="Libraries\include\reskinner\BoneInfo.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\assimp_glm_helpers.h">
@@ -93,6 +93,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\VBO.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\Face.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

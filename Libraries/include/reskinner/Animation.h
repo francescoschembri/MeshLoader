@@ -2,12 +2,13 @@
 
 #include <vector>
 #include <map>
+
 #include <glm/glm.hpp>
 #include <assimp/scene.h>
-#include "Bone.h"
-#include <functional>
-#include "Animdata.h"
-#include "Model.h"
+
+#include <reskinner/Bone.h>
+#include <reskinner/BoneInfo.h>
+#include <reskinner/Model.h>
 
 struct AssimpNodeData
 {
@@ -20,18 +21,15 @@ struct AssimpNodeData
 class Animation
 {
 public:
-	Animation() = default;
-
 	Animation(const std::string& animationPath, Model& model);
-
-	~Animation();
 
 	Bone* FindBone(const std::string& name);
 
 	float GetTicksPerSecond();
 	float GetDuration();
 	const AssimpNodeData& GetRootNode();
-	const std::map<std::string, BoneInfo>& GetBoneIDMap();
+	const std::map<std::string, BoneInfo>& GetBoneInfoMap();
+	glm::mat4 GetNodeTransform(const AssimpNodeData* node, float currentTime);
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model& model);

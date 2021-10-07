@@ -164,11 +164,12 @@
   <ItemGroup>
     <ClInclude Include="Libraries\include\reskinner\Animation.h" />
     <ClInclude Include="Libraries\include\reskinner\Animator.h" />
-    <ClInclude Include="Libraries\include\reskinner\AnimData.h" />
+    <ClInclude Include="Libraries\include\reskinner\BoneInfo.h" />
     <ClInclude Include="Libraries\include\reskinner\assimp_glm_helpers.h" />
     <ClInclude Include="Libraries\include\reskinner\Bone.h" />
     <ClInclude Include="Libraries\include\reskinner\Camera.h" />
     <ClInclude Include="Libraries\include\reskinner\EBO.h" />
+    <ClInclude Include="Libraries\include\reskinner\Face.h" />
     <ClInclude Include="Libraries\include\reskinner\Mesh.h" />
     <ClInclude Include="Libraries\include\reskinner\Model.h" />
     <ClInclude Include="Libraries\include\reskinner\Shader.h" />

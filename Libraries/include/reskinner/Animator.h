@@ -1,12 +1,13 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <map>
 #include <vector>
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
-#include "Animation.h"
-#include "Bone.h"
+#include <glm/glm.hpp>
+
+#include <reskinner/Animation.h>
+#include <reskinner/Bone.h>
 
 class Animator
 {
@@ -21,7 +22,6 @@ private:
 	std::vector<glm::mat4> m_FinalBoneMatrices;
 	Animation* m_CurrentAnimation;
 	float m_CurrentTime;
-	float m_DeltaTime;
 
 };
 

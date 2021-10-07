@@ -1,17 +1,4 @@
-#ifndef MODEL_H
-#define MODEL_H
-
-#include <glad/glad.h> 
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <stb/stb_image.h>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include "Mesh.h"
-#include "Shader.h"
+#pragma once
 
 #include <string>
 #include <fstream>
@@ -19,8 +6,19 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include "assimp_glm_helpers.h"
-#include "AnimData.h"
+
+#include <glad/glad.h> 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <stb/stb_image.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include <reskinner/Mesh.h>
+#include <reskinner/Shader.h>
+#include <reskinner/assimp_glm_helpers.h>
+#include <reskinner/BoneInfo.h>
 
 
 class Model
@@ -38,10 +36,8 @@ public:
 	Model(std::string const& path, bool gamma = false);
 	// draws the model, and thus all its meshes
 	void Draw(Shader& shader, bool faces = true, bool lines = false);
-
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
-	int& GetBoneCount();
-
+	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
 
 private:
 
@@ -63,8 +59,3 @@ private:
 	// the required info is returned as a Texture struct.
 	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 };
-
-
-
-#endif
-

@@ -1,9 +1,8 @@
-#ifndef VBO_CLASS_H
-#define VBO_CLASS_H
+#pragma once
 
-#include<glm/glm.hpp>
-#include<glad/glad.h>
-#include<vector>
+#include <glm/glm.hpp>
+#include <glad/glad.h>
+#include <vector>
 
 // Structure to standardize the vertices used in the meshes
 struct Vertex
@@ -31,5 +30,3 @@ public:
 	// Deletes the VBO
 	void Delete();
 };
-
-#endif

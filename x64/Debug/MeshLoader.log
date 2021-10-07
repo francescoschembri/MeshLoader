@@ -1,8 +1,8 @@
-﻿  Main.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(108,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(232,23): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(233,23): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(238,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(239,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(247,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+﻿  Model.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(148,37): warning C4018: '<': errata corrispondenza tra signed e unsigned
+  Shader.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Shader.cpp(41,40): warning C4101: 'e': variabile locale senza riferimenti
+  VBO.cpp
+  Generazione del codice in corso...
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(24): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe
