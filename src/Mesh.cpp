@@ -1,11 +1,11 @@
 #include <reskinner/Mesh.h>
 
 // constructor
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<Texture>&& textures)
 {
-	this->vertices = vertices;
-	this->indices = indices;
-	this->textures = textures;
+	this->vertices = std::move(vertices);
+	this->faces = std::move(faces);
+	this->textures = std::move(textures);
 
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
 	setupMesh();
@@ -46,7 +46,7 @@ void Mesh::Draw(Shader& shader, bool faces, bool lines)
 		shader.wireframeMode(true);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, this->faces.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	// draw mesh aka faces
@@ -57,7 +57,7 @@ void Mesh::Draw(Shader& shader, bool faces, bool lines)
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.0, 1.0);
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, this->faces.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	// always good practice to set everything back to defaults once configured.
@@ -82,7 +82,7 @@ void Mesh::setupMesh()
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, faces.size() * sizeof(Face), &faces[0], GL_STATIC_DRAW);
 
 	// set the vertex attribute pointers
 	// vertex Positions
