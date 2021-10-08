@@ -107,6 +107,15 @@
     <ClInclude Include="Libraries\include\reskinner\StatusManager.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\Vertex.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\Texture.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.vs">

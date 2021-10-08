@@ -1,12 +1,8 @@
 #include <reskinner/Mesh.h>
 
 // constructor
-Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<Texture>&& textures)
+Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<Texture>&& textures) : vertices(std::move(vertices)), faces(std::move(faces)), textures(std::move(textures))
 {
-	this->vertices = std::move(vertices);
-	this->faces = std::move(faces);
-	this->textures = std::move(textures);
-
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
 	setupMesh();
 }
@@ -102,10 +98,10 @@ void Mesh::setupMesh()
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 	// ids
 	glEnableVertexAttribArray(5);
-	glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, m_BoneIDs));
+	glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.BoneIDs[0]));
 	// weights
 	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.Weights[0]));
 	glBindVertexArray(0);
 }
 

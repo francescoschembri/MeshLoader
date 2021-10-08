@@ -73,8 +73,8 @@ void Model::SetVertexBoneDataToDefault(Vertex& vertex)
 {
 	for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
 	{
-		vertex.m_BoneIDs[i] = -1;
-		vertex.m_Weights[i] = 0.0f;
+		vertex.BoneData.BoneIDs[i] = -1;
+		vertex.BoneData.Weights[i] = 0.0f;
 	}
 }
 
@@ -134,10 +134,10 @@ void Model::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
 {
 	for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
 	{
-		if (vertex.m_BoneIDs[i] < 0)
+		if (vertex.BoneData.BoneIDs[i] < 0)
 		{
-			vertex.m_Weights[i] = weight;
-			vertex.m_BoneIDs[i] = boneID;
+			vertex.BoneData.Weights[i] = weight;
+			vertex.BoneData.BoneIDs[i] = boneID;
 			break;
 		}
 	}

@@ -176,8 +176,11 @@
     <ClInclude Include="Libraries\include\reskinner\Model.h" />
     <ClInclude Include="Libraries\include\reskinner\Shader.h" />
     <ClInclude Include="Libraries\include\reskinner\StatusManager.h" />
+    <ClInclude Include="Libraries\include\reskinner\Texture.h" />
     <ClInclude Include="Libraries\include\reskinner\VAO.h" />
     <ClInclude Include="Libraries\include\reskinner\VBO.h" />
+    <ClInclude Include="Libraries\include\reskinner\Vertex.h" />
+    <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.fs" />
