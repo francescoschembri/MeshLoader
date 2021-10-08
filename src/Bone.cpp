@@ -4,10 +4,11 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 	:
 	m_Name(name),
 	m_ID(ID),
-	m_LocalTransform(1.0f)
+	m_LocalTransform(1.0f),
+	m_NumPositions(channel->mNumPositionKeys),
+	m_NumRotations(channel->mNumRotationKeys),
+	m_NumScalings(channel->mNumScalingKeys)
 {
-	m_NumPositions = channel->mNumPositionKeys;
-
 	for (int positionIndex = 0; positionIndex < m_NumPositions; ++positionIndex)
 	{
 		aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
@@ -18,7 +19,6 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 		m_Positions.push_back(data);
 	}
 
-	m_NumRotations = channel->mNumRotationKeys;
 	for (int rotationIndex = 0; rotationIndex < m_NumRotations; ++rotationIndex)
 	{
 		aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
@@ -29,7 +29,6 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 		m_Rotations.push_back(data);
 	}
 
-	m_NumScalings = channel->mNumScalingKeys;
 	for (int keyIndex = 0; keyIndex < m_NumScalings; ++keyIndex)
 	{
 		aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;

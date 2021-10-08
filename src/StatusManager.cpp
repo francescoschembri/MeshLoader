@@ -1,10 +1,12 @@
 #include <reskinner/StatusManager.h>
 
-StatusManager::StatusManager(float screenWidth, float screenHeight) : camera(glm::vec3(0.0f, 0.0f, 3.0f))
+StatusManager::StatusManager(float screenWidth, float screenHeight)
+	:
+	camera(glm::vec3(0.0f, 0.0f, 3.0f)),
+	lastFrame(glfwGetTime()),
+	deltaTime(0.0f),
+	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2))
 {
-	lastFrame = glfwGetTime();
-	deltaTime = 0.0f;
-	mouseLastPos = glm::vec2(screenWidth / 2, screenHeight / 2);
 	InitStatus();
 }
 
@@ -40,7 +42,7 @@ void StatusManager::UpdateDeltaTime()
 	lastFrame = currentFrame;
 }
 
-void StatusManager::ProcessInput(GLFWwindow * window)
+void StatusManager::ProcessInput(GLFWwindow* window)
 {
 	// enable/disable wireframe mode
 	if (glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS && !status[WIREFRAME_KEY_PRESSED])
