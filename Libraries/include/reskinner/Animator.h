@@ -12,16 +12,20 @@
 class Animator
 {
 public:
-	Animator(Animation* animation);
+
+	Animator();
 	void UpdateAnimation(float dt);
-	void PlayAnimation(Animation* pAnimation);
+	void PlayAnimation(Animation* animation);
+	void PlayAnimationIndex(int index);
+	void PlayNextAnimation();
 	void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 	std::vector<glm::mat4> GetFinalBoneMatrices();
+	void AddAnimation(Animation animation);
 
 private:
 	std::vector<glm::mat4> m_FinalBoneMatrices;
-	Animation* m_CurrentAnimation;
+	std::vector<Animation> animations;
+	int currentAnimationIndex = 0;
 	float m_CurrentTime;
-
 };
 

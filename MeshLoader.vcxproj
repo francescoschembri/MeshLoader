@@ -157,6 +157,7 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\StatusManager.cpp" />
     <ClCompile Include="src\stb.cpp" />
     <ClCompile Include="src\VAO.cpp" />
     <ClCompile Include="src\VBO.cpp" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Libraries\include\reskinner\Animation.h" />
     <ClInclude Include="Libraries\include\reskinner\Animator.h" />
+    <ClInclude Include="Libraries\include\reskinner\AssimpNodeData.h" />
     <ClInclude Include="Libraries\include\reskinner\BoneInfo.h" />
     <ClInclude Include="Libraries\include\reskinner\assimp_glm_helpers.h" />
     <ClInclude Include="Libraries\include\reskinner\Bone.h" />
@@ -173,6 +175,7 @@
     <ClInclude Include="Libraries\include\reskinner\Mesh.h" />
     <ClInclude Include="Libraries\include\reskinner\Model.h" />
     <ClInclude Include="Libraries\include\reskinner\Shader.h" />
+    <ClInclude Include="Libraries\include\reskinner\StatusManager.h" />
     <ClInclude Include="Libraries\include\reskinner\VAO.h" />
     <ClInclude Include="Libraries\include\reskinner\VBO.h" />
   </ItemGroup>

@@ -9,14 +9,7 @@
 #include <reskinner/Bone.h>
 #include <reskinner/BoneInfo.h>
 #include <reskinner/Model.h>
-
-struct AssimpNodeData
-{
-	glm::mat4 transformation;
-	std::string name;
-	int childrenCount;
-	std::vector<AssimpNodeData> children;
-};
+#include <reskinner/AssimpNodeData.h>
 
 class Animation
 {
