@@ -46,7 +46,7 @@ void Mesh::Draw(Shader& shader, bool faces, bool lines)
 		shader.wireframeMode(true);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, this->faces.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, this->faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
 	}
 
 	// draw mesh aka faces
@@ -57,7 +57,7 @@ void Mesh::Draw(Shader& shader, bool faces, bool lines)
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.0, 1.0);
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, this->faces.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, this->faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
 	}
 
 	// always good practice to set everything back to defaults once configured.
