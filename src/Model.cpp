@@ -110,9 +110,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		Face f;
 		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; j++) {
-			f.indices[j]=face.mIndices[j];
-		}
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			f.indices[j] = face.mIndices[j];
 		faces.push_back(f);
 	}
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];

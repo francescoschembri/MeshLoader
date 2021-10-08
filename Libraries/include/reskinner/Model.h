@@ -19,6 +19,7 @@
 #include <reskinner/Shader.h>
 #include <reskinner/assimp_glm_helpers.h>
 #include <reskinner/BoneInfo.h>
+#include <reskinner/Face.h>
 
 
 class Model
