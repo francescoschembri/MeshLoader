@@ -8,6 +8,10 @@
 
 #include <GLFW/glfw3.h>
 
+#include <filesystem>
+
+namespace filesystem = std::filesystem;
+
 // keys
 constexpr int WIREFRAME_KEY = GLFW_KEY_W;
 constexpr int HIDDEN_LINE_KEY = GLFW_KEY_H;
@@ -38,6 +42,7 @@ public:
 	glm::vec2 mouseLastPos;
 	Camera camera;
 	Animator animator;
+	Model model;
 	float lastFrame;
 	float deltaTime;
 
@@ -47,7 +52,7 @@ public:
 	bool IsPaused() const;
 	bool DrawLines() const;
 	bool DrawFaces() const;
-	void AddAnimation(Animation animation);
+	void AddAnimation(const char* path);
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
 private:

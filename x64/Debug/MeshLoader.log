@@ -1,8 +1,49 @@
-﻿  Model.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(152,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
+﻿  Animation.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(10,24): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(11,30): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(28,47): warning C4244: 'return': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(72,20): warning C4018: '<': errata corrispondenza tra signed e unsigned
+  Animator.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animator.cpp(23,44): warning C4267: '=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  Bone.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Bone.cpp(15,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Bone.cpp(25,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Bone.cpp(35,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+  Camera.cpp
+  EBO.cpp
+  Main.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(151,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(152,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(157,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+          with
+          [
+              T=float
+          ]
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(158,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+          with
+          [
+              T=float
+          ]
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(166,35): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+  Mesh.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(51,85): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(62,85): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+  Model.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(182,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
+  Shader.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Shader.cpp(41,33): warning C4101: 'e': variabile locale senza riferimenti
   StatusManager.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(5,25): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(38,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(6,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(40,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+  stb.cpp
+  VAO.cpp
+  VBO.cpp
   Generazione del codice in corso...
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(24): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(36): warning C4172: verrà restituito l'indirizzo del valore : m temporaneo o della variabile locale
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(54): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(13): warning C4172: verrà restituito l'indirizzo del valore : m temporaneo o della variabile locale
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Bone.cpp(75): warning C4715: 'Bone::GetRotationIndex': non tutti i percorsi di controllo restituiscono un valore
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Bone.cpp(85): warning C4715: 'Bone::GetScaleIndex': non tutti i percorsi di controllo restituiscono un valore
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Bone.cpp(65): warning C4715: 'Bone::GetPositionIndex': non tutti i percorsi di controllo restituiscono un valore
+  glad.c
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

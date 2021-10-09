@@ -1,9 +1,39 @@
 #include <reskinner/Model.h>
 
+Model::Model()
+	:
+	gammaCorrection(false),
+	directory("")
+{
+	std::vector<Mesh> m;
+	meshes = m;
+	std::vector<Texture> t;
+	textures_loaded = t;
+}
+
 // constructor, expects a filepath to a 3D model.
 Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
 	loadModel(path);
+}
+
+Model::Model(std::vector<Texture>& textures, std::vector<Mesh>&& meshes, std::string const& path, bool gamma)
+	:
+	textures_loaded(textures),
+	meshes(std::move(meshes)),
+	directory(path),
+	gammaCorrection(gamma)
+{
+}
+
+Model& Model::Bake()
+{
+	std::vector<Mesh> meshes;
+	meshes.reserve(this->meshes.size());
+	for (Mesh m : this->meshes)
+		meshes.push_back(std::move(m.Bake()));
+	Model m(textures_loaded, std::move(meshes), directory, gammaCorrection);
+	return m;
 }
 
 // draws the model, and thus all its meshes

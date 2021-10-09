@@ -9,11 +9,8 @@
 #include <reskinner/Model.h>
 #include <reskinner/StatusManager.h>
 
-#include <filesystem>
 #include <iostream>
 #include <bitset>
-
-namespace filesystem = std::filesystem;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -75,12 +72,13 @@ int main()
 	Shader ourShader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs");
 	// load models
 	// -----------
-	Model ourModel(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
+	status.model = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
 	// load animations
-	status.AddAnimation(Animation(filesystem::path("./Animations/Capoeira/Capoeira.dae").string(), ourModel));
-	status.AddAnimation(Animation (filesystem::path("./Animations/Flair/Flair.dae").string(), ourModel));
-	status.AddAnimation(Animation (filesystem::path("./Animations/Silly Dancing/Silly Dancing.dae").string(), ourModel));
+	status.AddAnimation("./Animations/Capoeira/Capoeira.dae");
+	status.AddAnimation("./Animations/Flair/Flair.dae");
+	status.AddAnimation("./Animations/Silly Dancing/Silly Dancing.dae");
 
+	// glShadeModel(GL_FLAT); ANTOOOOOOOOOOO
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -118,7 +116,7 @@ int main()
 			ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 		// render the loaded model
-		ourModel.Draw(ourShader, status.DrawFaces(), status.DrawLines());
+		status.model.Draw(ourShader, status.DrawFaces(), status.DrawLines());
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

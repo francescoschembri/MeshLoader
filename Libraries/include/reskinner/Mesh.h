@@ -22,7 +22,8 @@ public:
 
 	// constructor
 	Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& indices, std::vector<Texture>&& textures);
-
+	// bake the mesh
+	Mesh& Bake();
 	// render the mesh
 	void Draw(Shader& shader, bool faces = true, bool lines = false);
 

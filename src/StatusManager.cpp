@@ -30,9 +30,9 @@ bool StatusManager::DrawFaces() const
 	return status[HIDDEN_LINE];
 }
 
-void StatusManager::AddAnimation(Animation animation)
+void StatusManager::AddAnimation(const char* path)
 {
-	animator.AddAnimation(animation);
+	animator.AddAnimation(Animation(filesystem::path(path).string(), model));
 }
 
 void StatusManager::UpdateDeltaTime()
@@ -54,8 +54,10 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 	if (glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS && !status[PAUSE_KEY_PRESSED] && !status[BAKED_MODEL])
 		status[PAUSE] = !status[PAUSE];
 	// bake the model in the current pose
-	if (glfwGetKey(window, BAKE_MODEL_KEY) == GLFW_PRESS && !status[BAKED_MODEL])
+	if (glfwGetKey(window, BAKE_MODEL_KEY) == GLFW_PRESS && !status[BAKED_MODEL]) {
 		status[BAKED_MODEL] = status[PAUSE] = true;
+		model = model.Bake();
+	}
 	// enable/disable hidden line
 	if (glfwGetKey(window, SWITCH_ANIMATION_KEY) == GLFW_PRESS && !status[SWITCH_ANIMATION_KEY_PRESSED]) {
 		SwitchAnimation();

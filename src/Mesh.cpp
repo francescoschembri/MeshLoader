@@ -7,6 +7,12 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	setupMesh();
 }
 
+Mesh& Mesh::Bake()
+{
+	Mesh m(std::move(vertices), std::move(faces), std::move(textures)); //ANTOOOOOOOO
+	return m;
+}
+
 // render the mesh
 void Mesh::Draw(Shader& shader, bool faces, bool lines)
 {

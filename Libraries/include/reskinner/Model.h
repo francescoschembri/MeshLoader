@@ -32,9 +32,14 @@ public:
 	bool gammaCorrection;
 
 
-
+	// default constructor
+	Model();
 	// constructor, expects a filepath to a 3D model.
 	Model(std::string const& path, bool gamma = false);
+	// constructor, used in the Baking process;
+	Model(std::vector<Texture>& textures, std::vector<Mesh>&& meshes, std::string const& path, bool gamma = false);
+	// bake the model
+	Model& Bake();
 	// draws the model, and thus all its meshes
 	void Draw(Shader& shader, bool faces = true, bool lines = false);
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
