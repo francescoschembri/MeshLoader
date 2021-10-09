@@ -7,10 +7,40 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	setupMesh();
 }
 
-Mesh& Mesh::Bake()
+void Mesh::Bake(std::vector<glm::mat4>& matrices)
 {
-	Mesh m(std::move(vertices), std::move(faces), std::move(textures)); //ANTOOOOOOOO
-	return m;
+	// Modify the vertex data
+	for (Vertex& v : vertices) {
+		glm::vec4 totalPosition = glm::vec4(0.0f);
+		glm::vec4 totalNormal = glm::vec4(0.0f);
+		glm::vec4 totalTangent = glm::vec4(0.0f);
+		glm::vec4 totalBitangent = glm::vec4(0.0f);
+		for (int i = 0; i < v.BoneData.NumBones; i++)
+		{
+			if (v.BoneData.BoneIDs[i] == -1)
+				continue;
+			if (v.BoneData.BoneIDs[i] >= MAX_BONE_INFLUENCE)
+			{
+				totalPosition = glm::vec4(v.Position, 1.0f);
+				totalNormal = glm::vec4(v.Normal, 1.0f);
+				totalTangent = glm::vec4(v.Tangent, 1.0f);
+				totalBitangent = glm::vec4(v.Bitangent, 1.0f);
+				break;
+			}
+			glm::vec4 localPosition = matrices[v.BoneData.BoneIDs[i]] * glm::vec4(v.Position, 1.0f);
+			glm::vec4 localNormal = matrices[v.BoneData.BoneIDs[i]] * glm::vec4(v.Normal, 1.0f);
+			glm::vec4 localTangent = matrices[v.BoneData.BoneIDs[i]] * glm::vec4(v.Tangent, 1.0f);
+			glm::vec4 localBitangent = matrices[v.BoneData.BoneIDs[i]] * glm::vec4(v.Bitangent, 1.0f);
+			totalPosition += localPosition * v.BoneData.Weights[i];
+			totalNormal += localNormal * v.BoneData.Weights[i];
+			totalTangent += localTangent * v.BoneData.Weights[i];
+			totalBitangent += localBitangent * v.BoneData.Weights[i];
+		}
+		v.Position = totalPosition;
+		v.Normal = totalNormal;
+		v.Tangent = totalTangent;
+		v.Bitangent = totalBitangent;
+	}
 }
 
 // render the mesh

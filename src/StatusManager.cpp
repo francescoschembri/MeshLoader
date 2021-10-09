@@ -17,7 +17,7 @@ bool StatusManager::IsRotationLocked() const
 
 bool StatusManager::IsPaused() const
 {
-	return status[PAUSE];
+	return status[PAUSE] || status[BAKED_MODEL];
 }
 
 bool StatusManager::DrawLines() const
@@ -55,8 +55,7 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 		status[PAUSE] = !status[PAUSE];
 	// bake the model in the current pose
 	if (glfwGetKey(window, BAKE_MODEL_KEY) == GLFW_PRESS && !status[BAKED_MODEL]) {
-		status[BAKED_MODEL] = status[PAUSE] = true;
-		model = model.Bake();
+		BakeModel();
 	}
 	// enable/disable hidden line
 	if (glfwGetKey(window, SWITCH_ANIMATION_KEY) == GLFW_PRESS && !status[SWITCH_ANIMATION_KEY_PRESSED]) {
@@ -92,6 +91,12 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 void StatusManager::SwitchAnimation()
 {
 	animator.PlayNextAnimation();
+}
+
+void StatusManager::BakeModel(){
+	status[BAKED_MODEL] = true;
+	status[PAUSE] = true;
+	model = model.Bake(animator.GetFinalBoneMatrices());
 }
 
 void StatusManager::InitStatus()

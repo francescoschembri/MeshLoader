@@ -58,6 +58,7 @@ public:
 private:
 	std::bitset<9> status;
 
+	void BakeModel();
 	void InitStatus();
 	void SwitchAnimation();
 };

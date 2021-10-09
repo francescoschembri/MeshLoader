@@ -1,16 +1,5 @@
 #include <reskinner/Model.h>
 
-Model::Model()
-	:
-	gammaCorrection(false),
-	directory("")
-{
-	std::vector<Mesh> m;
-	meshes = m;
-	std::vector<Texture> t;
-	textures_loaded = t;
-}
-
 // constructor, expects a filepath to a 3D model.
 Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
@@ -26,13 +15,11 @@ Model::Model(std::vector<Texture>& textures, std::vector<Mesh>&& meshes, std::st
 {
 }
 
-Model& Model::Bake()
+Model Model::Bake(std::vector<glm::mat4>& matrices)
 {
-	std::vector<Mesh> meshes;
-	meshes.reserve(this->meshes.size());
-	for (Mesh m : this->meshes)
-		meshes.push_back(std::move(m.Bake()));
-	Model m(textures_loaded, std::move(meshes), directory, gammaCorrection);
+	Model m(*this);
+	for (Mesh mesh : m.meshes)
+		mesh.Bake(matrices);
 	return m;
 }
 

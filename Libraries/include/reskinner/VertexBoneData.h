@@ -7,4 +7,6 @@ struct VertexBoneData {
 	int BoneIDs[MAX_BONE_INFLUENCE];
 	//weights from each bone
 	float Weights[MAX_BONE_INFLUENCE];
+	//num bones
+	int NumBones = 0;
 };
