@@ -99,6 +99,59 @@ void StatusManager::BakeModel(){
 	model = model.Bake(animator.GetFinalBoneMatrices());
 }
 
+float intersectSphere(glm::vec3 rayOrigin, glm::vec3 direction, glm::vec3 center, float radius) {
+	glm::vec3 oc = rayOrigin - center;
+	float a = glm::dot(direction, direction);
+	float b = 2.0 * glm::dot(oc, direction);
+	float c = dot(oc, oc) - radius * radius;
+	float discriminant = b * b - 4 * a * c;
+	if (discriminant < 0) {
+		return -1.0f;
+	}
+	else {
+		float t1 = (-b - sqrt(discriminant)) / (2.0f * a);
+		if (t1 > 0.0f) return t1;
+		return (-b + sqrt(discriminant)) / (2.0f * a);
+	}
+}
+
+void StatusManager::Picking()
+{
+	glm::vec2 mousePos = (mouseLastPos / glm::vec2(800.0f,800.0f)) * 2.0f - 1.0f;
+	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
+
+	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+
+	glm::mat4 toWorld = glm::inverse(proj * view);
+
+	glm::vec3 dir = glm::normalize(glm::vec3(toWorld * glm::vec4(mousePos, 1.0f, 1.0f)));
+
+	Vertex* ver = nullptr;
+	float minDist = 0.0f;
+
+	for (Mesh& m: model.meshes)
+	{
+		for (Vertex& v : m.vertices) {
+			v.Selected = 0;
+			float t = intersectSphere(camera.Position, dir, v.Position, 0.01f);
+			if (t > 0.0f)
+			{
+				//object i has been clicked. probably best to find the minimum t1 (front-most object)
+				if (ver == nullptr || t < minDist)
+				{
+					minDist = t;
+					ver = &v;
+				}
+			}
+		}
+	}
+	if (ver) {
+		std::cout << "trovato"<< ver->Position.x << ", " << ver->Position.y << ", " << ver->Position.z << "\n";
+		ver->Selected = 1;
+	}
+}
+
 void StatusManager::InitStatus()
 {
 	//init keys status

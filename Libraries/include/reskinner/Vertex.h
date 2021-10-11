@@ -16,4 +16,6 @@ struct Vertex {
 	glm::vec3 Bitangent;
 	// bone data
 	VertexBoneData BoneData;
+	// is the vertex hovered
+	int Selected = 0;
 };

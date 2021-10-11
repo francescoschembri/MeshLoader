@@ -7,6 +7,8 @@ layout(location = 3) in vec3 tangent;
 layout(location = 4) in vec2 bitangent;
 layout(location = 5) in ivec4 boneIds; 
 layout(location = 6) in vec4 weights;
+layout(location = 7) in int numBones;
+layout(location = 8) in int selected;
 	
 uniform mat4 projection;
 uniform mat4 view;
@@ -17,11 +19,14 @@ const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 	
 flat out vec2 TexCoords;
+flat out int Selected;
 	
 void main()
 {
-    vec4 totalPosition = vec4(0.0f);
-    for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
+    vec4 totalPosition = vec4(pos,1.0f);
+    if(numBones>0)
+        totalPosition = vec4(0.0f);
+    for(int i = 0 ; i < numBones ; i++)
     {
         if(boneIds[i] == -1) 
             continue;
@@ -35,4 +40,5 @@ void main()
     }
     gl_Position =  projection * view * model * totalPosition;
     TexCoords = tex;
+    Selected = selected;
 }

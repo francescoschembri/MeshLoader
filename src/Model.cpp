@@ -18,7 +18,7 @@ Model::Model(std::vector<Texture>& textures, std::vector<Mesh>&& meshes, std::st
 Model Model::Bake(std::vector<glm::mat4>& matrices)
 {
 	Model m(*this);
-	for (Mesh mesh : m.meshes)
+	for (Mesh& mesh : m.meshes)
 		mesh.Bake(matrices);
 	return m;
 }
@@ -92,6 +92,7 @@ void Model::SetVertexBoneDataToDefault(Vertex& vertex)
 	{
 		vertex.BoneData.BoneIDs[i] = -1;
 		vertex.BoneData.Weights[i] = 0.0f;
+		vertex.BoneData.NumBones = 0;
 	}
 }
 
@@ -149,15 +150,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 void Model::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
 {
-	for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
-	{
-		if (vertex.BoneData.BoneIDs[i] < 0)
-		{
-			vertex.BoneData.Weights[i] = weight;
-			vertex.BoneData.BoneIDs[i] = boneID;
-			break;
-		}
-	}
+	if (vertex.BoneData.NumBones >= MAX_BONE_INFLUENCE) return;
+	vertex.BoneData.Weights[vertex.BoneData.NumBones] = weight;
+	vertex.BoneData.BoneIDs[vertex.BoneData.NumBones++] = boneID;
 }
 
 

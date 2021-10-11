@@ -153,6 +153,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	else {
 		status.mouseLastPos.x = xpos;
 		status.mouseLastPos.y = ypos;
+		if(status.IsPaused())
+			status.Picking();
 	}
 }
 

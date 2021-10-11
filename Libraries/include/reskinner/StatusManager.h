@@ -55,6 +55,7 @@ public:
 	void AddAnimation(const char* path);
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
+	void Picking();
 private:
 	std::bitset<9> status;
 

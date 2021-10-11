@@ -2,6 +2,7 @@
 out vec4 FragColor;
 
 flat in vec2 TexCoords;
+flat in int Selected;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_diffuse2;
