@@ -1,5 +1,1 @@
-﻿  StatusManager.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(6,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(40,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(105,10): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-  MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe
+﻿  MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

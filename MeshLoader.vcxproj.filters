@@ -16,6 +16,9 @@
     <Filter Include="File di risorse\Shaders">
       <UniqueIdentifier>{4552c963-3d0d-4dde-aa08-b2d0c14edf8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File di origine\external">
+      <UniqueIdentifier>{b6ecdf37-fbdf-4dfb-bcf2-adf46abbf7f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp">
@@ -54,11 +57,35 @@
     <ClCompile Include="src\VBO.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="src\glad.c">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="src\StatusManager.cpp">
       <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glad.c">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui_widgets.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui_demo.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui_draw.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui_impl_glfw.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui_impl_opengl3.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui_stdlib.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\include\imgui\imgui_tables.cpp">
+      <Filter>File di origine\external</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

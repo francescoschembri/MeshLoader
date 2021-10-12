@@ -1,4 +1,11 @@
+
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+
 #include <glad/glad.h>
+
+
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -60,6 +67,20 @@ int main()
 		return -1;
 	}
 
+	// initialize imgui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
+
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
 
@@ -78,7 +99,6 @@ int main()
 	status.AddAnimation("./Animations/Flair/Flair.dae");
 	status.AddAnimation("./Animations/Silly Dancing/Silly Dancing.dae");
 
-	// glShadeModel(GL_FLAT); ANTOOOOOOOOOOO
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -99,6 +119,13 @@ int main()
 		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+
 		// don't forget to enable shader before setting uniforms
 		ourShader.use();
 
@@ -116,16 +143,23 @@ int main()
 			ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 		// render the loaded model
+		ImGui::Render();
 		status.model.Draw(ourShader, status.DrawFaces(), status.DrawLines());
 
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
+	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
 }
