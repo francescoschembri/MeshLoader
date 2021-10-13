@@ -20,6 +20,11 @@ bool StatusManager::IsPaused() const
 	return status[PAUSE] || status[BAKED_MODEL];
 }
 
+bool StatusManager::IsBaked() const
+{
+	return status[BAKED_MODEL];
+}
+
 bool StatusManager::DrawLines() const
 {
 	return status[WIREFRAME];

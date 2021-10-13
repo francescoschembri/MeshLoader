@@ -87,6 +87,10 @@ void Shader::use()
 {
 	glUseProgram(ID);
 }
+Shader::~Shader()
+{
+	glDeleteProgram(ID);
+}
 // utility uniform functions
 // ------------------------------------------------------------------------
 void Shader::setBool(const std::string& name, bool value) const

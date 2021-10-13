@@ -157,8 +157,6 @@ int main()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-
-	// glfw: terminate, clearing all previously allocated GLFW resources.
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
@@ -187,7 +185,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	else {
 		status.mouseLastPos.x = xpos;
 		status.mouseLastPos.y = ypos;
-		if(status.IsPaused())
+		if(status.IsBaked())
 			status.Picking();
 	}
 }

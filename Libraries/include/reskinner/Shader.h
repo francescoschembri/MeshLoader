@@ -19,6 +19,9 @@ public:
 	// activate the shader
 	// ------------------------------------------------------------------------
 	void use();
+	// destroy the shader
+	// ------------------------------------------------------------------------
+	~Shader();
 	// utility uniform functions
 	// ------------------------------------------------------------------------
 	void setBool(const std::string& name, bool value) const;

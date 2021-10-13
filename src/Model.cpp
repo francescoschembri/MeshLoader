@@ -6,15 +6,6 @@ Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 	loadModel(path);
 }
 
-Model::Model(std::vector<Texture>& textures, std::vector<Mesh>&& meshes, std::string const& path, bool gamma)
-	:
-	textures_loaded(textures),
-	meshes(std::move(meshes)),
-	directory(path),
-	gammaCorrection(gamma)
-{
-}
-
 Model Model::Bake(std::vector<glm::mat4>& matrices)
 {
 	Model m(*this);

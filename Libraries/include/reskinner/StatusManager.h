@@ -50,6 +50,7 @@ public:
 
 	bool IsRotationLocked() const;
 	bool IsPaused() const;
+	bool IsBaked() const;
 	bool DrawLines() const;
 	bool DrawFaces() const;
 	void AddAnimation(const char* path);

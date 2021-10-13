@@ -159,7 +159,6 @@
     <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\Bone.cpp" />
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\EBO.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
@@ -167,8 +166,6 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\StatusManager.cpp" />
     <ClCompile Include="src\stb.cpp" />
-    <ClCompile Include="src\VAO.cpp" />
-    <ClCompile Include="src\VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\reskinner\Animation.h" />
@@ -178,15 +175,12 @@
     <ClInclude Include="Libraries\include\reskinner\assimp_glm_helpers.h" />
     <ClInclude Include="Libraries\include\reskinner\Bone.h" />
     <ClInclude Include="Libraries\include\reskinner\Camera.h" />
-    <ClInclude Include="Libraries\include\reskinner\EBO.h" />
     <ClInclude Include="Libraries\include\reskinner\Face.h" />
     <ClInclude Include="Libraries\include\reskinner\Mesh.h" />
     <ClInclude Include="Libraries\include\reskinner\Model.h" />
     <ClInclude Include="Libraries\include\reskinner\Shader.h" />
     <ClInclude Include="Libraries\include\reskinner\StatusManager.h" />
     <ClInclude Include="Libraries\include\reskinner\Texture.h" />
-    <ClInclude Include="Libraries\include\reskinner\VAO.h" />
-    <ClInclude Include="Libraries\include\reskinner\VBO.h" />
     <ClInclude Include="Libraries\include\reskinner\Vertex.h" />
     <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h" />
   </ItemGroup>

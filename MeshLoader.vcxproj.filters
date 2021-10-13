@@ -33,9 +33,6 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="src\EBO.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
@@ -46,15 +43,6 @@
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="src\Shader.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stb.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\VAO.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\VBO.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="src\StatusManager.cpp">
@@ -87,6 +75,9 @@
     <ClCompile Include="Libraries\include\imgui\imgui_tables.cpp">
       <Filter>File di origine\external</Filter>
     </ClCompile>
+    <ClCompile Include="src\stb.cpp">
+      <Filter>File di origine\external</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\reskinner\Animation.h">
@@ -107,9 +98,6 @@
     <ClInclude Include="Libraries\include\reskinner\Camera.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\EBO.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\Mesh.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
@@ -117,12 +105,6 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\Shader.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\VAO.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\VBO.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\Face.h">
