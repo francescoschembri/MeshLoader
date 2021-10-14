@@ -54,6 +54,7 @@ public:
 	bool DrawLines() const;
 	bool DrawFaces() const;
 	void AddAnimation(const char* path);
+	void Update(GLFWwindow* window);
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
 	void Picking();

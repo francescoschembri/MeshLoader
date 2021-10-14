@@ -93,6 +93,14 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 	status[PAUSE_KEY_PRESSED] = glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS;
 }
 
+void StatusManager::Update(GLFWwindow* window)
+{
+	UpdateDeltaTime();
+	ProcessInput(window);
+	if (!IsPaused())
+		animator.UpdateAnimation(deltaTime);
+}
+
 void StatusManager::SwitchAnimation()
 {
 	animator.PlayNextAnimation();
@@ -139,7 +147,7 @@ void StatusManager::Picking()
 	{
 		for (Vertex& v : m.vertices) {
 			v.Selected = 0;
-			float t = intersectSphere(camera.Position, dir, v.Position, 0.01f);
+			float t = intersectSphere(camera.Position, dir, v.Position, 0.0025f);
 			if (t > 0.0f)
 			{
 				//object i has been clicked. probably best to find the minimum t1 (front-most object)

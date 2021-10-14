@@ -103,19 +103,10 @@ int main()
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
-		// per-frame time logic
-		// --------------------
-		status.UpdateDeltaTime();
-
-		// input
-		// -----
-		status.ProcessInput(window);
-
-		// animate the model
-		if (!status.IsPaused()) status.animator.UpdateAnimation(status.deltaTime);
+		// update the status before rendering based on user input
+		status.Update(window);
 
 		// render
-		// ------
 		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
