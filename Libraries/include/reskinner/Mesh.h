@@ -19,13 +19,17 @@ public:
 	std::vector<Face> faces;
 	std::vector<Texture>      textures;
 	unsigned int VAO;
+	bool loaded = false;
 
-	// constructor
+	// constructors
+	Mesh() = default;
 	Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& indices, std::vector<Texture>&& textures);
 	// bake the mesh
 	void Bake(std::vector<glm::mat4>& matrices);
 	// render the mesh
 	void Draw(Shader& shader, bool faces = true, bool lines = false);
+	// reload opengl data for the mesh
+	void Reload();
 
 private:
 	// render data 

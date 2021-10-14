@@ -42,6 +42,8 @@ public:
 	void Draw(Shader& shader, bool faces = true, bool lines = false);
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
 	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
+	// if there are several meshes join then in one mesh
+	void JoinMeshes();
 
 private:
 

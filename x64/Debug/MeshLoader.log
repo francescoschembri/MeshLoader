@@ -1,5 +1,19 @@
-﻿  StatusManager.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(6,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(45,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(118,10): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+﻿  Model.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(48,40): warning C4267: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+          with
+          [
+              _Ty=unsigned int
+          ]
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(49,40): warning C4267: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+          with
+          [
+              _Ty=unsigned int
+          ]
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(50,40): warning C4267: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+          with
+          [
+              _Ty=unsigned int
+          ]
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(183,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(33): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

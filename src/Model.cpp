@@ -4,6 +4,7 @@
 Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
 	loadModel(path);
+	JoinMeshes();
 }
 
 Model Model::Bake(std::vector<glm::mat4>& matrices)
@@ -35,6 +36,28 @@ const BoneInfo& Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
 		return m_BoneInfoMap[name];
 	}
 
+}
+
+void Model::JoinMeshes()
+{
+	Mesh m;
+	Face offset;
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		// join faces but add an offset to the face added
+		//create fake face to add the offset to the indices
+		offset.indices[0] = m.vertices.size();
+		offset.indices[1] = m.vertices.size();
+		offset.indices[2] = m.vertices.size();
+		//add the offset to each indices to every face
+		std::transform(meshes[i].faces.begin(), meshes[i].faces.end(), std::back_inserter(m.faces), 
+						[&offset](Face& face) {return face + offset; });
+		// join vertices
+		m.vertices.insert(m.vertices.end(), meshes[i].vertices.begin(), meshes[i].vertices.end());
+	}
+	m.textures.insert(m.textures.end(), textures_loaded.begin(), textures_loaded.end());
+	m.Reload();
+	meshes.clear();
+	meshes.push_back(m);
 }
 
 std::map<std::string, BoneInfo> Model::GetBoneInfoMap() { return m_BoneInfoMap; }
@@ -94,35 +117,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-	{
-		Vertex vertex;
-		SetVertexBoneDataToDefault(vertex);
-		vertex.Position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
-		vertex.Normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
-
-		if (mesh->mTextureCoords[0])
-		{
-			glm::vec2 vec;
-			vec.x = mesh->mTextureCoords[0][i].x;
-			vec.y = mesh->mTextureCoords[0][i].y;
-			vertex.TexCoords = vec;
-		}
-		else
-			vertex.TexCoords = glm::vec2(0.0f, 0.0f);
-
-		vertices.push_back(vertex);
-	}
-	std::vector<Face> faces;
-	faces.reserve(mesh->mNumFaces);
-	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
-	{
-		Face f;
-		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; j++)
-			f.indices[j] = face.mIndices[j];
-		faces.push_back(f);
-	}
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
 	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -133,6 +127,40 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+	{
+		Vertex vertex;
+		SetVertexBoneDataToDefault(vertex);
+		vertex.Position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
+		vertex.Normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
+
+		if (mesh->mTextureCoords[0])
+		{
+			glm::vec3 vec;
+			vec.x = mesh->mTextureCoords[0][i].x;
+			vec.y = mesh->mTextureCoords[0][i].y;
+			if (diffuseMaps.size() && diffuseMaps[0].id == textures_loaded[0].id)
+				vec.z = 0.0f;
+			else
+				vec.z = 1.0f;
+			vertex.TexCoords = vec;
+		}
+		else
+			vertex.TexCoords = glm::vec3(0.0f, 0.0f, -1.0f);
+
+		vertices.push_back(vertex);
+	}
+	std::vector<Face> faces;
+	faces.reserve(mesh->mNumFaces);
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+	{
+		Face f{};
+		aiFace face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			f.indices[j] = face.mIndices[j];
+		faces.push_back(f);
+	}
 
 	ExtractBoneWeightForVertices(vertices, mesh, scene);
 
@@ -190,12 +218,12 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 	filename = directory + '/' + filename;
 
 	unsigned int textureID;
-	glGenTextures(1, &textureID);
 
 	int width, height, nrComponents;
 	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 	if (data)
 	{
+		glGenTextures(1, &textureID);
 		GLenum format;
 		if (nrComponents == 1)
 			format = GL_RED;

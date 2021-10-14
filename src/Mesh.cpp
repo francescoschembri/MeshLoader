@@ -1,7 +1,7 @@
 #include <reskinner/Mesh.h>
 
 // constructor
-Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<Texture>&& textures) : vertices(std::move(vertices)), faces(std::move(faces)), textures(std::move(textures))
+Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<Texture>&& textures) : loaded(true), vertices(std::move(vertices)), faces(std::move(faces)), textures(std::move(textures))
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
 	setupMesh();
@@ -97,6 +97,16 @@ void Mesh::Draw(Shader& shader, bool faces, bool lines)
 	glActiveTexture(GL_TEXTURE0);
 }
 
+void Mesh::Reload()
+{
+	if (loaded) {
+		glDeleteVertexArrays(1, &VAO);
+		glDeleteBuffers(1, &VBO);
+		glDeleteBuffers(1, &EBO);
+	}
+	setupMesh();
+}
+
 // initializes all the buffer objects/arrays
 void Mesh::setupMesh()
 {
@@ -125,7 +135,7 @@ void Mesh::setupMesh()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
 	// vertex texture coords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
 	// vertex tangent
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
@@ -141,9 +151,6 @@ void Mesh::setupMesh()
 	// num bones
 	glEnableVertexAttribArray(7);
 	glVertexAttribIPointer(7, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.NumBones));
-	// vertex selected
-	glEnableVertexAttribArray(8);
-	glVertexAttribIPointer(8, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, Selected));
 	glBindVertexArray(0);
 }
 
