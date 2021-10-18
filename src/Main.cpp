@@ -98,9 +98,10 @@ int main()
 	Shader ourShader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs");
 	// load models
 	// -----------
-	status.model = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
+	//status.animatedModel = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
+	//status.currentModel = status.animatedModel;
 	// load animations
-	status.AddAnimation("./Animations/Capoeira/Capoeira.dae");
+	//status.AddAnimation("./Animations/Capoeira/Capoeira.dae");
 	//status.AddAnimation("./Animations/Flair/Flair.dae");
 	//status.AddAnimation("./Animations/Silly Dancing/Silly Dancing.dae");
 
@@ -135,7 +136,7 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 		// update the status before rendering based on user input
-		status.Update(window);
+		if(status.currentModel) status.Update(window);
 
 		// render
 		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
@@ -169,10 +170,37 @@ int main()
 			ImGui::EndMainMenuBar();
 		}
 
+		ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing()), ImGuiCond_Once);
+		if (ImGui::Begin("Settings"))
+		{
+			ImGui::Checkbox("Pause", &status.pause);
+			ImGui::Checkbox("Wireframe", &status.wireframe);
+			if(status.wireframe) {
+				ImGui::Checkbox("Hidden line", &status.hiddenLine);
+			}
+			if (ImGui::Button("Bake") && status.currentModel)
+			{
+				status.BakeModel();
+			}
+			if (ImGui::Button("Reset Camera"))
+			{
+				status.camera.Reset();
+			}
+			if (ImGui::Button("Switch Animation") && status.currentModel)
+			{
+				status.SwitchAnimation();
+			}
+		}
+		ImGui::End();
+
 		if (ifd::FileDialog::Instance().IsDone("Mesh Open Dialog")) {
 			if (ifd::FileDialog::Instance().HasResult()) {
 				std::string res = ifd::FileDialog::Instance().GetResult().u8string();
 				printf("OPEN[%s]\n", res.c_str());
+				if (status.currentModel == nullptr) {
+					status.animatedModel = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
+					status.currentModel = &status.animatedModel;
+				}
 				status.AddAnimation(res.c_str());
 			}
 			ifd::FileDialog::Instance().Close();
@@ -194,26 +222,28 @@ int main()
 			glfwMakeContextCurrent(backup_current_context);
 		}
 
-		// don't forget to enable shader before setting uniforms
-		ourShader.use();
 
-		// model/view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(ZOOM), get_window_aspect_ratio(window), 0.1f, 100.0f);
-		glm::mat4 view = status.camera.GetViewMatrix();
-		glm::mat4 model = glm::mat4(1.0f);
-		ourShader.setMat4("model", model);
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
+		if (status.currentModel) {
+			// don't forget to enable shader before setting uniforms
+			ourShader.use();
 
-		// pass bones matrices to the shader
-		auto transforms = status.animator.GetFinalBoneMatrices();
-		for (int i = 0; i < transforms.size(); ++i)
-			ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+			// model/view/projection transformations
+			glm::mat4 projection = glm::perspective(glm::radians(ZOOM), get_window_aspect_ratio(window), 0.1f, 100.0f);
+			glm::mat4 view = status.camera.GetViewMatrix();
+			glm::mat4 model = glm::mat4(1.0f);
+			ourShader.setMat4("model", model);
+			ourShader.setMat4("projection", projection);
+			ourShader.setMat4("view", view);
 
-		// render the loaded model
+			// pass bones matrices to the shader
+			auto transforms = status.animator.GetFinalBoneMatrices();
+			for (int i = 0; i < transforms.size(); ++i)
+				ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+			// render the loaded model
+			status.currentModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
+		}
 		ImGui::Render();
-		status.model.Draw(ourShader, status.DrawFaces(), status.DrawLines());
-
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

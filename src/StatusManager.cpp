@@ -5,7 +5,11 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	camera(glm::vec3(0.0f, 0.0f, 3.0f)),
 	lastFrame(glfwGetTime()),
 	deltaTime(0.0f),
-	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2))
+	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2)),
+	pause(false),
+	wireframe(false),
+	hiddenLine(true),
+	currentModel(nullptr)
 {
 	InitStatus();
 }
@@ -17,7 +21,7 @@ bool StatusManager::IsRotationLocked() const
 
 bool StatusManager::IsPaused() const
 {
-	return status[PAUSE] || status[BAKED_MODEL];
+	return pause;
 }
 
 bool StatusManager::IsBaked() const
@@ -27,17 +31,17 @@ bool StatusManager::IsBaked() const
 
 bool StatusManager::DrawLines() const
 {
-	return status[WIREFRAME];
+	return wireframe;
 }
 
 bool StatusManager::DrawFaces() const
 {
-	return status[HIDDEN_LINE];
+	return hiddenLine;
 }
 
 void StatusManager::AddAnimation(const char* path)
 {
-	animator.AddAnimation(Animation(filesystem::path(path).string(), model));
+	animator.AddAnimation(Animation(filesystem::path(path).string(), animatedModel));
 }
 
 void StatusManager::UpdateDeltaTime()
@@ -51,13 +55,14 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 {
 	// enable/disable wireframe mode
 	if (glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS && !status[WIREFRAME_KEY_PRESSED])
-		status[WIREFRAME] = !status[WIREFRAME];
-	// enable/disable hidden line
-	if (glfwGetKey(window, HIDDEN_LINE_KEY) == GLFW_PRESS && !status[HIDDEN_LINE_KEY_PRESSED])
-		status[HIDDEN_LINE] = !status[HIDDEN_LINE];
+		wireframe = !wireframe;
+	// enable/disable hidden line (possible only if wireframe enabled)
+	if (glfwGetKey(window, HIDDEN_LINE_KEY) == GLFW_PRESS && !status[HIDDEN_LINE_KEY_PRESSED] && !wireframe)
+		hiddenLine = !hiddenLine;
 	// pause/unpause animation. If is a baked model there are no bones -> no animation -> always paused
-	if (glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS && !status[PAUSE_KEY_PRESSED] && !status[BAKED_MODEL])
-		status[PAUSE] = !status[PAUSE];
+	if (glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS && !status[PAUSE_KEY_PRESSED]) {
+		pause = !pause;
+	}
 	// bake the model in the current pose
 	if (glfwGetKey(window, BAKE_MODEL_KEY) == GLFW_PRESS && !status[BAKED_MODEL]) {
 		BakeModel();
@@ -97,8 +102,11 @@ void StatusManager::Update(GLFWwindow* window)
 {
 	UpdateDeltaTime();
 	ProcessInput(window);
-	if (!IsPaused())
+	if (!IsPaused()) {
+		status[BAKED_MODEL] = false;
+		currentModel = &animatedModel;
 		animator.UpdateAnimation(deltaTime);
+	}
 }
 
 void StatusManager::SwitchAnimation()
@@ -108,8 +116,9 @@ void StatusManager::SwitchAnimation()
 
 void StatusManager::BakeModel(){
 	status[BAKED_MODEL] = true;
-	status[PAUSE] = true;
-	model = model.Bake(animator.GetFinalBoneMatrices());
+	pause = true;
+	bakedModel = animatedModel.Bake(animator.GetFinalBoneMatrices());
+	currentModel = &bakedModel;
 }
 
 float intersectSphere(glm::vec3 rayOrigin, glm::vec3 direction, glm::vec3 center, float radius) {
@@ -138,12 +147,13 @@ void StatusManager::Picking()
 
 	glm::mat4 toWorld = glm::inverse(proj * view);
 
-	glm::vec3 dir = glm::normalize(glm::vec3(toWorld * glm::vec4(mousePos, 1.0f, 1.0f)));
+	glm::vec4 notNormalizedDir = toWorld * glm::vec4(mousePos, 1.0f, 1.0f);
+	glm::vec3 dir = glm::normalize(glm::vec3(notNormalizedDir/ notNormalizedDir.w));
 
 	Vertex* ver = nullptr;
 	float minDist = 0.0f;
 
-	for (Mesh& m: model.meshes)
+	for (Mesh& m: currentModel->meshes)
 	{
 		for (Vertex& v : m.vertices) {
 			v.Selected = 0;
@@ -176,6 +186,5 @@ void StatusManager::InitStatus()
 	status[WIREFRAME] = 0;
 	status[HIDDEN_LINE] = 1;
 	status[ROTATE] = 0;
-	status[PAUSE] = 0;
 	status[BAKED_MODEL] = 0;
 }

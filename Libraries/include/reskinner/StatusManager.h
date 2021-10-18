@@ -33,8 +33,7 @@ constexpr int SWITCH_ANIMATION_KEY_PRESSED = 3;
 constexpr int WIREFRAME = 4;
 constexpr int HIDDEN_LINE = 5;
 constexpr int ROTATE = 6;
-constexpr int PAUSE = 7;
-constexpr int BAKED_MODEL = 8;
+constexpr int BAKED_MODEL = 7;
 
 class StatusManager
 {
@@ -42,9 +41,14 @@ public:
 	glm::vec2 mouseLastPos;
 	Camera camera;
 	Animator animator;
-	Model model;
+	Model animatedModel, bakedModel;
+	Model* currentModel;
 	float lastFrame;
 	float deltaTime;
+	bool pause;
+	bool wireframe;
+	bool hiddenLine;
+	std::bitset<8> status;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 
@@ -58,10 +62,9 @@ public:
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
 	void Picking();
-private:
-	std::bitset<9> status;
-
 	void BakeModel();
-	void InitStatus();
 	void SwitchAnimation();
+private:
+
+	void InitStatus();
 };
