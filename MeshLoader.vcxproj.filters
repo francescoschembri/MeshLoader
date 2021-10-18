@@ -19,6 +19,9 @@
     <Filter Include="File di origine\external">
       <UniqueIdentifier>{b6ecdf37-fbdf-4dfb-bcf2-adf46abbf7f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File di intestazione\external">
+      <UniqueIdentifier>{511707ad-3720-44fc-9667-2b434a5b6de8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp">
@@ -75,7 +78,7 @@
     <ClCompile Include="Libraries\include\imgui\imgui_tables.cpp">
       <Filter>File di origine\external</Filter>
     </ClCompile>
-    <ClCompile Include="src\stb.cpp">
+    <ClCompile Include="Libraries\include\FileBrowser\ImFileDialog.cpp">
       <Filter>File di origine\external</Filter>
     </ClCompile>
   </ItemGroup>
@@ -124,6 +127,33 @@
     </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h">
       <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imgui.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imgui_impl_glfw.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imgui_impl_opengl3.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imgui_internal.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imgui_stdlib.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imstb_rectpack.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imstb_textedit.h">
+      <Filter>File di intestazione\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\imgui\imstb_truetype.h">
+      <Filter>File di intestazione\external</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

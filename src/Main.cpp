@@ -1,11 +1,9 @@
-
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <FileBrowser/ImFileDialog.h>
 
 #include <glad/glad.h>
-
-
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -52,12 +50,10 @@ int main()
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1); // Enable vsync
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
-
-	// tell GLFW to capture our mouse
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
@@ -74,12 +70,21 @@ int main()
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
-
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+	io.ConfigDockingWithShift = false;
+	// When viewports are enabled we tweak WindowRounding 
+	// WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
-
 
 	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(true);
@@ -96,8 +101,34 @@ int main()
 	status.model = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
 	// load animations
 	status.AddAnimation("./Animations/Capoeira/Capoeira.dae");
-	status.AddAnimation("./Animations/Flair/Flair.dae");
-	status.AddAnimation("./Animations/Silly Dancing/Silly Dancing.dae");
+	//status.AddAnimation("./Animations/Flair/Flair.dae");
+	//status.AddAnimation("./Animations/Silly Dancing/Silly Dancing.dae");
+
+	// Our gui state
+	bool show_demo_window = true;
+	bool show_another_window = false;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+	// create a file browser instance
+	ifd::FileDialog::Instance().CreateTexture = [](uint8_t* data, int w, int h, char fmt) -> void* {
+		GLuint tex;
+
+		glGenTextures(1, &tex);
+		glBindTexture(GL_TEXTURE_2D, tex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, (fmt == 0) ? GL_BGRA : GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return (void*)tex;
+	};
+	ifd::FileDialog::Instance().DeleteTexture = [](void* tex) {
+		GLuint texID = (GLuint)tex;
+		glDeleteTextures(1, &texID);
+	};
 
 	// render loop
 	// -----------
@@ -110,12 +141,58 @@ int main()
 		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+		if (show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
+
+		// 2. Show navbar
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Open...", "CTRL+O")) {
+					ifd::FileDialog::Instance().Open("Mesh Open Dialog", "Open a mesh", "Mesh file (*.dae){.dae},.*");
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+				if (ImGui::MenuItem("Redo", "CTRL+Y")) {}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
+		if (ifd::FileDialog::Instance().IsDone("Mesh Open Dialog")) {
+			if (ifd::FileDialog::Instance().HasResult()) {
+				std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+				printf("OPEN[%s]\n", res.c_str());
+				status.AddAnimation(res.c_str());
+			}
+			ifd::FileDialog::Instance().Close();
+		}
+
+
+		// Rendering
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Update and Render additional Platform Windows
+		// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+		//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
 
 		// don't forget to enable shader before setting uniforms
 		ourShader.use();
@@ -176,7 +253,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	else {
 		status.mouseLastPos.x = xpos;
 		status.mouseLastPos.y = ypos;
-		if(status.IsBaked())
+		if (status.IsBaked())
 			status.Picking();
 	}
 }
@@ -192,5 +269,5 @@ float get_window_aspect_ratio(GLFWwindow* window)
 {
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
-	return float(width)/(float)height;
+	return float(width) / (float)height;
 }

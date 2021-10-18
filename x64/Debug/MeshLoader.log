@@ -1,19 +1,18 @@
-﻿  Model.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(48,40): warning C4267: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+﻿  Main.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(126,1): warning C4312: 'cast di tipo': conversione da 'GLuint' a 'void *', di dimensioni maggiori
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(129,1): warning C4311: 'cast di tipo': troncamento puntatore da 'void *' a 'GLuint'
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(129,1): warning C4302: 'cast di tipo': troncamento da 'void *' a 'GLuint'
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(248,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(249,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(254,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
-              _Ty=unsigned int
+              T=float
           ]
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(49,40): warning C4267: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(255,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
-              _Ty=unsigned int
+              T=float
           ]
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(50,40): warning C4267: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
-          with
-          [
-              _Ty=unsigned int
-          ]
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(183,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(33): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(265,35): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Libraries\include\FileBrowser\ImFileDialog.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui_demo.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui_draw.cpp" />
@@ -165,9 +166,17 @@
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\StatusManager.cpp" />
-    <ClCompile Include="src\stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Libraries\include\imgui\imgui.h" />
+    <ClInclude Include="Libraries\include\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Libraries\include\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Libraries\include\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Libraries\include\imgui\imgui_internal.h" />
+    <ClInclude Include="Libraries\include\imgui\imgui_stdlib.h" />
+    <ClInclude Include="Libraries\include\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Libraries\include\imgui\imstb_textedit.h" />
+    <ClInclude Include="Libraries\include\imgui\imstb_truetype.h" />
     <ClInclude Include="Libraries\include\reskinner\Animation.h" />
     <ClInclude Include="Libraries\include\reskinner\Animator.h" />
     <ClInclude Include="Libraries\include\reskinner\AssimpNodeData.h" />
