@@ -12,6 +12,9 @@
 class Animator
 {
 public:
+	float m_CurrentTime;
+	std::vector<Animation> animations;
+	int currentAnimationIndex = 0;
 
 	Animator();
 	void UpdateAnimation(float dt);
@@ -24,8 +27,5 @@ public:
 
 private:
 	std::vector<glm::mat4> m_FinalBoneMatrices;
-	std::vector<Animation> animations;
-	int currentAnimationIndex = 0;
-	float m_CurrentTime;
 };
 

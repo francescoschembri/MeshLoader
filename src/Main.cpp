@@ -130,13 +130,17 @@ int main()
 		GLuint texID = (GLuint)tex;
 		glDeleteTextures(1, &texID);
 	};
+	float animTime = 0.0f;
 
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
 		// update the status before rendering based on user input
-		if(status.currentModel) status.Update(window);
+		if (status.currentModel) {
+			status.Update(window);
+			animTime = status.animator.m_CurrentTime;
+		}
 
 		// render
 		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
@@ -171,14 +175,14 @@ int main()
 		}
 
 		ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing()), ImGuiCond_Once);
-		if (ImGui::Begin("Settings"))
+		if (ImGui::Begin("Settings") && status.currentModel)
 		{
 			ImGui::Checkbox("Pause", &status.pause);
 			ImGui::Checkbox("Wireframe", &status.wireframe);
-			if(status.wireframe) {
+			if (status.wireframe) {
 				ImGui::Checkbox("Hidden line", &status.hiddenLine);
 			}
-			if (ImGui::Button("Bake") && status.currentModel)
+			if (ImGui::Button("Bake"))
 			{
 				status.BakeModel();
 			}
@@ -186,10 +190,17 @@ int main()
 			{
 				status.camera.Reset();
 			}
-			if (ImGui::Button("Switch Animation") && status.currentModel)
+			if (ImGui::Button("Switch Animation"))
 			{
 				status.SwitchAnimation();
 			}
+			float animDuration = status.animator.animations[status.animator.currentAnimationIndex].GetDuration();
+			ImGui::InputFloat("Animation Time", &animTime);
+			ImGui::SliderFloat("Animation Time", &animTime, 0.0f, animDuration);
+			float deltaTime = animTime - status.animator.m_CurrentTime;
+			if (deltaTime)
+				status.animator.UpdateAnimation(deltaTime);
+
 		}
 		ImGui::End();
 
