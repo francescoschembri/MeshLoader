@@ -40,6 +40,7 @@ void Mesh::Bake(std::vector<glm::mat4>& matrices)
 		v.Normal = totalNormal;
 		v.Tangent = totalTangent;
 		v.Bitangent = totalBitangent;
+		v.BoneData.NumBones = 0;
 	}
 }
 
@@ -151,6 +152,8 @@ void Mesh::setupMesh()
 	// num bones
 	glEnableVertexAttribArray(7);
 	glVertexAttribIPointer(7, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.NumBones));
+	glEnableVertexAttribArray(8);
+	glVertexAttribIPointer(8, 1, GL_INT,  sizeof(Vertex), (void*)offsetof(Vertex, Selected));
 	glBindVertexArray(0);
 }
 

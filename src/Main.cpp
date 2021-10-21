@@ -200,6 +200,8 @@ int main()
 			float deltaTime = animTime - status.animator.m_CurrentTime;
 			if (deltaTime)
 				status.animator.UpdateAnimation(deltaTime);
+			if (ImGui::Button("Pennello 1"))
+				status.pennello1 = true;
 
 		}
 		ImGui::End();
@@ -295,7 +297,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		status.mouseLastPos.x = xpos;
 		status.mouseLastPos.y = ypos;
 		if (status.IsBaked())
-			status.Picking();
+			status.FacePicking();
 	}
 }
 

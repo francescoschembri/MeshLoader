@@ -1,18 +1,5 @@
-﻿  Main.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(127,1): warning C4312: 'cast di tipo': conversione da 'GLuint' a 'void *', di dimensioni maggiori
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(130,1): warning C4311: 'cast di tipo': troncamento puntatore da 'void *' a 'GLuint'
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(130,1): warning C4302: 'cast di tipo': troncamento da 'void *' a 'GLuint'
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(289,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(290,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(295,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
-          with
-          [
-              T=float
-          ]
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(296,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
-          with
-          [
-              T=float
-          ]
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(306,35): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+﻿  StatusManager.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(8,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(51,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(147,10): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

@@ -22,7 +22,8 @@ constexpr int CAMERA_DOWN_KEY = GLFW_KEY_DOWN;
 constexpr int CAMERA_LEFT_KEY = GLFW_KEY_LEFT;
 constexpr int CAMERA_RIGHT_KEY = GLFW_KEY_RIGHT;
 constexpr int BAKE_MODEL_KEY = GLFW_KEY_B;
-constexpr int PAUSE_KEY = GLFW_KEY_P;
+constexpr int PAUSE_KEY = GLFW_KEY_P; 
+constexpr int CHANGE_MESH_KEY = GLFW_MOUSE_BUTTON_LEFT;
 constexpr int SWITCH_ANIMATION_KEY = GLFW_KEY_S;
 // keys status (indices in the bitset)
 constexpr int WIREFRAME_KEY_PRESSED = 0;
@@ -48,6 +49,7 @@ public:
 	bool pause;
 	bool wireframe;
 	bool hiddenLine;
+	bool pennello1 = false;
 	std::bitset<8> status;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
@@ -61,9 +63,11 @@ public:
 	void Update(GLFWwindow* window);
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
-	void Picking();
+	Vertex* Picking();
+	void FacePicking();
 	void BakeModel();
 	void SwitchAnimation();
+	void ChangeMesh();
 private:
 
 	void InitStatus();

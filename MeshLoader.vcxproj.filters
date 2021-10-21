@@ -81,6 +81,9 @@
     <ClCompile Include="Libraries\include\FileBrowser\ImFileDialog.cpp">
       <Filter>File di origine\external</Filter>
     </ClCompile>
+    <ClCompile Include="Libraries\include\reskinner\Application.h">
+      <Filter>File di intestazione</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\reskinner\Animation.h">

@@ -19,6 +19,8 @@ public:
 	std::vector<Face> faces;
 	std::vector<Texture>      textures;
 	unsigned int VAO;
+	// render data 
+	unsigned int VBO, EBO;
 	bool loaded = false;
 
 	// constructors
@@ -32,8 +34,6 @@ public:
 	void Reload();
 
 private:
-	// render data 
-	unsigned int VBO, EBO;
 
 	// initializes all the buffer objects/arrays
 	void setupMesh();
