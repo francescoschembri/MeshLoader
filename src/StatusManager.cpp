@@ -162,13 +162,21 @@ Vertex* StatusManager::Picking()
 	glm::vec2 mousePos = (mouseLastPos / glm::vec2(800.0f, 800.0f)) * 2.0f - 1.0f;
 	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
 
+	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
+	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
+
 	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 
 	glm::mat4 toWorld = glm::inverse(proj * view);
 
-	glm::vec4 notNormalizedDir = toWorld * glm::vec4(mousePos, 1.0f, 1.0f);
-	glm::vec3 dir = glm::normalize(glm::vec3(notNormalizedDir / notNormalizedDir.w));
+	rayStartPos = toWorld * rayStartPos;
+	rayEndPos = toWorld * rayEndPos;
+
+	rayStartPos /= rayStartPos.w;
+	rayEndPos /= rayEndPos.w;
+
+	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
 
 	Vertex* ver = nullptr;
 	float minDist = 0.0f;
@@ -177,7 +185,7 @@ Vertex* StatusManager::Picking()
 	{
 		for (Vertex& v : m.vertices) {
 			v.Selected = 0;
-			float t = intersectSphere(camera.Position, dir, v.Position, 0.01f);
+			float t = intersectSphere(rayStartPos, dir, v.Position, 0.01f);
 			if (t > 0.0f)
 			{
 				//object i has been clicked. probably best to find the minimum t1 (front-most object)
@@ -192,6 +200,24 @@ Vertex* StatusManager::Picking()
 	if (ver) {
 		std::cout << "trovato" << ver->Position.x << ", " << ver->Position.y << ", " << ver->Position.z << "\n";
 		ver->Selected = 1;
+		for (Mesh& m : currentModel->meshes)
+		{
+			for (Face& f : m.faces)
+			{
+				Vertex& v1 = m.vertices[f.indices[0]];
+				Vertex& v2 = m.vertices[f.indices[1]];
+				Vertex& v3 = m.vertices[f.indices[2]];
+				if (v1.Selected == 1) {
+					v2.Selected = v3.Selected = 2;
+				}
+				if (v2.Selected == 1) {
+					v1.Selected = v3.Selected = 2;
+				}
+				if (v3.Selected == 1) {
+					v2.Selected = v1.Selected = 2;
+				}
+			}
+		}
 	}
 	for (Mesh& m : currentModel->meshes)
 		m.Reload();
@@ -203,10 +229,10 @@ float magnitude(glm::vec3 v) {
 }
 
 float intersectPlane(glm::vec3 rayOrigin, glm::vec3 direction, Vertex& v1, Vertex& v2, Vertex& v3) {
-	glm::vec3 e12 = v2.Position - v1.Position;
-	glm::vec3 e13 = v3.Position - v1.Position;
-	glm::vec3 e23 = v3.Position - v2.Position;
-	glm::vec3 normalPlane = glm::normalize(glm::cross(e12, e13));
+	glm::vec3 e12 = glm::normalize(v2.Position - v1.Position);
+	glm::vec3 e31 = glm::normalize(v1.Position - v3.Position);
+	glm::vec3 e23 = glm::normalize(v3.Position - v2.Position);
+	glm::vec3 normalPlane = glm::normalize(glm::cross(e12, e23));
 
 	//check if not parallel
 	float normalDotDirection = glm::dot(normalPlane, direction);
@@ -214,9 +240,17 @@ float intersectPlane(glm::vec3 rayOrigin, glm::vec3 direction, Vertex& v1, Verte
 		return -1.0f;
 
 	// dot((P-P0), normal) = 0, normal<-->[a,b,c]
-	// (x-x0)*a + (y-y0)*b + (z-z0)*c = 0 ---> ax + by + cz + dot(P0, normal) = 0
-	float d = glm::dot(normalPlane, v1.Position);
+	// (x-x0)*a + (y-y0)*b + (z-z0)*c = 0 ---> ax + by + cz - dot(P0, normal) = 0, so d=- dot(P0, normal) 
+	float d = - glm::dot(normalPlane, v1.Position);
 
+	// the intersection point is the solution of this sistem
+	// P-P0 = t*rayDirection <---> P(t) = P0+t*raydir , P0 is the ray origin
+	// a*Px + b*Py + c*Pz + d = 0 <----> dot(normal, P) + d = 0
+	// 
+	// to find the t:
+	// dot(normal, P0+t*raydir) + d = 0 <---> dot(normal,P0) + dot(normal, t*raydir) + d = 0
+	// dot(normal, P0) + t*dot(normal,raydir) + d = 0
+	// t = -[dot(normal,P0) + d]/dot(normal, raydir)
 	float distRayOriginPlane = glm::dot(normalPlane, rayOrigin) + d;
 
 	float distFollowingRayDirFromRayOrigin = -distRayOriginPlane / normalDotDirection;
@@ -227,12 +261,13 @@ float intersectPlane(glm::vec3 rayOrigin, glm::vec3 direction, Vertex& v1, Verte
 	// while if B in on the right of A, dot(cross(A,B), normal)<0
 	// if instead of B we use the intersection point P, than we have to check for each edge if P is on the left of the edge
 	
-	bool checkEdge1 = glm::dot(glm::cross(e12, intersectionPoint - v1.Position), normalPlane) < 0.0f;
+	bool checkEdge1 = glm::dot(glm::normalize(glm::cross(e12, intersectionPoint - v1.Position)), normalPlane)<0.9;
 	if (checkEdge1) return -1.0f;
-	bool checkEdge2 = glm::dot(glm::cross(e23, intersectionPoint - v2.Position), normalPlane) < 0.0f;
+	bool checkEdge2 = glm::dot(glm::normalize(glm::cross(e23, intersectionPoint - v2.Position)), normalPlane) < 0.9f;
 	if (checkEdge2) return -1.0f;
-	bool checkEdge3 = glm::dot(glm::cross(-e13, intersectionPoint - v3.Position), normalPlane) < 0.0f;
+	bool checkEdge3 = glm::dot(glm::normalize(glm::cross(e31, intersectionPoint - v3.Position)), normalPlane) < 0.9f;
 	if (checkEdge3) return -1.0f;
+
 	
 	return distFollowingRayDirFromRayOrigin;
 }
@@ -242,13 +277,21 @@ void StatusManager::FacePicking()
 	glm::vec2 mousePos = (mouseLastPos / glm::vec2(800.0f, 800.0f)) * 2.0f - 1.0f;
 	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
 
+	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
+	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
+
 	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 
 	glm::mat4 toWorld = glm::inverse(proj * view);
 
-	glm::vec4 notNormalizedDir = toWorld * glm::vec4(mousePos, 1.0f, 1.0f);
-	glm::vec3 dir = glm::normalize(glm::vec3(notNormalizedDir));
+	rayStartPos = toWorld * rayStartPos;
+	rayEndPos = toWorld * rayEndPos;
+
+	rayStartPos /= rayStartPos.w;
+	rayEndPos /= rayEndPos.w;
+
+	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
 
 	Vertex* v1 = nullptr;
 	Vertex* v2 = nullptr;
@@ -265,12 +308,9 @@ void StatusManager::FacePicking()
 			Vertex& ver1 = m.vertices[f.indices[0]];
 			Vertex& ver2 = m.vertices[f.indices[1]];
 			Vertex& ver3 = m.vertices[f.indices[2]];
-			float t = intersectPlane(camera.Position, dir, ver1, ver2, ver3);
+			float t = intersectPlane(rayStartPos, dir, ver1, ver2, ver3);
 			if (t > 0.0f)
 			{
-				ver1.Selected = 1;
-				ver2.Selected = 1;
-				ver3.Selected = 1;
 				//object i has been clicked. probably best to find the minimum t1 (front-most object)
 				if (v1 == nullptr || t < minDist)
 				{

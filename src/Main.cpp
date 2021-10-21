@@ -99,7 +99,7 @@ int main()
 	// load models
 	// -----------
 	//status.animatedModel = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
-	//status.currentModel = status.animatedModel;
+	//status.currentModel = &status.animatedModel;
 	// load animations
 	//status.AddAnimation("./Animations/Capoeira/Capoeira.dae");
 	//status.AddAnimation("./Animations/Flair/Flair.dae");
