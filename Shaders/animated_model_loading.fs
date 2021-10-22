@@ -1,7 +1,7 @@
 #version 330 core
 out vec4 FragColor;
 
-flat in vec3 TexCoords;
+flat in vec2 TexCoords;
 flat in int Selected;
 
 uniform sampler2D texture_diffuse1;
@@ -14,12 +14,10 @@ uniform bool wireframe;
 
 void main()
 {    
-    if(wireframe || TexCoords.z == -1.0f)
+    if(wireframe)
         FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    else if (TexCoords.z == 0.0f && Selected == 0)
-        FragColor = texture(texture_diffuse1, vec2(TexCoords.x, TexCoords.y) );
     else if(Selected == 0)
-        FragColor = texture(texture_diffuse2, vec2(TexCoords.x, TexCoords.y));
+        FragColor = texture(texture_diffuse1, TexCoords);
     else
         FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }

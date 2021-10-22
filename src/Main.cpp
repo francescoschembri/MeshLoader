@@ -10,7 +10,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <reskinner/Shader.h>
 #include <reskinner/Model.h>
 #include <reskinner/StatusManager.h>
 
@@ -86,8 +85,6 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
-	// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-	stbi_set_flip_vertically_on_load(true);
 
 	// configure global opengl state
 	// -----------------------------
@@ -210,10 +207,7 @@ int main()
 			if (ifd::FileDialog::Instance().HasResult()) {
 				std::string res = ifd::FileDialog::Instance().GetResult().u8string();
 				printf("OPEN[%s]\n", res.c_str());
-				if (status.currentModel == nullptr) {
-					status.animatedModel = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
-					status.currentModel = &status.animatedModel;
-				}
+				status.LoadModel(res);
 				status.AddAnimation(res.c_str());
 			}
 			ifd::FileDialog::Instance().Close();

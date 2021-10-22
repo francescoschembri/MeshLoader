@@ -1,10 +1,12 @@
 #pragma once
 
 #include <bitset>
+#include <optional>
 
 #include <glm/glm.hpp>
 #include <reskinner/Camera.h>
 #include <reskinner/Animator.h>
+#include <reskinner/TextureManager.h>
 
 #include <GLFW/glfw3.h>
 
@@ -42,8 +44,8 @@ public:
 	glm::vec2 mouseLastPos;
 	Camera camera;
 	Animator animator;
-	Model animatedModel, bakedModel;
-	Model* currentModel;
+	std::optional<Model> animatedModel, bakedModel, currentModel;
+	TextureManager texMan;
 	float lastFrame;
 	float deltaTime;
 	bool pause;
@@ -68,6 +70,7 @@ public:
 	void BakeModel();
 	void SwitchAnimation();
 	void ChangeMesh();
+	void LoadModel(std::string& path);
 private:
 
 	void InitStatus();

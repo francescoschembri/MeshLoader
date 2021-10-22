@@ -10,8 +10,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2)),
 	pause(false),
 	wireframe(false),
-	hiddenLine(true),
-	currentModel(nullptr)
+	hiddenLine(true)
 {
 	InitStatus();
 }
@@ -43,7 +42,8 @@ bool StatusManager::DrawFaces() const
 
 void StatusManager::AddAnimation(const char* path)
 {
-	animator.AddAnimation(Animation(filesystem::path(path).string(), animatedModel));
+	if(animatedModel)
+		animator.AddAnimation(Animation(filesystem::path(path).string(), *animatedModel));
 }
 
 void StatusManager::UpdateDeltaTime()
@@ -112,7 +112,8 @@ void StatusManager::Update(GLFWwindow* window)
 	ProcessInput(window);
 	if (!IsPaused()) {
 		status[BAKED_MODEL] = false;
-		currentModel = &animatedModel;
+		currentModel.reset();
+		currentModel.emplace(*animatedModel);
 		animator.UpdateAnimation(deltaTime);
 	}
 }
@@ -125,8 +126,10 @@ void StatusManager::SwitchAnimation()
 void StatusManager::BakeModel() {
 	status[BAKED_MODEL] = true;
 	pause = true;
-	bakedModel = animatedModel.Bake(animator.GetFinalBoneMatrices());
-	currentModel = &bakedModel;
+	bakedModel.reset();
+	currentModel.reset();
+	bakedModel.emplace(animatedModel->Bake(animator.GetFinalBoneMatrices()));
+	currentModel.emplace(*bakedModel);
 }
 
 void StatusManager::ChangeMesh()
@@ -332,6 +335,13 @@ void StatusManager::FacePicking()
 	}
 	for (Mesh& m : currentModel->meshes)
 		m.Reload();
+}
+
+void StatusManager::LoadModel(std::string& path)
+{
+	animatedModel.reset();
+	animatedModel.emplace(Model(path, texMan));
+	currentModel.emplace(*animatedModel);
 }
 
 void StatusManager::InitStatus()

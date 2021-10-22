@@ -1,10 +1,42 @@
 #include <reskinner/Model.h>
 
+#include <algorithm>
+
 // constructor, expects a filepath to a 3D model.
-Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
+Model::Model(std::string& path, TextureManager& texManager, bool gamma) : gammaCorrection(gamma), texMan(texManager)
 {
 	loadModel(path);
-	JoinMeshes();
+	//JoinVertices();
+}
+
+void Model::JoinVertices() {
+	std::vector<Vertex> mergedVertices;
+	for (Mesh& m : meshes) {
+		std::vector<bool> skip(m.vertices.size(), false);
+		for (int i = 0; i < m.vertices.size(); i++)
+		{
+			if (skip[i]) continue;
+			for (int j = 0; j < m.vertices.size(); j++)
+			{
+				if (skip[j]) continue;
+				if (m.vertices[i].Position == m.vertices[j].Position) {
+					m.vertices[i].TexCoords;
+					for (Face& f : m.faces)
+					{
+						for (int k = 0; k < 3; k++)
+						{
+							if (f.indices[k] == j) {
+								f.indices[k] = i;
+							}
+						}
+					}
+					skip[j] = true;
+				}
+			}
+			mergedVertices.push_back(m.vertices[i]);
+		}
+		m.vertices = mergedVertices;
+	}
 }
 
 Model Model::Bake(std::vector<glm::mat4>& matrices)
@@ -18,8 +50,12 @@ Model Model::Bake(std::vector<glm::mat4>& matrices)
 // draws the model, and thus all its meshes
 void Model::Draw(Shader& shader, bool faces, bool lines)
 {
-	for (unsigned int i = 0; i < meshes.size(); i++)
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		// Bind textures for the mesh
+		texMan.BindTextures(meshes[i].texIndices, shader);
+		// Draw the mesh
 		meshes[i].Draw(shader, faces, lines);
+	}
 }
 
 const BoneInfo& Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
@@ -38,32 +74,10 @@ const BoneInfo& Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
 
 }
 
-void Model::JoinMeshes()
-{
-	Mesh m;
-	Face offset;
-	for (unsigned int i = 0; i < meshes.size(); i++) {
-		// join faces but add an offset to the face added
-		//create fake face to add the offset to the indices
-		offset.indices[0] = m.vertices.size();
-		offset.indices[1] = m.vertices.size();
-		offset.indices[2] = m.vertices.size();
-		//add the offset to each indices to every face
-		std::transform(meshes[i].faces.begin(), meshes[i].faces.end(), std::back_inserter(m.faces), 
-						[&offset](Face& face) {return face + offset; });
-		// join vertices
-		m.vertices.insert(m.vertices.end(), meshes[i].vertices.begin(), meshes[i].vertices.end());
-	}
-	m.textures.insert(m.textures.end(), textures_loaded.begin(), textures_loaded.end());
-	m.Reload();
-	meshes.clear();
-	meshes.push_back(m);
-}
-
 std::map<std::string, BoneInfo> Model::GetBoneInfoMap() { return m_BoneInfoMap; }
 
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-void Model::loadModel(std::string const& path)
+void Model::loadModel(std::string& path)
 {
 	// read file via ASSIMP
 	Assimp::Importer importer;
@@ -75,8 +89,8 @@ void Model::loadModel(std::string const& path)
 		return;
 	}
 	// retrieve the directory path of the filepath
+	std::replace(path.begin(), path.end(), '\\', '/');
 	directory = path.substr(0, path.find_last_of('/'));
-
 	// process ASSIMP's root node recursively
 	processNode(scene->mRootNode, scene);
 }
@@ -102,31 +116,27 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 
 void Model::SetVertexBoneDataToDefault(Vertex& vertex)
 {
-	for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
-	{
-		vertex.BoneData.BoneIDs[i] = -1;
-		vertex.BoneData.Weights[i] = 0.0f;
-		vertex.BoneData.NumBones = 0;
-	}
+	vertex.BoneData.NumBones = 0;
+	vertex.BoneData.BoneIDs[0] = -1;
+	vertex.BoneData.Weights[0] = 0.0f;	
 }
 
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<int> texIndices;
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-	std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+	std::vector<int> diffuseMaps = texMan.loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory);
+	texIndices.insert(texIndices.end(), diffuseMaps.begin(), diffuseMaps.end());
+	std::vector<int> specularMaps = texMan.loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", directory);
+	texIndices.insert(texIndices.end(), specularMaps.begin(), specularMaps.end());
+	std::vector<int> normalMaps = texMan.loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal", directory);
+	texIndices.insert(texIndices.end(), normalMaps.begin(), normalMaps.end());
+	std::vector<int> heightMaps = texMan.loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height", directory);
+	texIndices.insert(texIndices.end(), heightMaps.begin(), heightMaps.end());
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -137,17 +147,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 		if (mesh->mTextureCoords[0])
 		{
-			glm::vec3 vec;
+			glm::vec2 vec;
 			vec.x = mesh->mTextureCoords[0][i].x;
 			vec.y = mesh->mTextureCoords[0][i].y;
-			if (diffuseMaps.size() && diffuseMaps[0].id == textures_loaded[0].id)
-				vec.z = 0.0f;
-			else
-				vec.z = 1.0f;
-			vertex.TexCoords = vec;
 		}
-		else
-			vertex.TexCoords = glm::vec3(0.0f, 0.0f, -1.0f);
 
 		vertices.push_back(vertex);
 	}
@@ -164,7 +167,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 	ExtractBoneWeightForVertices(vertices, mesh, scene);
 
-	return Mesh(std::move(vertices), std::move(faces), std::move(textures));
+	return Mesh(std::move(vertices), std::move(faces), std::move(texIndices));
 }
 
 void Model::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
@@ -209,79 +212,4 @@ void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* 
 			SetVertexBoneData(vertices[vertexId], boneID, weight);
 		}
 	}
-}
-
-
-unsigned int Model::TextureFromFile(const char* path, const std::string& directory, bool gamma)
-{
-	std::string filename = std::string(path);
-	filename = directory + '/' + filename;
-
-	unsigned int textureID;
-
-	int width, height, nrComponents;
-	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-	if (data)
-	{
-		glGenTextures(1, &textureID);
-		GLenum format;
-		if (nrComponents == 1)
-			format = GL_RED;
-		else if (nrComponents == 3)
-			format = GL_RGB;
-		else if (nrComponents == 4)
-			format = GL_RGBA;
-
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
-	}
-	else
-	{
-		std::cout << "Texture failed to load at path: " << path << std::endl;
-		stbi_image_free(data);
-	}
-
-	return textureID;
-}
-
-// checks all material textures of a given type and loads the textures if they're not loaded yet.
-// the required info is returned as a Texture struct.
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
-{
-	std::vector<Texture> textures;
-	textures.reserve(mat->GetTextureCount(type));
-	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-	{
-		aiString str;
-		mat->GetTexture(type, i, &str);
-		// check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-		bool skip = false;
-		for (unsigned int j = 0; j < textures_loaded.size(); j++)
-		{
-			if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
-			{
-				textures.push_back(textures_loaded[j]);
-				skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-				break;
-			}
-		}
-		if (!skip)
-		{   // if texture hasn't been loaded already, load it
-			Texture texture;
-			texture.id = TextureFromFile(str.C_Str(), this->directory);
-			texture.type = typeName;
-			texture.path = str.C_Str();
-			textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
-			textures.push_back(texture);
-		}
-	}
-	return textures;
 }

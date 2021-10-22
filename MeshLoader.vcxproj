@@ -166,6 +166,7 @@
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\StatusManager.cpp" />
+    <ClCompile Include="src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\imgui\imgui.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Libraries\include\reskinner\Shader.h" />
     <ClInclude Include="Libraries\include\reskinner\StatusManager.h" />
     <ClInclude Include="Libraries\include\reskinner\Texture.h" />
+    <ClInclude Include="Libraries\include\reskinner\TextureManager.h" />
     <ClInclude Include="Libraries\include\reskinner\Vertex.h" />
     <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h" />
   </ItemGroup>
