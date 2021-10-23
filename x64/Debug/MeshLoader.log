@@ -1,7 +1,2 @@
-﻿  TextureManager.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\TextureManager.cpp(39,40): warning C4267: 'argomento': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
-          with
-          [
-              _Ty=int
-          ]
+﻿  LINK : C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe non trovato o non compilato dall'ultimo collegamento incrementale; verrà eseguito il collegamento completo
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

@@ -54,7 +54,7 @@ void TextureManager::BindTextures(std::vector<int>& texIndices, Shader& shader)
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 	unsigned int normalNr = 1;
-	unsigned int heightNr = 1;
+	unsigned int ambientNr = 1;
 	for (unsigned int i = 0; i < texIndices.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
@@ -67,8 +67,8 @@ void TextureManager::BindTextures(std::vector<int>& texIndices, Shader& shader)
 			number = std::to_string(specularNr++); // transfer unsigned int to stream
 		else if (name == "texture_normal")
 			number = std::to_string(normalNr++); // transfer unsigned int to stream
-		else if (name == "texture_height")
-			number = std::to_string(heightNr++); // transfer unsigned int to stream
+		else if (name == "texture_ambient")
+			number = std::to_string(ambientNr++); // transfer unsigned int to stream
 
 		// now set the sampler to the correct texture unit
 		glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);

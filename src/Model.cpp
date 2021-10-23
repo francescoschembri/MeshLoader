@@ -133,10 +133,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	texIndices.insert(texIndices.end(), diffuseMaps.begin(), diffuseMaps.end());
 	std::vector<int> specularMaps = texMan.loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", directory);
 	texIndices.insert(texIndices.end(), specularMaps.begin(), specularMaps.end());
-	std::vector<int> normalMaps = texMan.loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal", directory);
+	std::vector<int> normalMaps = texMan.loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal", directory);
 	texIndices.insert(texIndices.end(), normalMaps.begin(), normalMaps.end());
-	std::vector<int> heightMaps = texMan.loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height", directory);
-	texIndices.insert(texIndices.end(), heightMaps.begin(), heightMaps.end());
+	std::vector<int> ambientMaps = texMan.loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ambient", directory);
+	texIndices.insert(texIndices.end(), ambientMaps.begin(), ambientMaps.end());
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -150,6 +150,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			glm::vec2 vec;
 			vec.x = mesh->mTextureCoords[0][i].x;
 			vec.y = mesh->mTextureCoords[0][i].y;
+			vertex.TexCoords = vec;
 		}
 
 		vertices.push_back(vertex);
