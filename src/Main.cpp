@@ -97,6 +97,9 @@ int main()
 	// -----------
 	//status.animatedModel = Model(filesystem::path("./Animations/Capoeira/Capoeira.dae").string());
 	//status.currentModel = &status.animatedModel;
+	std::string modelPath = std::string("./Animations/Capoeira/Capoeira.dae");
+	status.LoadModel(modelPath);
+	status.AddAnimation(modelPath.c_str());
 	// load animations
 	//status.AddAnimation("./Animations/Capoeira/Capoeira.dae");
 	//status.AddAnimation("./Animations/Flair/Flair.dae");
@@ -134,7 +137,7 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 		// update the status before rendering based on user input
-		if (status.currentModel) {
+		if (status.animatedModel) {
 			status.Update(window);
 			animTime = status.animator.m_CurrentTime;
 		}
@@ -160,7 +163,7 @@ int main()
 				if (ImGui::MenuItem("Open new Model...", "CTRL+O")) {
 					ifd::FileDialog::Instance().Open("Mesh Open Dialog", "Open a mesh", "Mesh file (*.dae){.dae},.*");
 				}
-				if (ImGui::MenuItem("Add new animation...", "CTRL+Shift+A") && status.currentModel) {
+				if (ImGui::MenuItem("Add new animation...", "CTRL+Shift+A") && status.animatedModel) {
 					ifd::FileDialog::Instance().Open("Animation Open Dialog", "Open an animation", "Animation file (*.dae){.dae},.*");
 				}
 				ImGui::EndMenu();
@@ -175,7 +178,7 @@ int main()
 		}
 
 		ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing()), ImGuiCond_Once);
-		if (ImGui::Begin("Settings") && status.currentModel)
+		if (ImGui::Begin("Settings") && status.animatedModel)
 		{
 			ImGui::Checkbox("Pause", &status.pause);
 			ImGui::Checkbox("Wireframe", &status.wireframe);
@@ -242,7 +245,7 @@ int main()
 		}
 
 
-		if (status.currentModel) {
+		if (status.animatedModel) {
 			// don't forget to enable shader before setting uniforms
 			ourShader.use();
 
@@ -260,7 +263,7 @@ int main()
 				ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 			// render the loaded model
-			status.currentModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
+			status.animatedModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
 		}
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

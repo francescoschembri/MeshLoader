@@ -97,6 +97,7 @@ void Model::loadModel(std::string& path)
 		aiProcess_ValidateDataStructure |
 		aiProcess_OptimizeMeshes |
 		aiProcess_OptimizeGraph |
+		aiProcess_FixInfacingNormals |
 		aiProcess_JoinIdenticalVertices
 		);
 	// check for errors

@@ -45,7 +45,7 @@ public:
 	glm::vec2 mouseLastPos;
 	Camera camera;
 	Animator animator;
-	std::optional<Model> animatedModel, bakedModel, currentModel;
+	std::optional<Model> animatedModel, bakedModel;
 	TextureManager texMan;
 	float lastFrame;
 	float deltaTime;
@@ -54,6 +54,8 @@ public:
 	bool hiddenLine;
 	bool changedMesh = false;
 	bool pennello1 = false;
+	int lastVertexPicked = -1;
+	int lastMeshPicked = -1;
 	std::bitset<8> status;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
@@ -67,7 +69,7 @@ public:
 	void Update(GLFWwindow* window);
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
-	Vertex* Picking();
+	//Vertex* Picking(bool reload = true);
 	std::pair<std::optional<Face>, int> FacePicking(bool reload = true);
 	void BakeModel();
 	void SwitchAnimation();

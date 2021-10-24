@@ -93,7 +93,6 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 
 	// controlla pennello
 	if (pennello1 && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS) {
-		BakeModel();
 		ChangeMesh();
 	}
 	// keep rotating only if the rotation key is still pressed. 
@@ -112,7 +111,6 @@ void StatusManager::Update(GLFWwindow* window)
 	ProcessInput(window);
 	if (!IsPaused()) {
 		status[BAKED_MODEL] = false;
-		currentModel.emplace(*animatedModel);
 		animator.UpdateAnimation(deltaTime);
 	}
 }
@@ -127,90 +125,94 @@ void StatusManager::BakeModel() {
 	pause = true;
 	bakedModel.reset();
 	bakedModel.emplace(animatedModel->Bake(animator.GetFinalBoneMatrices()));
-	currentModel.emplace(*bakedModel);
 }
 
 void StatusManager::ChangeMesh()
 {
+	BakeModel();
 	auto pair = FacePicking(false);
 	if (pair.first) {
 		Mesh& aMesh = animatedModel->meshes[pair.second];
-		Mesh& bMesh = bakedModel->meshes[pair.second];
 		for (unsigned int i : pair.first->indices) {
-			// TODO: capire come deformarli bene
 			aMesh.vertices[i].Position += aMesh.vertices[i].Normal * 1.5f;
-			bMesh.vertices[i].Position += bMesh.vertices[i].Normal * 1.5f;
 		}
 		aMesh.Reload();
-		bMesh.Reload();
 	}
 }
 
-Vertex* StatusManager::Picking()
-{
-	glm::vec2 mousePos = (mouseLastPos / glm::vec2(800.0f, 800.0f)) * 2.0f - 1.0f;
-	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
-
-	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
-	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
-
-	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
-	glm::mat4 view = camera.GetViewMatrix();
-
-	glm::mat4 toWorld = glm::inverse(proj * view);
-
-	rayStartPos = toWorld * rayStartPos;
-	rayEndPos = toWorld * rayEndPos;
-
-	rayStartPos /= rayStartPos.w;
-	rayEndPos /= rayEndPos.w;
-
-	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
-
-	Vertex* ver = nullptr;
-	float minDist = 0.0f;
-
-	for (Mesh& m : currentModel->meshes)
-	{
-		for (Vertex& v : m.vertices) {
-			v.Selected = 0;
-			float t = raySphereIntersection(rayStartPos, dir, v.Position, 0.01f);
-			if (t > 0.0f)
-			{
-				//object i has been clicked. probably best to find the minimum t1 (front-most object)
-				if (ver == nullptr || t < minDist)
-				{
-					minDist = t;
-					ver = &v;
-				}
-			}
-		}
-	}
-	if (ver) {
-		ver->Selected = 1;
-		for (Mesh& m : currentModel->meshes)
-		{
-			for (Face& f : m.faces)
-			{
-				Vertex& v1 = m.vertices[f.indices[0]];
-				Vertex& v2 = m.vertices[f.indices[1]];
-				Vertex& v3 = m.vertices[f.indices[2]];
-				if (v1.Selected == 1) {
-					v2.Selected = v3.Selected = 2;
-				}
-				if (v2.Selected == 1) {
-					v1.Selected = v3.Selected = 2;
-				}
-				if (v3.Selected == 1) {
-					v2.Selected = v1.Selected = 2;
-				}
-			}
-		}
-	}
-	for (Mesh& m : currentModel->meshes)
-		m.Reload();
-	return ver;
-}
+//Vertex* StatusManager::Picking(bool reload)
+//{
+//	glm::vec2 mousePos = (mouseLastPos / glm::vec2(800.0f, 800.0f)) * 2.0f - 1.0f;
+//	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
+//
+//	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
+//	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
+//
+//	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
+//	glm::mat4 view = camera.GetViewMatrix();
+//
+//	glm::mat4 toWorld = glm::inverse(proj * view);
+//
+//	rayStartPos = toWorld * rayStartPos;
+//	rayEndPos = toWorld * rayEndPos;
+//
+//	rayStartPos /= rayStartPos.w;
+//	rayEndPos /= rayEndPos.w;
+//
+//	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
+//
+//	Vertex* ver = nullptr;
+//	float minDist = 0.0f;
+//
+//	for (Mesh& m : bakedModel->meshes)
+//	{
+//		for (Vertex& v : m.vertices) {
+//			v.Selected = 0;
+//			float t = raySphereIntersection(rayStartPos, dir, v.Position, 0.01f);
+//			if (t > 0.0f)
+//			{
+//				//object i has been clicked. probably best to find the minimum t1 (front-most object)
+//				if (ver == nullptr || t < minDist)
+//				{
+//					minDist = t;
+//					ver = &v;
+//				}
+//			}
+//		}
+//	}
+//
+//	if (ver) {
+//		ver->Selected = 1;
+//		for (Mesh& m : animatedModel->meshes)
+//		{
+//			bool changed = false;
+//			for (Face& f : m.faces)
+//			{
+//				Vertex& v1 = m.vertices[f.indices[0]];
+//				Vertex& v2 = m.vertices[f.indices[1]];
+//				Vertex& v3 = m.vertices[f.indices[2]];
+//				if (v1.Selected == 1) {
+//					changed = true;
+//					v2.Selected = v3.Selected = 2;
+//				}
+//				if (v2.Selected == 1) {
+//					changed = true;
+//					v1.Selected = v3.Selected = 2;
+//				}
+//				if (v3.Selected == 1)
+//				{
+//					changed = true;
+//					v2.Selected = v1.Selected = 2;
+//				}
+//			}
+//			if (changed && reload)
+//			{
+//				m.Reload();
+//			}
+//		}
+//	}
+//	return ver;
+//}
 
 std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 {
@@ -234,16 +236,25 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
 
 	std::optional<Face> face;
-	std::optional<Mesh> mesh;
 	int meshIndex = -1;
 	float minDist = 0.0f;
 
-	for (int i = 0; i < bakedModel->meshes.size(); i++)
+	if (lastMeshPicked >= 0)
+	{
+		animatedModel->meshes[lastMeshPicked].vertices[lastVertexPicked].Selected = 0;
+	}
+	for (Mesh& m : animatedModel->meshes)
+	{
+		for (Vertex& v : m.vertices)
+		{
+			if(v.Selected == 1)
+				std::cout << "caaaaazzzzzooooooo\n";
+		}
+	}
+
+	for (int i = 0; i < animatedModel->meshes.size(); i++)
 	{
 		Mesh& m = bakedModel->meshes[i];
-		for (Vertex& v : bakedModel->meshes[i].vertices) {
-			v.Selected = 0;
-		}
 		for (Face& f : m.faces)
 		{
 			Vertex& ver1 = m.vertices[f.indices[0]];
@@ -257,17 +268,25 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 				{
 					minDist = info.distance;
 					face.emplace(f);
-					mesh.emplace(m);
 					meshIndex = i;
 				}
 			}
 		}
 	}
 	if (face) {
+		lastMeshPicked = meshIndex;
+		lastVertexPicked = face->indices[2];
 		//mesh->vertices[face->indices[0]].Selected = 1;
 		//mesh->vertices[face->indices[1]].Selected = 1;
-		mesh->vertices[face->indices[2]].Selected = 1;
-		if (reload) mesh->Reload();
+		//lastMeshPicked->vertices[face->indices[0]].Selected = 1;
+		//lastMeshPicked->vertices[face->indices[1]].Selected = 1;
+		animatedModel->meshes[meshIndex].vertices[lastVertexPicked].Selected = 1;
+		if (reload) animatedModel->meshes[meshIndex].Reload();
+	}
+	else if (lastMeshPicked >= 0 && reload) {
+		animatedModel->meshes[lastMeshPicked].Reload();
+		lastVertexPicked = -1;
+		lastMeshPicked = -1;
 	}
 
 	return std::pair<std::optional<Face>, int>(face, meshIndex);
@@ -279,7 +298,6 @@ void StatusManager::LoadModel(std::string& path)
 	animator.animations.clear();
 	animator.currentAnimationIndex = 0;
 	animatedModel.emplace(Model(path, texMan));
-	currentModel.emplace(*animatedModel);
 }
 
 void StatusManager::InitStatus()
