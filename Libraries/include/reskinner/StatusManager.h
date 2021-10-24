@@ -2,6 +2,7 @@
 
 #include <bitset>
 #include <optional>
+#include <utility>
 
 #include <glm/glm.hpp>
 #include <reskinner/Camera.h>
@@ -51,6 +52,7 @@ public:
 	bool pause;
 	bool wireframe;
 	bool hiddenLine;
+	bool changedMesh = false;
 	bool pennello1 = false;
 	std::bitset<8> status;
 
@@ -66,7 +68,7 @@ public:
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
 	Vertex* Picking();
-	void FacePicking();
+	std::pair<std::optional<Face>, int> FacePicking(bool reload = true);
 	void BakeModel();
 	void SwitchAnimation();
 	void ChangeMesh();

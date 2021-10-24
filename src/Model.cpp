@@ -15,22 +15,21 @@ void Model::JoinVertices() {
 		std::vector<bool> skip(m.vertices.size(), false);
 		for (int i = 0; i < m.vertices.size(); i++)
 		{
+			std::cout << "Vertex: " << i << "\n";
 			if (skip[i]) continue;
-			for (int j = 0; j < m.vertices.size(); j++)
+			for (int j = i+1; j < m.vertices.size(); j++)
 			{
 				if (skip[j]) continue;
-				if (m.vertices[i].Position == m.vertices[j].Position) {
-					m.vertices[i].TexCoords;
-					for (Face& f : m.faces)
-					{
+				skip[j] = m.vertices[i].Position == m.vertices[j].Position 
+					&& m.vertices[i].TexCoords == m.vertices[j].TexCoords;
+				if (skip[j]) {
+					std::cout << "Vertex 1: " << i << ", Vertex 2: "<< j<<"\n";
+					for (Face& f : m.faces) {
 						for (int k = 0; k < 3; k++)
 						{
-							if (f.indices[k] == j) {
-								f.indices[k] = i;
-							}
+							if (f.indices[k] == j) f.indices[k] = i;
 						}
 					}
-					skip[j] = true;
 				}
 			}
 			mergedVertices.push_back(m.vertices[i]);
@@ -81,7 +80,25 @@ void Model::loadModel(std::string& path)
 {
 	// read file via ASSIMP
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+	importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_CAMERAS | aiComponent_COLORS | aiComponent_LIGHTS);
+	importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
+	const aiScene* scene = importer.ReadFile(path,
+		aiProcess_Triangulate |
+		aiProcess_CalcTangentSpace | 
+		aiProcess_GenSmoothNormals |
+		aiProcess_ImproveCacheLocality |
+		aiProcess_RemoveRedundantMaterials |
+		aiProcess_RemoveComponent |
+		aiProcess_SplitLargeMeshes |
+		aiProcess_GenUVCoords |
+		aiProcess_SortByPType |
+		aiProcess_FindDegenerates |
+		aiProcess_FindInstances |
+		aiProcess_ValidateDataStructure |
+		aiProcess_OptimizeMeshes |
+		aiProcess_OptimizeGraph |
+		aiProcess_JoinIdenticalVertices
+		);
 	// check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
@@ -161,6 +178,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		Face f{};
 		aiFace face = mesh->mFaces[i];
+		if (face.mNumIndices > 3) {
+			std::cout << face.mNumIndices << "\n";
+		}
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
 			f.indices[j] = face.mIndices[j];
 		faces.push_back(f);

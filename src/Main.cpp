@@ -157,8 +157,11 @@ int main()
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Open...", "CTRL+O")) {
+				if (ImGui::MenuItem("Open new Model...", "CTRL+O")) {
 					ifd::FileDialog::Instance().Open("Mesh Open Dialog", "Open a mesh", "Mesh file (*.dae){.dae},.*");
+				}
+				if (ImGui::MenuItem("Add new animation...", "CTRL+Shift+A") && status.currentModel) {
+					ifd::FileDialog::Instance().Open("Animation Open Dialog", "Open an animation", "Animation file (*.dae){.dae},.*");
 				}
 				ImGui::EndMenu();
 			}
@@ -208,6 +211,15 @@ int main()
 				std::string res = ifd::FileDialog::Instance().GetResult().u8string();
 				printf("OPEN[%s]\n", res.c_str());
 				status.LoadModel(res);
+				status.AddAnimation(res.c_str());
+			}
+			ifd::FileDialog::Instance().Close();
+		}
+
+		if (ifd::FileDialog::Instance().IsDone("Animation Open Dialog")) {
+			if (ifd::FileDialog::Instance().HasResult()) {
+				std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+				printf("OPEN[%s]\n", res.c_str());
 				status.AddAnimation(res.c_str());
 			}
 			ifd::FileDialog::Instance().Close();
