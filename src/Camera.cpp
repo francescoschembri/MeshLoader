@@ -10,19 +10,26 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 	Position(position),
 	WorldUp(up),
 	Yaw(yaw),
-	Pitch(pitch)
+	Pitch(pitch),
+	ZoomSpeed(ZOOMSPEED)
 {
 
 	updateCameraVectors();
 }
 
 // constructor with scalar values
-Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY)
+Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) 
+	: 
+	Front(glm::vec3(0.0f, 0.0f, -1.0f)),
+	MovementSpeed(SPEED), 
+	MouseSensitivity(SENSITIVITY),
+	ZoomSpeed(ZOOMSPEED),
+	Position(glm::vec3(posX, posY, posZ)),
+	sPosition(glm::vec3(posX, posY, posZ)),
+	WorldUp(glm::vec3(upX, upY, upZ)),
+	Yaw(yaw),
+	Pitch(pitch)
 {
-	sPosition = Position = glm::vec3(posX, posY, posZ);
-	WorldUp = glm::vec3(upX, upY, upZ);
-	Yaw = yaw;
-	Pitch = pitch;
 	updateCameraVectors();
 }
 
@@ -71,7 +78,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 void Camera::ProcessMouseScroll(float yoffset)
 {
-	Position += Front * yoffset;
+	Position += Front * yoffset * ZoomSpeed;
 }
 
 // calculates the front vector from the Camera's (updated) Euler Angles

@@ -48,9 +48,6 @@
     <ClCompile Include="src\Shader.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="src\StatusManager.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="src\glad.c">
       <Filter>File di origine\external</Filter>
     </ClCompile>
@@ -84,10 +81,13 @@
     <ClCompile Include="src\TextureManager.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="Libraries\include\reskinner\Utility.h">
-      <Filter>File di intestazione</Filter>
-    </ClCompile>
     <ClCompile Include="Libraries\include\reskinner\Utility.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StatusManager.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,6 +167,12 @@
     <ClInclude Include="Libraries\include\reskinner\TextureManager.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\GUI.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\Utility.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.vs">
@@ -175,5 +181,13 @@
     <None Include="Shaders\animated_model_loading.fs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
+    <None Include="Shaders\screen_shader.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Shaders\screen_shader.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

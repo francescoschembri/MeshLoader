@@ -247,7 +247,7 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 	{
 		for (Vertex& v : m.vertices)
 		{
-			if(v.Selected == 1)
+			if (v.Selected == 1)
 				std::cout << "caaaaazzzzzooooooo\n";
 		}
 	}
@@ -312,4 +312,12 @@ void StatusManager::InitStatus()
 	status[HIDDEN_LINE] = 1;
 	status[ROTATE] = 0;
 	status[BAKED_MODEL] = 0;
+}
+
+glm::mat4 StatusManager::GetModelMatrix()
+{
+	glm::mat4 matrix = glm::toMat4(glm::quat(glm::radians(glm::make_vec3(modelRot))));
+	matrix = glm::translate(matrix, glm::make_vec3(modelPos));
+	matrix = glm::scale(matrix, glm::make_vec3(modelScale));
+	return matrix;
 }

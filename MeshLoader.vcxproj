@@ -157,12 +157,12 @@
     <ClCompile Include="Libraries\include\imgui\imgui_tables.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Libraries\include\reskinner\Utility.cpp" />
-    <ClCompile Include="Libraries\include\reskinner\Utility.h" />
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\Bone.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\GUI.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
@@ -188,18 +188,24 @@
     <ClInclude Include="Libraries\include\reskinner\Bone.h" />
     <ClInclude Include="Libraries\include\reskinner\Camera.h" />
     <ClInclude Include="Libraries\include\reskinner\Face.h" />
+    <ClInclude Include="Libraries\include\reskinner\GUI.h" />
     <ClInclude Include="Libraries\include\reskinner\Mesh.h" />
     <ClInclude Include="Libraries\include\reskinner\Model.h" />
     <ClInclude Include="Libraries\include\reskinner\Shader.h" />
     <ClInclude Include="Libraries\include\reskinner\StatusManager.h" />
     <ClInclude Include="Libraries\include\reskinner\Texture.h" />
     <ClInclude Include="Libraries\include\reskinner\TextureManager.h" />
+    <ClInclude Include="Libraries\include\reskinner\Utility.h" />
     <ClInclude Include="Libraries\include\reskinner\Vertex.h" />
     <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.fs" />
     <None Include="Shaders\animated_model_loading.vs" />
+    <None Include="Shaders\screen_shader.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Shaders\screen_shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,6 +5,8 @@
 #include <utility>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <reskinner/Camera.h>
 #include <reskinner/Animator.h>
 #include <reskinner/TextureManager.h>
@@ -57,6 +59,9 @@ public:
 	int lastVertexPicked = -1;
 	int lastMeshPicked = -1;
 	std::bitset<8> status;
+	float modelPos[3] = { 0.0f, 0.0f, 0.0f };
+	float modelRot[3] = { 0.0f, 0.0f, 0.0f };
+	float modelScale[3] = { 1.0f, 1.0f, 1.0f };
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 
@@ -75,6 +80,7 @@ public:
 	void SwitchAnimation();
 	void ChangeMesh();
 	void LoadModel(std::string& path);
+	glm::mat4 GetModelMatrix();
 private:
 
 	void InitStatus();
