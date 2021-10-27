@@ -8,6 +8,7 @@
 #include <reskinner/Camera.h>
 #include <reskinner/Animator.h>
 #include <reskinner/TextureManager.h>
+#include <reskinner/Brush.h>
 
 #include <GLFW/glfw3.h>
 
@@ -52,11 +53,12 @@ public:
 	bool pause;
 	bool wireframe;
 	bool hiddenLine;
-	bool changedMesh = false;
 	bool pennello1 = false;
+	bool sculptingMode;
 	int lastVertexPicked = -1;
 	int lastMeshPicked = -1;
 	std::bitset<8> status;
+	std::optional<Brush*> activeBrush;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 

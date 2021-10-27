@@ -10,7 +10,8 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2)),
 	pause(false),
 	wireframe(false),
-	hiddenLine(true)
+	hiddenLine(true),
+	sculptingMode(false)
 {
 	InitStatus();
 }

@@ -2,7 +2,7 @@
 
 void RenderGUI(StatusManager& status)
 {
-	bool show_demo_window = true;
+	bool show_demo_window = false;
 	NewGUIFrame();
 	RenderMenuBar(status);
 	if (show_demo_window)
@@ -12,6 +12,8 @@ void RenderGUI(StatusManager& status)
 	RenderModelInfo(status);
 	RenderCameraInfo(status);
 	RenderAnimatorInfo(status);
+	RenderRenderInfo(status);
+	RenderSculptingPanel(status);
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -166,9 +168,12 @@ void RenderWindowMenuSection(StatusManager& status)
 		if (ImGui::MenuItem("Show Animator Info")) {
 			showAnimator = true;
 		}
-		if (ImGui::MenuItem("Show Animations Info")) {}
-		if (ImGui::MenuItem("Show Camera Info")) {}
-		if (ImGui::MenuItem("Show Status Info")) {}
+		if (ImGui::MenuItem("Show Render Info")) {
+			showRenderInfo = true;
+		}
+		if (ImGui::MenuItem("Open Sculpting Panel")) {
+			showSculptingPanel = true;
+		}
 		ImGui::EndMenu();
 	}
 }
@@ -215,7 +220,7 @@ void RenderModelInfo(StatusManager& status)
 	if (ImGui::Button("Bake")) {
 		status.BakeModel();
 	}
-	
+
 	RenderMeshesInfo(status);
 	ImGui::End();
 }
@@ -224,24 +229,25 @@ void RenderMeshTextureInfo(Mesh& mesh, int mIndex, int tIndex, TextureManager& t
 	int texManIndex = mesh.texIndices[tIndex];
 	Texture tex = texMan.textures[texManIndex];
 	ImTextureID texID = (void*)(intptr_t)tex.id;
-	std::pair p = std::pair(mIndex, tIndex);
 	std::string textureName = tex.type + ": " + std::to_string(texManIndex);
 	ImGui::Text(textureName.c_str());
-	ImGui::PushID(mIndex * 100 + tex.id);
+	int hashedIndex = mIndex * 100 + tIndex;
+	ImGui::PushID(hashedIndex);
 	if (ImGui::ImageButton(texID, ImVec2(50, 50))) {
-		auto it = std::find(panelTex.begin(), panelTex.end(), p);
+		auto it = std::find(panelTex.begin(), panelTex.end(), hashedIndex);
 		if (it == panelTex.end()) {
-			panelTex.push_back(p);
+			panelTex.push_back(hashedIndex);
 		}
 	}
 	ImGui::PopID();
 	ImGui::SameLine();
-	if (ImGui::Button("Remove")) {
+	std::string removeBtnName = "Remove##" + std::to_string(mIndex * 100 + tex.id);
+	if (ImGui::Button(removeBtnName.c_str())) {
 		mesh.texIndices.erase(mesh.texIndices.begin() + tIndex);
 	}
 
-	if (std::find(panelTex.begin(), panelTex.end(), p) != panelTex.end())
-		ShowTextureInPanel(mIndex, texManIndex, texID, 500, 500);
+	if (std::find(panelTex.begin(), panelTex.end(), hashedIndex) != panelTex.end())
+		ShowTextureInPanel(mIndex, tIndex, texID, 500, 500);
 }
 
 void ShowTextureInPanel(int mIndex, int tIndex, ImTextureID id, int width, int height)
@@ -251,8 +257,9 @@ void ShowTextureInPanel(int mIndex, int tIndex, ImTextureID id, int width, int h
 	ImGui::Begin(name.c_str(), &open);
 	ImGui::Image(id, ImVec2(width, height));
 	ImGui::End();
+	int hashedIndex = mIndex * 100 + tIndex;
 	if (!open)
-		panelTex.erase(std::find(panelTex.begin(), panelTex.end(), std::pair(mIndex, tIndex)));
+		panelTex.erase(std::find(panelTex.begin(), panelTex.end(), hashedIndex));
 }
 
 void RenderAnimatorInfo(StatusManager& status)
@@ -297,7 +304,7 @@ void RenderAnimatorInfo(StatusManager& status)
 	}
 
 	int size = status.animator.animations.size();
-	std::string otherAnim = "Other animations (" + std::to_string(size-1) + ")";
+	std::string otherAnim = "Other animations (" + std::to_string(size - 1) + ")";
 	if (!ImGui::CollapsingHeader(otherAnim.c_str()))
 	{
 		ImGui::End();
@@ -324,13 +331,64 @@ void ShowAnimationNInfo(Animator& animator, int n) {
 	if (ImGui::Button(buttonText.c_str())) {
 		animator.PlayAnimationIndex(n);
 	}
-	
+
 	float animDuration = anim.GetDuration();
 	std::string durationText = "Duration: " + std::to_string(animDuration);
 	ImGui::Text(durationText.c_str());
 
 	std::string ticks = "Tick per second: " + std::to_string(anim.GetTicksPerSecond());
 	ImGui::Text(ticks.c_str());
+}
+
+void RenderRenderInfo(StatusManager& status)
+{
+	if (!showRenderInfo)
+		return;
+	ImGui::Begin("Render Info");
+	ImGui::Checkbox("Wireframe", &status.wireframe);
+	if (status.wireframe) {
+		ImGui::Checkbox("Hidden line mode", &status.hiddenLine);
+	}
+	std::string fps = "Current FPS: " + std::to_string(1.0f / status.deltaTime);
+	ImGui::Text(fps.c_str());
+	ImGui::End();
+}
+
+void RenderSculptingPanel(StatusManager& status)
+{
+	status.sculptingMode = showSculptingPanel;
+	if (!showSculptingPanel) {
+		status.activeBrush.reset();
+		return;
+	}
+	ImGui::Begin("Sculpting", &showSculptingPanel);
+	status.BakeModel();
+	if (status.activeBrush)
+		DrawBrushInfo(**status.activeBrush);
+	if (ImGui::Button("Brush 1")) {
+		status.sculptingMode = true;
+		status.activeBrush.emplace(brushesRef.brush1.get());
+	}
+	if (ImGui::Button("Brush 2")) {
+		status.sculptingMode = true;
+		status.activeBrush.emplace(brushesRef.brush2.get());
+	}
+	if (ImGui::Button("Brush 3")) {
+		status.sculptingMode = true;
+		status.activeBrush.emplace(brushesRef.brush3.get());
+	}
+	ImGui::End();
+}
+
+void DrawBrushInfo(Brush& brush) {
+	ImGui::Text(brush.name.c_str());
+	ImGui::InputFloat("Radius", &brush.radius);
+	if (brush.radius <= 0.0f) brush.radius = 0.0001f;
+	ImGui::SliderFloat("Smoothness", &brush.smoothness, 0.0f, 1.0f);
+	ImGui::InputFloat("Impact", &brush.impact);
+	if (brush.impact <= 0.0f) brush.impact = 0.0001f;
+	ImGui::Checkbox("Reverse normals", &brush.reverseNormal);
+	ImGui::Separator();
 }
 
 void RenderMeshesInfo(StatusManager& status)

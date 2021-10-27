@@ -90,6 +90,12 @@
     <ClCompile Include="src\StatusManager.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Brush.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Brushes.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\reskinner\Animation.h">
@@ -171,6 +177,12 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\Utility.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\Brush.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\Brushes.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

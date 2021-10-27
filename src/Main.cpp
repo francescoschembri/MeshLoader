@@ -95,24 +95,6 @@ int main()
 		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		
-
-		/*ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing()), ImGuiCond_Once);
-		if (ImGui::Begin("Settings") && status.animatedModel)
-		{
-			ImGui::Checkbox("Wireframe", &status.wireframe);
-			if (status.wireframe) {
-				ImGui::Checkbox("Hidden line", &status.hiddenLine);
-			}
-			if (ImGui::Button("Bake"))
-			{
-				status.BakeModel();
-			}
-
-		}*/
-
-
 		if (status.animatedModel) {
 			// don't forget to enable shader before setting uniforms
 			ourShader.use();
