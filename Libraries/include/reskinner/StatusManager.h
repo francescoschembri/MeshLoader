@@ -59,6 +59,9 @@ public:
 	int lastMeshPicked = -1;
 	std::bitset<8> status;
 	std::optional<Brush*> activeBrush;
+	float aspect_ratio = 1.0f;
+	float width = 800.0f;
+	float height = 800.0f;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 

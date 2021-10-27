@@ -100,7 +100,7 @@ int main()
 			ourShader.use();
 
 			// model/view/projection transformations
-			glm::mat4 projection = glm::perspective(glm::radians(ZOOM), get_window_aspect_ratio(window), 0.1f, 100.0f);
+			glm::mat4 projection = glm::perspective(glm::radians(ZOOM), status.aspect_ratio, 0.1f, 100.0f);
 			glm::mat4 view = status.camera.GetViewMatrix();
 			glm::mat4 model = status.animatedModel->GetModelMatrix();
 			ourShader.setMat4("model", model);
@@ -143,6 +143,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
+	status.aspect_ratio = (float)width / (float)height;
+	status.width = float(width);
+	status.height = float(height);
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -170,9 +173,9 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	status.camera.ProcessMouseScroll(yoffset);
 }
 
-float get_window_aspect_ratio(GLFWwindow* window)
-{
-	int width, height;
-	glfwGetWindowSize(window, &width, &height);
-	return float(width) / (float)height;
-}
+//float get_window_aspect_ratio(GLFWwindow* window)
+//{
+//	int width, height;
+//	glfwGetWindowSize(window, &width, &height);
+//	return float(width) / (float)height;
+//}

@@ -218,13 +218,13 @@ void StatusManager::ChangeMesh()
 
 std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 {
-	glm::vec2 mousePos = (mouseLastPos / glm::vec2(800.0f, 800.0f)) * 2.0f - 1.0f;
+	glm::vec2 mousePos = (mouseLastPos / glm::vec2(width, height)) * 2.0f - 1.0f;
 	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
 
 	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
 	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
 
-	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), aspect_ratio, 0.1f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 model = animatedModel->GetModelMatrix();
 

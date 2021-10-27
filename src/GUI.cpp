@@ -351,6 +351,8 @@ void RenderRenderInfo(StatusManager& status)
 	}
 	std::string fps = "Current FPS: " + std::to_string(1.0f / status.deltaTime);
 	ImGui::Text(fps.c_str());
+	std::string aspectRatioWin = "Window aspect ratio: " + std::to_string(status.aspect_ratio);
+	ImGui::Text(aspectRatioWin.c_str());
 	ImGui::End();
 }
 

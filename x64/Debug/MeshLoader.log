@@ -6,18 +6,21 @@ C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(258,33): warning C4244
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(258,26): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(306,46): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
   Main.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(153,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(154,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(159,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(156,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(157,17): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(162,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
               T=float
           ]
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(160,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(163,27): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
               T=float
           ]
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(170,35): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Main.cpp(173,35): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+  StatusManager.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(8,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(52,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
   Generazione del codice in corso...
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe
