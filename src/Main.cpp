@@ -101,7 +101,6 @@ int main()
 		/*ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing()), ImGuiCond_Once);
 		if (ImGui::Begin("Settings") && status.animatedModel)
 		{
-			ImGui::Checkbox("Pause", &status.pause);
 			ImGui::Checkbox("Wireframe", &status.wireframe);
 			if (status.wireframe) {
 				ImGui::Checkbox("Hidden line", &status.hiddenLine);
@@ -110,22 +109,6 @@ int main()
 			{
 				status.BakeModel();
 			}
-			if (ImGui::Button("Reset Camera"))
-			{
-				status.camera.Reset();
-			}
-			if (ImGui::Button("Switch Animation"))
-			{
-				status.SwitchAnimation();
-			}
-			float animDuration = status.animator.animations[status.animator.currentAnimationIndex].GetDuration();
-			ImGui::InputFloat("Animation Time", &animTime);
-			ImGui::SliderFloat("Animation Time", &animTime, 0.0f, animDuration);
-			float deltaTime = animTime - status.animator.m_CurrentTime;
-			if (deltaTime)
-				status.animator.UpdateAnimation(deltaTime);
-			if (ImGui::Button("Pennello 1"))
-				status.pennello1 = true;
 
 		}*/
 
@@ -137,7 +120,7 @@ int main()
 			// model/view/projection transformations
 			glm::mat4 projection = glm::perspective(glm::radians(ZOOM), get_window_aspect_ratio(window), 0.1f, 100.0f);
 			glm::mat4 view = status.camera.GetViewMatrix();
-			glm::mat4 model = status.GetModelMatrix();
+			glm::mat4 model = status.animatedModel->GetModelMatrix();
 			ourShader.setMat4("model", model);
 			ourShader.setMat4("projection", projection);
 			ourShader.setMat4("view", view);
@@ -149,8 +132,12 @@ int main()
 
 			// render the loaded model
 			status.animatedModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
+			//if (status.bakedModel) {
+			//	//std::cout << "print baked\n";
+			//	status.bakedModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
+			//}
+
 		}
-		//status.fb.DrawTextureToScreen();
 
 
 		RenderGUI(status);

@@ -8,8 +8,12 @@
 #include <vector>
 
 #include <glad/glad.h> 
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -30,6 +34,9 @@ public:
 	std::string directory;
 	TextureManager& texMan;
 	bool gammaCorrection;
+	float modelPos[3] = { 0.0f, 0.0f, 0.0f };
+	float modelRot[3] = { 0.0f, 0.0f, 0.0f };
+	float modelScale[3] = { 1.0f, 1.0f, 1.0f };
 
 
 	// default constructor
@@ -44,6 +51,8 @@ public:
 	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
 	// if two vertices have the same position merge the vertices in a unique vertex and change the faces.
 	void JoinVertices();
+
+	glm::mat4 GetModelMatrix();
 
 private:
 

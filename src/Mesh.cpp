@@ -127,7 +127,7 @@ void Mesh::setupMesh()
 	glEnableVertexAttribArray(7);
 	glVertexAttribIPointer(7, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.NumBones));
 	glEnableVertexAttribArray(8);
-	glVertexAttribIPointer(8, 1, GL_INT,  sizeof(Vertex), (void*)offsetof(Vertex, Selected));
+	glVertexAttribIPointer(8, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, Selected));
 	glBindVertexArray(0);
 }
 

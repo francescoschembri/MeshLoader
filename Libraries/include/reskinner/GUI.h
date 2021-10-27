@@ -18,6 +18,7 @@ constexpr int STATUS = 4;
 
 static bool showModel = true;
 static bool showCamera = true;
+static bool showAnimator = true;
 
 static std::vector<std::pair<int, int>> panelTex;
 
@@ -37,7 +38,8 @@ void RenderMeshesInfo(StatusManager& status);
 void RenderCameraInfo(StatusManager& status);
 void RenderMeshTextureInfo(Mesh& mesh, int meshIndex, int textureIndex, TextureManager& texMan);
 void ShowTextureInPanel(int m, int textureIndex, ImTextureID id, int width, int height);
-//void RenderScenePanel(StatusManager& stauts);
-//void RenderAnimatorInfo(StatusManager& status);
+void RenderAnimatorInfo(StatusManager& status);
+void ShowAnimationNInfo(Animator& animator, int n);
 //void RenderAnimationsInfo(StatusManager& status);
 //void RenderStatusInfo(StatusManager& status);
+//void RenderScenePanel(StatusManager& stauts);

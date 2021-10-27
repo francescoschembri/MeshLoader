@@ -110,6 +110,7 @@ void StatusManager::Update(GLFWwindow* window)
 	UpdateDeltaTime();
 	ProcessInput(window);
 	if (!IsPaused()) {
+		bakedModel.reset();
 		status[BAKED_MODEL] = false;
 		animator.UpdateAnimation(deltaTime);
 	}
@@ -224,8 +225,9 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 
 	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
+	glm::mat4 model = animatedModel->GetModelMatrix();
 
-	glm::mat4 toWorld = glm::inverse(proj * view);
+	glm::mat4 toWorld = glm::inverse(proj * view * model);
 
 	rayStartPos = toWorld * rayStartPos;
 	rayEndPos = toWorld * rayEndPos;
@@ -242,14 +244,6 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 	if (lastMeshPicked >= 0)
 	{
 		animatedModel->meshes[lastMeshPicked].vertices[lastVertexPicked].Selected = 0;
-	}
-	for (Mesh& m : animatedModel->meshes)
-	{
-		for (Vertex& v : m.vertices)
-		{
-			if (v.Selected == 1)
-				std::cout << "caaaaazzzzzooooooo\n";
-		}
 	}
 
 	for (int i = 0; i < animatedModel->meshes.size(); i++)
@@ -274,6 +268,8 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 		}
 	}
 	if (face) {
+		if (lastMeshPicked != meshIndex && lastMeshPicked>=0)
+			animatedModel->meshes[lastMeshPicked].Reload();
 		lastMeshPicked = meshIndex;
 		lastVertexPicked = face->indices[2];
 		//mesh->vertices[face->indices[0]].Selected = 1;
@@ -312,12 +308,4 @@ void StatusManager::InitStatus()
 	status[HIDDEN_LINE] = 1;
 	status[ROTATE] = 0;
 	status[BAKED_MODEL] = 0;
-}
-
-glm::mat4 StatusManager::GetModelMatrix()
-{
-	glm::mat4 matrix = glm::toMat4(glm::quat(glm::radians(glm::make_vec3(modelRot))));
-	matrix = glm::translate(matrix, glm::make_vec3(modelPos));
-	matrix = glm::scale(matrix, glm::make_vec3(modelScale));
-	return matrix;
 }

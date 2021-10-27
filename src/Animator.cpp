@@ -28,13 +28,18 @@ void Animator::PlayAnimation(Animation* animation)
 
 void Animator::PlayAnimationIndex(int index)
 {
-	currentAnimationIndex = index % animations.size(); //meglio assert index < animations.size(); ??
+	currentAnimationIndex = (index + animations.size()) % animations.size();
 	m_CurrentTime = 0.0f;
 }
 
 void Animator::PlayNextAnimation()
 {
 	PlayAnimationIndex(currentAnimationIndex + 1);
+}
+
+void Animator::PlayPrevAnimation()
+{
+	PlayAnimationIndex(currentAnimationIndex - 1);
 }
 
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)

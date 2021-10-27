@@ -75,6 +75,14 @@ const BoneInfo& Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
 
 std::map<std::string, BoneInfo> Model::GetBoneInfoMap() { return m_BoneInfoMap; }
 
+glm::mat4 Model::GetModelMatrix()
+{
+	glm::mat4 matrix = glm::toMat4(glm::quat(glm::radians(glm::make_vec3(modelRot))));
+	matrix = glm::translate(matrix, glm::make_vec3(modelPos));
+	matrix = glm::scale(matrix, glm::make_vec3(modelScale));
+	return matrix;
+}
+
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 void Model::loadModel(std::string& path)
 {

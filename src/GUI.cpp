@@ -11,6 +11,7 @@ void RenderGUI(StatusManager& status)
 	OpenAnimationDialog(status);
 	RenderModelInfo(status);
 	RenderCameraInfo(status);
+	RenderAnimatorInfo(status);
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -162,7 +163,9 @@ void RenderWindowMenuSection(StatusManager& status)
 		if (ImGui::MenuItem("Show Camera Info")) {
 			showCamera = true;
 		}
-		if (ImGui::MenuItem("Show Animator Info")) {}
+		if (ImGui::MenuItem("Show Animator Info")) {
+			showAnimator = true;
+		}
 		if (ImGui::MenuItem("Show Animations Info")) {}
 		if (ImGui::MenuItem("Show Camera Info")) {}
 		if (ImGui::MenuItem("Show Status Info")) {}
@@ -177,38 +180,42 @@ void RenderModelInfo(StatusManager& status)
 	if (!(showModel && status.animatedModel))
 		return;
 	ImGui::Begin("Model", &showModel);
-	ImGui::InputFloat3("Position", status.modelPos);
-	ImGui::InputFloat3("Rotation", status.modelRot);
-	status.modelRot[0] = std::clamp(status.modelRot[0], 0.0f, 360.0f);
-	status.modelRot[1] = std::clamp(status.modelRot[1], 0.0f, 360.0f);
-	status.modelRot[2] = std::clamp(status.modelRot[2], 0.0f, 360.0f);
+	ImGui::InputFloat3("Position", status.animatedModel->modelPos);
+	ImGui::InputFloat3("Rotation", status.animatedModel->modelRot);
+	status.animatedModel->modelRot[0] = std::clamp(status.animatedModel->modelRot[0], 0.0f, 360.0f);
+	status.animatedModel->modelRot[1] = std::clamp(status.animatedModel->modelRot[1], 0.0f, 360.0f);
+	status.animatedModel->modelRot[2] = std::clamp(status.animatedModel->modelRot[2], 0.0f, 360.0f);
 	ImGui::Checkbox("Uniform Scale (RESETS SCALE TO 1.0)", &uniform);
 	if (uniform)
 	{
 		ImGui::InputFloat("Scale", &scale);
-		status.modelScale[0] = scale;
-		status.modelScale[1] = scale;
-		status.modelScale[2] = scale;
+		status.animatedModel->modelScale[0] = scale;
+		status.animatedModel->modelScale[1] = scale;
+		status.animatedModel->modelScale[2] = scale;
 	}
 	else {
-		ImGui::InputFloat3("Scale", status.modelScale);
+		ImGui::InputFloat3("Scale", status.animatedModel->modelScale);
 	}
 	if (ImGui::Button("Reset Model Settings")) {
 		scale = 1.0f;
 		uniform = true;
 		//Reset position
-		status.modelPos[0] = 0.0f;
-		status.modelPos[1] = 0.0f;
-		status.modelPos[2] = 0.0f;
+		status.animatedModel->modelPos[0] = 0.0f;
+		status.animatedModel->modelPos[1] = 0.0f;
+		status.animatedModel->modelPos[2] = 0.0f;
 		//Reset rotation
-		status.modelRot[0] = 0.0f;
-		status.modelRot[1] = 0.0f;
-		status.modelRot[2] = 0.0f;
+		status.animatedModel->modelRot[0] = 0.0f;
+		status.animatedModel->modelRot[1] = 0.0f;
+		status.animatedModel->modelRot[2] = 0.0f;
 		//Reset scaling
-		status.modelScale[0] = scale;
-		status.modelScale[1] = scale;
-		status.modelScale[2] = scale;
+		status.animatedModel->modelScale[0] = scale;
+		status.animatedModel->modelScale[1] = scale;
+		status.animatedModel->modelScale[2] = scale;
 	}
+	if (ImGui::Button("Bake")) {
+		status.BakeModel();
+	}
+	
 	RenderMeshesInfo(status);
 	ImGui::End();
 }
@@ -218,7 +225,7 @@ void RenderMeshTextureInfo(Mesh& mesh, int mIndex, int tIndex, TextureManager& t
 	Texture tex = texMan.textures[texManIndex];
 	ImTextureID texID = (void*)(intptr_t)tex.id;
 	std::pair p = std::pair(mIndex, tIndex);
-	std::string textureName = tex.type + ": " +std::to_string(texManIndex);
+	std::string textureName = tex.type + ": " + std::to_string(texManIndex);
 	ImGui::Text(textureName.c_str());
 	ImGui::PushID(mIndex * 100 + tex.id);
 	if (ImGui::ImageButton(texID, ImVec2(50, 50))) {
@@ -233,7 +240,7 @@ void RenderMeshTextureInfo(Mesh& mesh, int mIndex, int tIndex, TextureManager& t
 		mesh.texIndices.erase(mesh.texIndices.begin() + tIndex);
 	}
 
-	if(std::find(panelTex.begin(), panelTex.end(), p) != panelTex.end())
+	if (std::find(panelTex.begin(), panelTex.end(), p) != panelTex.end())
 		ShowTextureInPanel(mIndex, texManIndex, texID, 500, 500);
 }
 
@@ -248,6 +255,84 @@ void ShowTextureInPanel(int mIndex, int tIndex, ImTextureID id, int width, int h
 		panelTex.erase(std::find(panelTex.begin(), panelTex.end(), std::pair(mIndex, tIndex)));
 }
 
+void RenderAnimatorInfo(StatusManager& status)
+{
+	if (!(showAnimator && status.animatedModel))
+		return;
+	ImGui::Begin("Animator", &showAnimator);
+	int animIndex = status.animator.currentAnimationIndex;
+	std::string currentAnim = "Current animation: " + std::to_string(animIndex);
+	ImGui::Text(currentAnim.c_str());
+
+	ImGui::SameLine();
+	if (ImGui::Button(status.pause ? "Play" : "Pause")) {
+		status.pause = !status.pause;
+	}
+
+	Animation& anim = status.animator.animations[animIndex];
+	float animDuration = anim.GetDuration();
+	std::string durationText = "Duration: " + std::to_string(animDuration);
+	ImGui::Text(durationText.c_str());
+
+	std::string ticks = "Tick per second: " + std::to_string(anim.GetTicksPerSecond());
+	ImGui::Text(ticks.c_str());
+
+	ImGui::Separator();
+	float currentTime = status.animator.m_CurrentTime;
+	ImGui::SliderFloat("Current Time", &currentTime, 0.0f, animDuration);
+	if (currentTime != status.animator.m_CurrentTime)
+	{
+		status.animator.m_CurrentTime = currentTime;
+		status.animator.UpdateAnimation(0.0f);
+		if (status.IsBaked())
+			status.BakeModel();
+	}
+
+	if (ImGui::Button("Previous Animation")) {
+		status.animator.PlayPrevAnimation();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Next Animation")) {
+		status.animator.PlayNextAnimation();
+	}
+
+	int size = status.animator.animations.size();
+	std::string otherAnim = "Other animations (" + std::to_string(size-1) + ")";
+	if (!ImGui::CollapsingHeader(otherAnim.c_str()))
+	{
+		ImGui::End();
+		return;
+	}
+
+	for (int i = 0; i < status.animator.animations.size(); i++)
+	{
+		if (animIndex == i)
+			continue;
+		ShowAnimationNInfo(status.animator, i);
+		ImGui::Separator();
+	}
+	ImGui::End();
+}
+
+void ShowAnimationNInfo(Animator& animator, int n) {
+	Animation& anim = animator.animations[n];
+	std::string animIndexText = "Animation index: " + std::to_string(n);
+	ImGui::Text(animIndexText.c_str());
+
+	ImGui::SameLine();
+	std::string buttonText = "Play Animation##" + std::to_string(n);
+	if (ImGui::Button(buttonText.c_str())) {
+		animator.PlayAnimationIndex(n);
+	}
+	
+	float animDuration = anim.GetDuration();
+	std::string durationText = "Duration: " + std::to_string(animDuration);
+	ImGui::Text(durationText.c_str());
+
+	std::string ticks = "Tick per second: " + std::to_string(anim.GetTicksPerSecond());
+	ImGui::Text(ticks.c_str());
+}
+
 void RenderMeshesInfo(StatusManager& status)
 {
 	if (!ImGui::CollapsingHeader("Meshes Info"))
@@ -258,7 +343,7 @@ void RenderMeshesInfo(StatusManager& status)
 		std::string header = "Mesh " + std::to_string(++meshIndex);
 		if (!ImGui::CollapsingHeader(header.c_str()))
 			continue;
-		for (int i = 0; i< m.texIndices.size(); i++)
+		for (int i = 0; i < m.texIndices.size(); i++)
 		{
 			RenderMeshTextureInfo(m, meshIndex, i, status.texMan);
 		}
