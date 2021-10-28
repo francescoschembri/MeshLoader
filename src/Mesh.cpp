@@ -1,9 +1,28 @@
 #include <reskinner/Mesh.h>
 
 // constructor
-Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<int>&& texIndices) : loaded(true), vertices(std::move(vertices)), faces(std::move(faces)), texIndices(std::move(texIndices))
+Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<int>&& texIndices) 
+	: 
+	loaded(true), 
+	vertices(std::move(vertices)), 
+	faces(std::move(faces)), 
+	texIndices(std::move(texIndices)),
+	verticesPerVertex(std::vector<std::set<int>>())
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
+	for (int i = 0; i < this->vertices.size(); i++) {
+		std::set<int> adj;
+		for (int j = 0; j < this->faces.size(); j++) {
+			for (int index = 0; index < 3; index++) {
+				if (this->faces[j].indices[index] == i) {
+					adj.insert(this->faces[j].indices[(index + 1) % 3]);
+					adj.insert(this->faces[j].indices[(index + 2) % 3]);
+					break;
+				}
+			}
+		}
+		verticesPerVertex.push_back(adj);
+	}
 	setupMesh();
 }
 

@@ -11,6 +11,8 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <algorithm>
 
 class Mesh {
 public:
@@ -18,6 +20,7 @@ public:
 	std::vector<Vertex>       vertices;
 	std::vector<Face> faces;
 	std::vector<int> texIndices;
+	std::vector<std::set<int>> verticesPerVertex;
 	unsigned int VAO;
 	// render data 
 	unsigned int VBO, EBO;

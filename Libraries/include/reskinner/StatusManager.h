@@ -9,6 +9,7 @@
 #include <reskinner/Animator.h>
 #include <reskinner/TextureManager.h>
 #include <reskinner/Brush.h>
+#include <reskinner/Utility.h>
 
 #include <GLFW/glfw3.h>
 
@@ -53,8 +54,7 @@ public:
 	bool pause;
 	bool wireframe;
 	bool hiddenLine;
-	bool pennello1 = false;
-	bool sculptingMode;
+	bool changingMesh = false;
 	int lastVertexPicked = -1;
 	int lastMeshPicked = -1;
 	std::bitset<8> status;
@@ -74,12 +74,11 @@ public:
 	void Update(GLFWwindow* window);
 	void UpdateDeltaTime();
 	void ProcessInput(GLFWwindow* window);
-	//Vertex* Picking(bool reload = true);
-	std::pair<std::optional<Face>, int> FacePicking(bool reload = true);
 	void BakeModel();
 	void SwitchAnimation();
 	void ChangeMesh();
 	void LoadModel(std::string& path);
+	PickingInfo FacePicking(bool reload = true);
 private:
 
 	void InitStatus();

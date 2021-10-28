@@ -291,8 +291,6 @@ void RenderAnimatorInfo(StatusManager& status)
 	{
 		status.animator.m_CurrentTime = currentTime;
 		status.animator.UpdateAnimation(0.0f);
-		if (status.IsBaked())
-			status.BakeModel();
 	}
 
 	if (ImGui::Button("Previous Animation")) {
@@ -358,25 +356,20 @@ void RenderRenderInfo(StatusManager& status)
 
 void RenderSculptingPanel(StatusManager& status)
 {
-	status.sculptingMode = showSculptingPanel;
 	if (!showSculptingPanel) {
 		status.activeBrush.reset();
 		return;
 	}
 	ImGui::Begin("Sculpting", &showSculptingPanel);
-	status.BakeModel();
 	if (status.activeBrush)
 		DrawBrushInfo(**status.activeBrush);
 	if (ImGui::Button("Brush 1")) {
-		status.sculptingMode = true;
 		status.activeBrush.emplace(brushesRef.brush1.get());
 	}
 	if (ImGui::Button("Brush 2")) {
-		status.sculptingMode = true;
 		status.activeBrush.emplace(brushesRef.brush2.get());
 	}
 	if (ImGui::Button("Brush 3")) {
-		status.sculptingMode = true;
 		status.activeBrush.emplace(brushesRef.brush3.get());
 	}
 	ImGui::End();
@@ -385,10 +378,10 @@ void RenderSculptingPanel(StatusManager& status)
 void DrawBrushInfo(Brush& brush) {
 	ImGui::Text(brush.name.c_str());
 	ImGui::InputFloat("Radius", &brush.radius);
-	if (brush.radius <= 0.0f) brush.radius = 0.0001f;
-	ImGui::SliderFloat("Smoothness", &brush.smoothness, 0.0f, 1.0f);
+	if (brush.radius <= 0.0f) brush.radius = 0.1f;
+	ImGui::SliderFloat("Smoothness", &brush.smoothness, 0.001f, 1.0f);
 	ImGui::InputFloat("Impact", &brush.impact);
-	if (brush.impact <= 0.0f) brush.impact = 0.0001f;
+	if (brush.impact <= 0.0f) brush.impact = 0.001f;
 	ImGui::Checkbox("Reverse normals", &brush.reverseNormal);
 	ImGui::Separator();
 }

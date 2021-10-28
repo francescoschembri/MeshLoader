@@ -12,6 +12,12 @@
 //	std::optional<IntersectionInfo> info;
 //};
 
+struct PickingInfo {
+	std::optional<glm::vec3> hitPoint;
+	std::optional<Face> face;
+	int meshIndex = -1;
+};
+
 struct IntersectionInfo {
 	std::optional<glm::vec3> hitPoint;
 	float distance = -1.0f;

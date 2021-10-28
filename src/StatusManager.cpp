@@ -1,7 +1,5 @@
 #include <reskinner/StatusManager.h>
 
-#include <reskinner/Utility.h>
-
 StatusManager::StatusManager(float screenWidth, float screenHeight)
 	:
 	camera(glm::vec3(0.0f, 0.0f, 3.0f)),
@@ -10,8 +8,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2)),
 	pause(false),
 	wireframe(false),
-	hiddenLine(true),
-	sculptingMode(false)
+	hiddenLine(true)
 {
 	InitStatus();
 }
@@ -93,8 +90,13 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 	}
 
 	// controlla pennello
-	if (pennello1 && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS) {
+	if (activeBrush && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS) {
+		changingMesh = true;
 		ChangeMesh();
+	}
+	if (changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_RELEASE) {
+		changingMesh = false;
+		BakeModel();
 	}
 	// keep rotating only if the rotation key is still pressed. 
 	// This way it starts rotating when it is pressed and keeps rotating until is released
@@ -110,6 +112,9 @@ void StatusManager::Update(GLFWwindow* window)
 {
 	UpdateDeltaTime();
 	ProcessInput(window);
+	if (activeBrush && !bakedModel) {
+		BakeModel();
+	}
 	if (!IsPaused()) {
 		bakedModel.reset();
 		status[BAKED_MODEL] = false;
@@ -131,92 +136,57 @@ void StatusManager::BakeModel() {
 
 void StatusManager::ChangeMesh()
 {
-	BakeModel();
-	auto pair = FacePicking(false);
-	if (pair.first) {
-		Mesh& aMesh = animatedModel->meshes[pair.second];
-		for (unsigned int i : pair.first->indices) {
-			aMesh.vertices[i].Position += aMesh.vertices[i].Normal * 1.5f;
+	auto info = FacePicking(false);
+	if (info.hitPoint) {
+		Mesh& aMesh = animatedModel->meshes[info.meshIndex];
+		std::vector<int> verticesToCheck;
+		std::vector<int> exploredVertices;
+		std::map<int, float> distances;
+		verticesToCheck.push_back(info.face->indices[0]);
+		verticesToCheck.push_back(info.face->indices[1]);
+		verticesToCheck.push_back(info.face->indices[2]);
+		exploredVertices.push_back(info.face->indices[0]);
+		exploredVertices.push_back(info.face->indices[1]);
+		exploredVertices.push_back(info.face->indices[2]);
+		distances[info.face->indices[0]] = 0.0f;
+		distances[info.face->indices[1]] = 0.0f;
+		distances[info.face->indices[2]] = 0.0f;
+		std::vector<int> verIndices;
+		float radius = activeBrush.value()->radius;
+		while (verticesToCheck.size() > 0) {
+			int index = verticesToCheck.back();
+			verticesToCheck.pop_back();
+			float distance = magnitude(aMesh.vertices[index].Position - info.hitPoint.value()) + distances[index];
+			//std::cout << "index: " << index << " , distance: " << distance << " , radius: " << radius << "\n";
+			if (distance <= radius)
+			{
+				//std::cout << "picked index: " << index << "\n";
+				distances[index] = distance;
+				verIndices.push_back(index);
+				std::set<int> closeVertices = aMesh.verticesPerVertex[index];
+				for (int i : closeVertices) {
+					auto iter = std::find(exploredVertices.begin(), exploredVertices.end(), i);
+					bool notExplored = !(iter == exploredVertices.end());
+					float distanceFromCurrentIndex = magnitude(aMesh.vertices[index].Position - aMesh.vertices[i].Position);
+//					std::cout << "next index: " << i << " , distance parent (" << index<< "): "<< distances[index]
+//						<< ", distance from parent: " << distanceFromCurrentIndex <<", Total: "<< distances[index] + distanceFromCurrentIndex;
+//					if (!notExplored) std::cout << ", prev distance: " << distances[i];
+//					std::cout << "\n";
+					if (notExplored || distances[i] > distances[index] + distanceFromCurrentIndex) {
+						//std::cout << "inserted next index: " << i <<"\n";
+						exploredVertices.push_back(i);
+						verticesToCheck.push_back(i);
+						distances[i] = distance;
+					}
+				}
+			}
 		}
-		aMesh.Reload();
+		std::cout << "\n\n";
+		activeBrush.value()->ModifyMesh(aMesh, verIndices, info.hitPoint.value());
 	}
 }
 
-//Vertex* StatusManager::Picking(bool reload)
-//{
-//	glm::vec2 mousePos = (mouseLastPos / glm::vec2(800.0f, 800.0f)) * 2.0f - 1.0f;
-//	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
-//
-//	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
-//	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
-//
-//	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), 1.0f, 0.1f, 100.0f);
-//	glm::mat4 view = camera.GetViewMatrix();
-//
-//	glm::mat4 toWorld = glm::inverse(proj * view);
-//
-//	rayStartPos = toWorld * rayStartPos;
-//	rayEndPos = toWorld * rayEndPos;
-//
-//	rayStartPos /= rayStartPos.w;
-//	rayEndPos /= rayEndPos.w;
-//
-//	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
-//
-//	Vertex* ver = nullptr;
-//	float minDist = 0.0f;
-//
-//	for (Mesh& m : bakedModel->meshes)
-//	{
-//		for (Vertex& v : m.vertices) {
-//			v.Selected = 0;
-//			float t = raySphereIntersection(rayStartPos, dir, v.Position, 0.01f);
-//			if (t > 0.0f)
-//			{
-//				//object i has been clicked. probably best to find the minimum t1 (front-most object)
-//				if (ver == nullptr || t < minDist)
-//				{
-//					minDist = t;
-//					ver = &v;
-//				}
-//			}
-//		}
-//	}
-//
-//	if (ver) {
-//		ver->Selected = 1;
-//		for (Mesh& m : animatedModel->meshes)
-//		{
-//			bool changed = false;
-//			for (Face& f : m.faces)
-//			{
-//				Vertex& v1 = m.vertices[f.indices[0]];
-//				Vertex& v2 = m.vertices[f.indices[1]];
-//				Vertex& v3 = m.vertices[f.indices[2]];
-//				if (v1.Selected == 1) {
-//					changed = true;
-//					v2.Selected = v3.Selected = 2;
-//				}
-//				if (v2.Selected == 1) {
-//					changed = true;
-//					v1.Selected = v3.Selected = 2;
-//				}
-//				if (v3.Selected == 1)
-//				{
-//					changed = true;
-//					v2.Selected = v1.Selected = 2;
-//				}
-//			}
-//			if (changed && reload)
-//			{
-//				m.Reload();
-//			}
-//		}
-//	}
-//	return ver;
-//}
-
-std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
+PickingInfo StatusManager::FacePicking(bool reload)
 {
 	glm::vec2 mousePos = (mouseLastPos / glm::vec2(width, height)) * 2.0f - 1.0f;
 	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
@@ -238,15 +208,12 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 
 	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
 
-	std::optional<Face> face;
-	int meshIndex = -1;
 	float minDist = 0.0f;
 
 	if (lastMeshPicked >= 0)
-	{
 		animatedModel->meshes[lastMeshPicked].vertices[lastVertexPicked].Selected = 0;
-	}
 
+	PickingInfo res{};
 	for (int i = 0; i < animatedModel->meshes.size(); i++)
 	{
 		Mesh& m = bakedModel->meshes[i];
@@ -259,26 +226,27 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 			if (info.distance > 0.0)
 			{
 				//object i has been clicked. probably best to find the minimum t1 (front-most object)
-				if (!face || info.distance < minDist)
+				if (!res.face || info.distance < minDist)
 				{
+					res.hitPoint = info.hitPoint;
+					res.face.emplace(f);
+					res.meshIndex = i;
 					minDist = info.distance;
-					face.emplace(f);
-					meshIndex = i;
 				}
 			}
 		}
 	}
-	if (face) {
-		if (lastMeshPicked != meshIndex && lastMeshPicked>=0)
+	if (res.face) {
+		if (lastMeshPicked != res.meshIndex && lastMeshPicked >= 0)
 			animatedModel->meshes[lastMeshPicked].Reload();
-		lastMeshPicked = meshIndex;
-		lastVertexPicked = face->indices[2];
+		lastMeshPicked = res.meshIndex;
+		lastVertexPicked = res.face->indices[2];
 		//mesh->vertices[face->indices[0]].Selected = 1;
 		//mesh->vertices[face->indices[1]].Selected = 1;
 		//lastMeshPicked->vertices[face->indices[0]].Selected = 1;
 		//lastMeshPicked->vertices[face->indices[1]].Selected = 1;
-		animatedModel->meshes[meshIndex].vertices[lastVertexPicked].Selected = 1;
-		if (reload) animatedModel->meshes[meshIndex].Reload();
+		animatedModel->meshes[res.meshIndex].vertices[lastVertexPicked].Selected = 1;
+		if (reload) animatedModel->meshes[res.meshIndex].Reload();
 	}
 	else if (lastMeshPicked >= 0 && reload) {
 		animatedModel->meshes[lastMeshPicked].Reload();
@@ -286,7 +254,7 @@ std::pair<std::optional<Face>, int> StatusManager::FacePicking(bool reload)
 		lastMeshPicked = -1;
 	}
 
-	return std::pair<std::optional<Face>, int>(face, meshIndex);
+	return res;
 }
 
 void StatusManager::LoadModel(std::string& path)

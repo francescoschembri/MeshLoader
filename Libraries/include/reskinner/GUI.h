@@ -22,7 +22,7 @@ static bool showModel = true;
 static bool showCamera = true;
 static bool showAnimator = true;
 static bool showRenderInfo = true;
-static bool showSculptingPanel = false;
+static bool showSculptingPanel = true;
 
 static std::vector<int> panelTex;
 
