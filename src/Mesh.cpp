@@ -7,10 +7,11 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	vertices(std::move(vertices)), 
 	faces(std::move(faces)), 
 	texIndices(std::move(texIndices)),
-	verticesPerVertex(std::vector<std::set<int>>())
+	adjVV(std::vector<std::set<int>>())
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
-	for (int i = 0; i < this->vertices.size(); i++) {
+	//TODO ottimizzare
+	/*for (int i = 0; i < this->vertices.size(); i++) {
 		std::set<int> adj;
 		for (int j = 0; j < this->faces.size(); j++) {
 			for (int index = 0; index < 3; index++) {
@@ -21,8 +22,8 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 				}
 			}
 		}
-		verticesPerVertex.push_back(adj);
-	}
+		adjVV.push_back(adj);
+	}*/
 	setupMesh();
 }
 

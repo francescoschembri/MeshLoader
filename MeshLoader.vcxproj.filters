@@ -196,6 +196,12 @@
     <None Include="Shaders\screen_shader.fs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
+    <None Include="Shaders\mouse_shader.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\mouse_shader.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\screen_shader.vs">

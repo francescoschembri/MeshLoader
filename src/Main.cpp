@@ -69,10 +69,12 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 
 	// build and compile shaders
 	// -------------------------
 	Shader ourShader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs");
+	Shader mouseShader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs");
 	// load models
 	// -----------
 	std::string modelPath = std::string("./Animations/Capoeira/Capoeira.dae");
@@ -81,6 +83,41 @@ int main()
 
 	// Our gui state
 	float animTime = 0.0f;
+
+	//mouse effect setup
+	unsigned int mouseVAO, mouseVBO, mouseEBO;
+	float screenVertices[] = {
+		1.0f, 1.0f, 
+		1.0f, -1.0f,
+		-1.0f, -1.0f,
+		-1.0f, 1.0f
+	};
+
+	unsigned int screenIndices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	glGenVertexArrays(1, &mouseVAO);
+	glGenBuffers(1, &mouseVBO);
+	glGenBuffers(1, &mouseEBO);
+	glBindVertexArray(mouseVAO);
+	// load data into vertex buffers
+	glBindBuffer(GL_ARRAY_BUFFER, mouseVBO);
+	// A great thing about structs is that their memory layout is sequential for all its items.
+	// The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
+	// again translates to 3/2 floats which translates to a byte array.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices) * sizeof(float), &screenVertices[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mouseEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(screenIndices), &screenIndices[0], GL_STATIC_DRAW);
+
+	// set the vertex attribute pointers
+	// vertex Positions
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glBindVertexArray(0);
+	//end mouse effect setup
 
 	// render loop
 	// -----------
@@ -94,6 +131,17 @@ int main()
 		// render
 		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//mouseShader.use();
+		//mouseShader.setVec2("mousePos", status.mouseLastPos);
+		//mouseShader.setVec2("resolution", status.width, status.height);
+		//if (status.activeBrush)
+		//	mouseShader.setFloat("radius", status.activeBrush.value()->radius);
+		//else
+		//	mouseShader.setFloat("radius", 1.0f);
+		//glBindVertexArray(mouseVAO);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(0);
 
 		if (status.animatedModel) {
 			// don't forget to enable shader before setting uniforms

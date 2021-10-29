@@ -139,50 +139,40 @@ void StatusManager::ChangeMesh()
 	auto info = FacePicking(false);
 	if (info.hitPoint) {
 		Mesh& aMesh = animatedModel->meshes[info.meshIndex];
+		Mesh& bMesh = bakedModel->meshes[info.meshIndex];
+		std::vector<int> verIndices;
 		std::vector<int> verticesToCheck;
 		std::vector<int> exploredVertices;
 		std::map<int, float> distances;
-		verticesToCheck.push_back(info.face->indices[0]);
-		verticesToCheck.push_back(info.face->indices[1]);
-		verticesToCheck.push_back(info.face->indices[2]);
-		exploredVertices.push_back(info.face->indices[0]);
-		exploredVertices.push_back(info.face->indices[1]);
-		exploredVertices.push_back(info.face->indices[2]);
-		distances[info.face->indices[0]] = 0.0f;
-		distances[info.face->indices[1]] = 0.0f;
-		distances[info.face->indices[2]] = 0.0f;
-		std::vector<int> verIndices;
-		float radius = activeBrush.value()->radius;
+		for (int i : info.face->indices) {
+			verticesToCheck.push_back(i);
+			exploredVertices.push_back(i);
+			glm::vec3 verPos = bMesh.vertices[i].Position;
+			distances[i] = magnitude(verPos - info.hitPoint.value());
+		}
+		float maxDist = activeBrush.value()->radius;
 		while (verticesToCheck.size() > 0) {
 			int index = verticesToCheck.back();
 			verticesToCheck.pop_back();
-			float distance = magnitude(aMesh.vertices[index].Position - info.hitPoint.value()) + distances[index];
-			//std::cout << "index: " << index << " , distance: " << distance << " , radius: " << radius << "\n";
-			if (distance <= radius)
+			if (distances[index] < maxDist)
 			{
-				//std::cout << "picked index: " << index << "\n";
-				distances[index] = distance;
+				//std::cout << "dist " << distances[index] << " rad " << radius << "\n";
 				verIndices.push_back(index);
-				std::set<int> closeVertices = aMesh.verticesPerVertex[index];
+				std::set<int> closeVertices = aMesh.adjVV[index];
 				for (int i : closeVertices) {
 					auto iter = std::find(exploredVertices.begin(), exploredVertices.end(), i);
-					bool notExplored = !(iter == exploredVertices.end());
-					float distanceFromCurrentIndex = magnitude(aMesh.vertices[index].Position - aMesh.vertices[i].Position);
-//					std::cout << "next index: " << i << " , distance parent (" << index<< "): "<< distances[index]
-//						<< ", distance from parent: " << distanceFromCurrentIndex <<", Total: "<< distances[index] + distanceFromCurrentIndex;
-//					if (!notExplored) std::cout << ", prev distance: " << distances[i];
-//					std::cout << "\n";
-					if (notExplored || distances[i] > distances[index] + distanceFromCurrentIndex) {
-						//std::cout << "inserted next index: " << i <<"\n";
+					bool notExplored = iter == exploredVertices.end();
+					float distanceFromCurrentIndex = magnitude(bMesh.vertices[index].Position - bMesh.vertices[i].Position);
+					float myDist = distances[index] + distanceFromCurrentIndex;
+					if (notExplored && myDist < maxDist) {
 						exploredVertices.push_back(i);
 						verticesToCheck.push_back(i);
-						distances[i] = distance;
+						distances[i] = myDist;
 					}
 				}
 			}
 		}
-		std::cout << "\n\n";
-		activeBrush.value()->ModifyMesh(aMesh, verIndices, info.hitPoint.value());
+		activeBrush.value()->ModifyMesh(aMesh, verIndices, distances);
 	}
 }
 

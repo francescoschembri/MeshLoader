@@ -26,14 +26,14 @@ Brush::Brush(const char* name, float radius, float smoothness, float impact, boo
 	reverseNormal(reverseNormal)
 {}
 
-void Brush::ModifyMesh(Mesh& mesh, std::vector<int> verIndices, glm::vec3 center)
+void Brush::ModifyMesh(Mesh& mesh, std::vector<int>& verIndices, std::map<int,float>& distancesFromCenter)
 {
-	for (int i = 0; i < verIndices.size(); i++) {
-		Vertex& v = mesh.vertices[verIndices[i]];
-		float distanceFromCenter = magnitude(v.Position - center);
-		float calculateSmoothnessEffect = smoothness + (1.0f - distanceFromCenter / radius)*(1.0f-smoothness);
-		float effectiveImpact = impact * (reverseNormal ? -1.0f : 1.0f) * calculateSmoothnessEffect;
-		v.Position += v.Normal * effectiveImpact;
+	for (int i : verIndices) {
+		Vertex& v = mesh.vertices[i];
+		float calculateSmoothnessEffect = smoothness + (1.0f - distancesFromCenter[i] / radius)*(1.0f-smoothness);
+		float effectiveImpact = impact * (reverseNormal ? -1.0f : 1.0f) *calculateSmoothnessEffect;
+		//v.Position += v.Normal * effectiveImpact;
+		v.Selected = 1;
 	}
 	if(verIndices.size())
 		mesh.Reload();

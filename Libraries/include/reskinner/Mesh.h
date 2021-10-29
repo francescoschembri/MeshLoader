@@ -20,7 +20,7 @@ public:
 	std::vector<Vertex>       vertices;
 	std::vector<Face> faces;
 	std::vector<int> texIndices;
-	std::vector<std::set<int>> verticesPerVertex;
+	std::vector<std::set<int>> adjVV;
 	unsigned int VAO;
 	// render data 
 	unsigned int VBO, EBO;

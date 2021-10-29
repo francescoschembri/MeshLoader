@@ -28,10 +28,10 @@ class Camera
 {
 public:
 	// camera Attributes
-	glm::vec3 Position, sPosition;
+	/*glm::vec3 Position, sPosition;
 	glm::vec3 Front;
 	glm::vec3 Up;
-	glm::vec3 Right;
+	glm::vec3 Right;*/
 	glm::vec3 WorldUp;
 	// euler Angles
 	float Yaw;

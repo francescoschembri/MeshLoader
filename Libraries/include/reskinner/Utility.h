@@ -25,4 +25,4 @@ struct IntersectionInfo {
 
 float magnitude(glm::vec3 v);
 float raySphereIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 sphereCenter, float radius);
-IntersectionInfo rayPlaneIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, Vertex& v1, Vertex& v2, Vertex& v3);
+IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDir, const Vertex& v1, const Vertex& v2, const Vertex& v3);

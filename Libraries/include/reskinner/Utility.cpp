@@ -21,7 +21,7 @@ float raySphereIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 sph
 	return -1.0f;
 }
 
-IntersectionInfo rayPlaneIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, Vertex& v1, Vertex& v2, Vertex& v3)
+IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDir, const Vertex& v1, const Vertex& v2, const Vertex& v3)
 {
 	IntersectionInfo result{};
 	glm::vec3 e12 = glm::normalize(v2.Position - v1.Position);

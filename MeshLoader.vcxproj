@@ -206,6 +206,8 @@
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.fs" />
     <None Include="Shaders\animated_model_loading.vs" />
+    <None Include="Shaders\mouse_shader.fs" />
+    <None Include="Shaders\mouse_shader.vs" />
     <None Include="Shaders\screen_shader.fs" />
   </ItemGroup>
   <ItemGroup>

@@ -273,6 +273,7 @@ void RenderAnimatorInfo(StatusManager& status)
 
 	ImGui::SameLine();
 	if (ImGui::Button(status.pause ? "Play" : "Pause")) {
+		status.activeBrush.reset();
 		status.pause = !status.pause;
 	}
 
@@ -371,6 +372,14 @@ void RenderSculptingPanel(StatusManager& status)
 	}
 	if (ImGui::Button("Brush 3")) {
 		status.activeBrush.emplace(brushesRef.brush3.get());
+	}
+	if (ImGui::Button("Reset Selected Vertex")) {
+		for (Mesh& m : status.animatedModel->meshes) {
+			for (Vertex& v : m.vertices)
+				v.Selected = 0;
+			m.Reload();
+		}
+
 	}
 	ImGui::End();
 }
