@@ -20,7 +20,6 @@ public:
 	std::vector<Vertex>       vertices;
 	std::vector<Face> faces;
 	std::vector<int> texIndices;
-	std::vector<std::set<int>> adjVV;
 	unsigned int VAO;
 	// render data 
 	unsigned int VBO, EBO;
@@ -32,7 +31,7 @@ public:
 	// bake the mesh
 	void Bake(std::vector<glm::mat4>& matrices);
 	// render the mesh
-	void Draw(Shader& shader, bool faces = true, bool lines = false);
+	void Draw(Shader& shader, bool wireframeEnabled = false);
 	// reload opengl data for the mesh
 	void Reload();
 

@@ -13,12 +13,10 @@ public:
 	// the required infos are returned as a vector of indices to use the textures of the texture manager
 	std::vector<int> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string& typeName, std::string& directory);
 	std::vector<int> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const char* typeName, std::string& directory);
+	// loads the texture from a file and return the index in textures of the texture loaded 
+	int LoadTextureFromFile(const char* filename, std::string type = "");
 	// bind the corrisponding textures to the given shader
 	void BindTextures(std::vector<int>& texIndices, Shader& shader);
 	// change the setting of stbi. Default flip = true;
 	void FlipTextures(bool flip);
-private:
-	// loads the texture from a file and return the id of the texture; 
-	// NOTE: id texture =/= index of vector
-	unsigned int TextureFromFile(const char* path, const std::string& directory);
 };

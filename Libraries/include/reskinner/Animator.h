@@ -28,6 +28,5 @@ public:
 
 private:
 	std::vector<glm::mat4> m_FinalBoneMatrices;
-	//std::shared_ptr<Animation> currentAnimation;
 };
 

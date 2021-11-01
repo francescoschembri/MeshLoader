@@ -67,3 +67,42 @@ IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3
 	result.distance = distFollowingRayDirFromRayOrigin;
 	return result;
 }
+
+int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3)
+{
+	int res = v1;
+	float dist = magnitude(point - m.vertices[v1].Position);
+	if (magnitude(point - m.vertices[v2].Position) < dist) {
+		res = v2;
+	}
+	if (magnitude(point - m.vertices[v3].Position)) {
+		res = v3;
+	}
+	return res;
+}
+
+Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3)
+{
+	Line res{};
+	res.v1 = v1;
+	res.v2 = v2;
+	float dist = getPointLineDist(m.vertices[v1].Position, m.vertices[v2].Position, point);
+	if (getPointLineDist(m.vertices[v1].Position, m.vertices[v3].Position, point) < dist)
+	{
+		res.v2 = v3;
+	}
+	if (getPointLineDist(m.vertices[v2].Position, m.vertices[v3].Position, point) < dist)
+	{
+		res.v1 = v3;
+	}
+	return res;
+}
+
+float getPointLineDist(const glm::vec3 l1, const glm::vec3 l2, const glm::vec3 point)
+{
+	glm::vec3 l12 = l2 - l1;
+	glm::vec3 l1p = point - l1;
+	float area = magnitude(glm::cross(l12, l1p));
+	float base = magnitude(l12);
+	return area / base;
+}

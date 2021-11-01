@@ -2,41 +2,17 @@
 
 StatusManager::StatusManager(float screenWidth, float screenHeight)
 	:
+	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2)),
 	camera(glm::vec3(0.0f, 0.0f, 3.0f)),
 	lastFrame(glfwGetTime()),
 	deltaTime(0.0f),
-	mouseLastPos(glm::vec2(screenWidth / 2, screenHeight / 2)),
 	pause(false),
-	wireframe(false),
-	hiddenLine(true)
-{
-	InitStatus();
-}
-
-bool StatusManager::IsRotationLocked() const
-{
-	return status[ROTATE];
-}
-
-bool StatusManager::IsPaused() const
-{
-	return pause;
-}
-
-bool StatusManager::IsBaked() const
-{
-	return status[BAKED_MODEL];
-}
-
-bool StatusManager::DrawLines() const
-{
-	return wireframe;
-}
-
-bool StatusManager::DrawFaces() const
-{
-	return hiddenLine;
-}
+	wireframeEnabled(false),
+	isModelBaked(false),
+	rotating(false),
+	changingMesh(false),
+	keys(0)
+{}
 
 void StatusManager::AddAnimation(const char* path)
 {
@@ -54,21 +30,19 @@ void StatusManager::UpdateDeltaTime()
 void StatusManager::ProcessInput(GLFWwindow* window)
 {
 	// enable/disable wireframe mode
-	if (glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS && !status[WIREFRAME_KEY_PRESSED])
-		wireframe = !wireframe;
-	// enable/disable hidden line (possible only if wireframe enabled)
-	if (glfwGetKey(window, HIDDEN_LINE_KEY) == GLFW_PRESS && !status[HIDDEN_LINE_KEY_PRESSED] && !wireframe)
-		hiddenLine = !hiddenLine;
+	if (glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS && !keys[WIREFRAME_KEY_PRESSED])
+		wireframeEnabled = !wireframeEnabled;
+
 	// pause/unpause animation. If is a baked model there are no bones -> no animation -> always paused
-	if (glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS && !status[PAUSE_KEY_PRESSED]) {
+	if (glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS && !keys[PAUSE_KEY_PRESSED]) {
 		pause = !pause;
 	}
 	// bake the model in the current pose
-	if (glfwGetKey(window, BAKE_MODEL_KEY) == GLFW_PRESS && !status[BAKED_MODEL]) {
+	if (glfwGetKey(window, BAKE_MODEL_KEY) == GLFW_PRESS && !isModelBaked) {
 		BakeModel();
 	}
 	// enable/disable hidden line
-	if (glfwGetKey(window, SWITCH_ANIMATION_KEY) == GLFW_PRESS && !status[SWITCH_ANIMATION_KEY_PRESSED]) {
+	if (glfwGetKey(window, SWITCH_ANIMATION_KEY) == GLFW_PRESS && !keys[SWITCH_ANIMATION_KEY_PRESSED]) {
 		SwitchAnimation();
 	}
 	// reset camera position
@@ -89,35 +63,52 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 
-	// controlla pennello
-	if (activeBrush && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS) {
+	// controlla tweaking
+	/*if (glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS) {
 		changingMesh = true;
 		ChangeMesh();
 	}
 	if (changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_RELEASE) {
 		changingMesh = false;
 		BakeModel();
-	}
+	}*/
 	// keep rotating only if the rotation key is still pressed. 
 	// This way it starts rotating when it is pressed and keeps rotating until is released
-	status[ROTATE] = glfwGetMouseButton(window, ROTATE_KEY) == GLFW_PRESS;
+	rotating = glfwGetMouseButton(window, ROTATE_KEY) == GLFW_PRESS;
+	if (rotating && !keys[ROTATION_KEY_PRESSED])
+	{
+		bool bakupBaked = isModelBaked;
+		BakeModel();
+		auto info = FacePicking(false);
+		if (info.hitPoint) {
+			auto indices = info.face.value().indices;
+			Mesh& hittedMesh = bakedModel->meshes[info.meshIndex];
+			int closestIndex = getClosestVertexIndex(info.hitPoint.value(), hittedMesh, indices[0], indices[1], indices[2]);
+			animatedModel.value().pivot = hittedMesh.vertices[closestIndex].Position;
+		}
+		else {
+			animatedModel.value().pivot = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+		//restore status
+		isModelBaked = bakupBaked;
+		if (!isModelBaked) {
+			bakedModel.reset();
+		}
+	}
 	// reset status of keys released
-	status[SWITCH_ANIMATION_KEY_PRESSED] = glfwGetKey(window, SWITCH_ANIMATION_KEY) == GLFW_PRESS;
-	status[WIREFRAME_KEY_PRESSED] = glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS;
-	status[HIDDEN_LINE_KEY_PRESSED] = glfwGetKey(window, HIDDEN_LINE_KEY) == GLFW_PRESS;
-	status[PAUSE_KEY_PRESSED] = glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS;
+	keys[SWITCH_ANIMATION_KEY_PRESSED] = glfwGetKey(window, SWITCH_ANIMATION_KEY) == GLFW_PRESS;
+	keys[WIREFRAME_KEY_PRESSED] = glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS;
+	keys[PAUSE_KEY_PRESSED] = glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS;
+	keys[ROTATION_KEY_PRESSED] = glfwGetMouseButton(window, ROTATE_KEY) == GLFW_PRESS;
 }
 
 void StatusManager::Update(GLFWwindow* window)
 {
 	UpdateDeltaTime();
 	ProcessInput(window);
-	if (activeBrush && !bakedModel) {
-		BakeModel();
-	}
-	if (!IsPaused()) {
+	if (!pause) {
 		bakedModel.reset();
-		status[BAKED_MODEL] = false;
+		isModelBaked = false;
 		animator.UpdateAnimation(deltaTime);
 	}
 }
@@ -128,7 +119,7 @@ void StatusManager::SwitchAnimation()
 }
 
 void StatusManager::BakeModel() {
-	status[BAKED_MODEL] = true;
+	isModelBaked = true;
 	pause = true;
 	bakedModel.reset();
 	bakedModel.emplace(animatedModel->Bake(animator.GetFinalBoneMatrices()));
@@ -137,43 +128,6 @@ void StatusManager::BakeModel() {
 void StatusManager::ChangeMesh()
 {
 	auto info = FacePicking(false);
-	if (info.hitPoint) {
-		Mesh& aMesh = animatedModel->meshes[info.meshIndex];
-		Mesh& bMesh = bakedModel->meshes[info.meshIndex];
-		std::vector<int> verIndices;
-		std::vector<int> verticesToCheck;
-		std::vector<int> exploredVertices;
-		std::map<int, float> distances;
-		for (int i : info.face->indices) {
-			verticesToCheck.push_back(i);
-			exploredVertices.push_back(i);
-			glm::vec3 verPos = bMesh.vertices[i].Position;
-			distances[i] = magnitude(verPos - info.hitPoint.value());
-		}
-		float maxDist = activeBrush.value()->radius;
-		while (verticesToCheck.size() > 0) {
-			int index = verticesToCheck.back();
-			verticesToCheck.pop_back();
-			if (distances[index] < maxDist)
-			{
-				//std::cout << "dist " << distances[index] << " rad " << radius << "\n";
-				verIndices.push_back(index);
-				std::set<int> closeVertices = aMesh.adjVV[index];
-				for (int i : closeVertices) {
-					auto iter = std::find(exploredVertices.begin(), exploredVertices.end(), i);
-					bool notExplored = iter == exploredVertices.end();
-					float distanceFromCurrentIndex = magnitude(bMesh.vertices[index].Position - bMesh.vertices[i].Position);
-					float myDist = distances[index] + distanceFromCurrentIndex;
-					if (notExplored && myDist < maxDist) {
-						exploredVertices.push_back(i);
-						verticesToCheck.push_back(i);
-						distances[i] = myDist;
-					}
-				}
-			}
-		}
-		activeBrush.value()->ModifyMesh(aMesh, verIndices, distances);
-	}
 }
 
 PickingInfo StatusManager::FacePicking(bool reload)
@@ -184,11 +138,10 @@ PickingInfo StatusManager::FacePicking(bool reload)
 	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
 	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
 
-	glm::mat4 proj = glm::perspective(glm::radians(ZOOM), aspect_ratio, 0.1f, 100.0f);
-	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 model = animatedModel->GetModelMatrix();
+	glm::mat4 proj = glm::perspective(glm::radians(FOV), aspect_ratio, NEAR_PLANE, FAR_PLANE);
+	glm::mat4 modelView = GetModelViewMatrix();
 
-	glm::mat4 toWorld = glm::inverse(proj * view * model);
+	glm::mat4 toWorld = glm::inverse(proj * modelView);
 
 	rayStartPos = toWorld * rayStartPos;
 	rayEndPos = toWorld * rayEndPos;
@@ -199,9 +152,6 @@ PickingInfo StatusManager::FacePicking(bool reload)
 	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
 
 	float minDist = 0.0f;
-
-	if (lastMeshPicked >= 0)
-		animatedModel->meshes[lastMeshPicked].vertices[lastVertexPicked].Selected = 0;
 
 	PickingInfo res{};
 	for (int i = 0; i < animatedModel->meshes.size(); i++)
@@ -226,45 +176,27 @@ PickingInfo StatusManager::FacePicking(bool reload)
 			}
 		}
 	}
-	if (res.face) {
-		if (lastMeshPicked != res.meshIndex && lastMeshPicked >= 0)
-			animatedModel->meshes[lastMeshPicked].Reload();
-		lastMeshPicked = res.meshIndex;
-		lastVertexPicked = res.face->indices[2];
-		//mesh->vertices[face->indices[0]].Selected = 1;
-		//mesh->vertices[face->indices[1]].Selected = 1;
-		//lastMeshPicked->vertices[face->indices[0]].Selected = 1;
-		//lastMeshPicked->vertices[face->indices[1]].Selected = 1;
-		animatedModel->meshes[res.meshIndex].vertices[lastVertexPicked].Selected = 1;
-		if (reload) animatedModel->meshes[res.meshIndex].Reload();
-	}
-	else if (lastMeshPicked >= 0 && reload) {
-		animatedModel->meshes[lastMeshPicked].Reload();
-		lastVertexPicked = -1;
-		lastMeshPicked = -1;
-	}
 
 	return res;
+}
+
+glm::mat4 StatusManager::GetModelViewMatrix()
+{
+	glm::mat4 model = glm::mat4(1.0f);
+	if (animatedModel) {
+		model = animatedModel.value().GetModelMatrix();
+	}
+	return camera.GetViewMatrix() * model;
 }
 
 void StatusManager::LoadModel(std::string& path)
 {
 	animatedModel.reset();
+	bakedModel.reset();
+	pause = isModelBaked = false;
 	animator.animations.clear();
 	animator.currentAnimationIndex = 0;
+	texMan.textures.clear();
 	animatedModel.emplace(Model(path, texMan));
-}
-
-void StatusManager::InitStatus()
-{
-	//init keys status
-	status[WIREFRAME_KEY_PRESSED] = 0;
-	status[HIDDEN_LINE_KEY_PRESSED] = 0;
-	status[PAUSE_KEY_PRESSED] = 0;
-	status[SWITCH_ANIMATION_KEY_PRESSED] = 0;
-	//init status
-	status[WIREFRAME] = 0;
-	status[HIDDEN_LINE] = 1;
-	status[ROTATE] = 0;
-	status[BAKED_MODEL] = 0;
+	animatedModel.value().pivot = glm::vec3(-0.3f, 1.3f, 0.3f);
 }

@@ -15,12 +15,10 @@
 #include <reskinner/StatusManager.h>
 
 #include <iostream>
-#include <bitset>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-float get_window_aspect_ratio(GLFWwindow* window);
 
 StatusManager status;
 
@@ -148,12 +146,10 @@ int main()
 			ourShader.use();
 
 			// model/view/projection transformations
-			glm::mat4 projection = glm::perspective(glm::radians(ZOOM), status.aspect_ratio, 0.1f, 100.0f);
-			glm::mat4 view = status.camera.GetViewMatrix();
-			glm::mat4 model = status.animatedModel->GetModelMatrix();
-			ourShader.setMat4("model", model);
+			glm::mat4 projection = glm::perspective(glm::radians(FOV), status.aspect_ratio, NEAR_PLANE, FAR_PLANE);
+			glm::mat4 modelView = status.GetModelViewMatrix();
+			ourShader.setMat4("modelView", modelView);
 			ourShader.setMat4("projection", projection);
-			ourShader.setMat4("view", view);
 
 			// pass bones matrices to the shader
 			auto transforms = status.animator.GetFinalBoneMatrices();
@@ -161,7 +157,7 @@ int main()
 				ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 			// render the loaded model
-			status.animatedModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
+			status.animatedModel->Draw(ourShader, status.wireframeEnabled);
 			//if (status.bakedModel) {
 			//	//std::cout << "print baked\n";
 			//	status.bakedModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
@@ -200,16 +196,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (status.IsRotationLocked()) {
+	if (status.pause && status.rotating) {
 		float xoffset = xpos - status.mouseLastPos.x;
 		float yoffset = status.mouseLastPos.y - ypos; // reversed since y-coordinates go from bottom to top
-
-		status.camera.ProcessMouseMovement(xoffset, yoffset);
+		status.animatedModel.value().Rotate(xoffset, yoffset);
 	}
 	else {
 		status.mouseLastPos.x = xpos;
 		status.mouseLastPos.y = ypos;
-		if (status.IsBaked())
+		if (status.isModelBaked)
 			status.FacePicking();
 	}
 }
@@ -220,10 +215,3 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	status.camera.ProcessMouseScroll(yoffset);
 }
-
-//float get_window_aspect_ratio(GLFWwindow* window)
-//{
-//	int width, height;
-//	glfwGetWindowSize(window, &width, &height);
-//	return float(width) / (float)height;
-//}

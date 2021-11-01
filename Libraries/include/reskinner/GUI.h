@@ -5,7 +5,6 @@
 #include <imgui/imgui_impl_opengl3.h>
 #include <FileBrowser/ImFileDialog.h>
 #include <reskinner/StatusManager.h>
-#include <reskinner/Brushes.h>
 
 #include <algorithm>
 #include <vector>
@@ -16,13 +15,10 @@ constexpr int ANIMATOR = 2;
 constexpr int ANIMATIONS = 3;
 constexpr int STATUS = 4;
 
-static Brushes brushesRef;
-
 static bool showModel = true;
 static bool showCamera = true;
 static bool showAnimator = true;
 static bool showRenderInfo = true;
-static bool showSculptingPanel = true;
 
 static std::vector<int> panelTex;
 
@@ -45,6 +41,4 @@ void ShowTextureInPanel(int m, int textureIndex, ImTextureID id, int width, int 
 void RenderAnimatorInfo(StatusManager& status);
 void ShowAnimationNInfo(Animator& animator, int n);
 void RenderRenderInfo(StatusManager& status);
-void RenderSculptingPanel(StatusManager& status);
-void DrawBrushInfo(Brush& brush);
 //void RenderScenePanel(StatusManager& stauts);

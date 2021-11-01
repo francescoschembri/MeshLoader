@@ -25,6 +25,9 @@
 #include <reskinner/Face.h>
 #include <reskinner/TextureManager.h>
 
+constexpr float YAW = 0.0f;
+constexpr float PITCH = 0.0f;
+constexpr float ROTATION_SPEED = 0.005f;
 
 class Model
 {
@@ -34,10 +37,11 @@ public:
 	std::string directory;
 	TextureManager& texMan;
 	bool gammaCorrection;
-	float modelPos[3] = { 0.0f, 0.0f, 0.0f };
-	float modelRot[3] = { 0.0f, 0.0f, 0.0f };
-	float modelScale[3] = { 1.0f, 1.0f, 1.0f };
 
+	float yaw;
+	float pitch;
+	float rotationSpeed;
+	glm::vec3 pivot = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// default constructor
 	Model() = default;
@@ -46,14 +50,11 @@ public:
 	// bake the model
 	Model Bake(std::vector<glm::mat4>& matrices);
 	// draws the model, and thus all its meshes
-	void Draw(Shader& shader, bool faces = true, bool lines = false);
+	void Draw(Shader& shader, bool wireframeEnabled = false);
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
 	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
-	// if two vertices have the same position merge the vertices in a unique vertex and change the faces.
-	void JoinVertices();
-
+	void Rotate(float xOffset, float yOffset); 
 	glm::mat4 GetModelMatrix();
-
 private:
 
 	std::map<std::string, BoneInfo> m_BoneInfoMap;

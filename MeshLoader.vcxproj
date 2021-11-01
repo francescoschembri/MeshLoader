@@ -160,8 +160,6 @@
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\Bone.cpp" />
-    <ClCompile Include="src\Brush.cpp" />
-    <ClCompile Include="src\Brushes.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\GUI.cpp" />
@@ -188,8 +186,6 @@
     <ClInclude Include="Libraries\include\reskinner\BoneInfo.h" />
     <ClInclude Include="Libraries\include\reskinner\assimp_glm_helpers.h" />
     <ClInclude Include="Libraries\include\reskinner\Bone.h" />
-    <ClInclude Include="Libraries\include\reskinner\Brush.h" />
-    <ClInclude Include="Libraries\include\reskinner\Brushes.h" />
     <ClInclude Include="Libraries\include\reskinner\Camera.h" />
     <ClInclude Include="Libraries\include\reskinner\Face.h" />
     <ClInclude Include="Libraries\include\reskinner\GUI.h" />

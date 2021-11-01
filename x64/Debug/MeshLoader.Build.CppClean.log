@@ -1,8 +1,10 @@
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\vc142.pdb
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\vc142.idb
+c:\users\franc\desktop\mesh loader\meshloader\x64\debug\statusmanager.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\shader.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\model.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\mesh.obj
+c:\users\franc\desktop\mesh loader\meshloader\x64\debug\main.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\camera.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\bone.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\animator.obj
@@ -18,16 +20,6 @@ c:\users\franc\desktop\mesh loader\meshloader\x64\debug\imgui_demo.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\imgui.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\imfiledialog.obj
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\texturemanager.obj
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\statusmanager.obj
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\main.obj
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\gui.obj
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\glad.obj
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.exe
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.ilk
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.pdb
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.tlog\cl.command.1.tlog
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.tlog\cl.read.1.tlog
 c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.tlog\cl.write.1.tlog
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.tlog\link.command.1.tlog
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.tlog\link.read.1.tlog
-c:\users\franc\desktop\mesh loader\meshloader\x64\debug\meshloader.tlog\link.write.1.tlog

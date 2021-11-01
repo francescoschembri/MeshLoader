@@ -3,39 +3,16 @@
 #include <algorithm>
 
 // constructor, expects a filepath to a 3D model.
-Model::Model(std::string& path, TextureManager& texManager, bool gamma) : gammaCorrection(gamma), texMan(texManager)
+Model::Model(std::string& path, TextureManager& texManager, bool gamma)
+	:
+	gammaCorrection(gamma), 
+	texMan(texManager),
+	yaw(YAW),
+	pitch(PITCH),
+	rotationSpeed(ROTATION_SPEED),
+	pivot(glm::vec3(0.0f, 0.0f, 0.0f))
 {
 	loadModel(path);
-	//JoinVertices();
-}
-
-void Model::JoinVertices() {
-	std::vector<Vertex> mergedVertices;
-	for (Mesh& m : meshes) {
-		std::vector<bool> skip(m.vertices.size(), false);
-		for (int i = 0; i < m.vertices.size(); i++)
-		{
-			std::cout << "Vertex: " << i << "\n";
-			if (skip[i]) continue;
-			for (int j = i+1; j < m.vertices.size(); j++)
-			{
-				if (skip[j]) continue;
-				skip[j] = m.vertices[i].Position == m.vertices[j].Position 
-					&& m.vertices[i].TexCoords == m.vertices[j].TexCoords;
-				if (skip[j]) {
-					std::cout << "Vertex 1: " << i << ", Vertex 2: "<< j<<"\n";
-					for (Face& f : m.faces) {
-						for (int k = 0; k < 3; k++)
-						{
-							if (f.indices[k] == j) f.indices[k] = i;
-						}
-					}
-				}
-			}
-			mergedVertices.push_back(m.vertices[i]);
-		}
-		m.vertices = mergedVertices;
-	}
 }
 
 Model Model::Bake(std::vector<glm::mat4>& matrices)
@@ -47,13 +24,13 @@ Model Model::Bake(std::vector<glm::mat4>& matrices)
 }
 
 // draws the model, and thus all its meshes
-void Model::Draw(Shader& shader, bool faces, bool lines)
+void Model::Draw(Shader& shader, bool wireframeEnabled)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		// Bind textures for the mesh
 		texMan.BindTextures(meshes[i].texIndices, shader);
 		// Draw the mesh
-		meshes[i].Draw(shader, faces, lines);
+		meshes[i].Draw(shader, wireframeEnabled);
 	}
 }
 
@@ -75,12 +52,27 @@ const BoneInfo& Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
 
 std::map<std::string, BoneInfo> Model::GetBoneInfoMap() { return m_BoneInfoMap; }
 
+void Model::Rotate(float xOffset, float yOffset)
+{
+	xOffset *= rotationSpeed;
+	yOffset *= rotationSpeed;
+
+	yaw += xOffset;
+	pitch += yOffset;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	pitch = std::clamp(pitch, -89.9f, 89.9f);
+	yaw = std::clamp(yaw, -200.0f, 200.0f);
+}
+
 glm::mat4 Model::GetModelMatrix()
 {
-	glm::mat4 matrix = glm::toMat4(glm::quat(glm::radians(glm::make_vec3(modelRot))));
-	matrix = glm::translate(matrix, glm::make_vec3(modelPos));
-	matrix = glm::scale(matrix, glm::make_vec3(modelScale));
-	return matrix;
+	glm::mat4 model = glm::mat4(1.0f);
+	//model = glm::translate(model, -pivot);
+	model = glm::rotate(model, glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+	//model = glm::translate(model, pivot);
+	return model;
 }
 
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -92,7 +84,7 @@ void Model::loadModel(std::string& path)
 	importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
 	const aiScene* scene = importer.ReadFile(path,
 		aiProcess_Triangulate |
-		aiProcess_CalcTangentSpace | 
+		aiProcess_CalcTangentSpace |
 		aiProcess_GenSmoothNormals |
 		aiProcess_ImproveCacheLocality |
 		aiProcess_RemoveRedundantMaterials |
@@ -107,7 +99,7 @@ void Model::loadModel(std::string& path)
 		aiProcess_OptimizeGraph |
 		aiProcess_FixInfacingNormals |
 		aiProcess_JoinIdenticalVertices
-		);
+	);
 	// check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
@@ -144,7 +136,7 @@ void Model::SetVertexBoneDataToDefault(Vertex& vertex)
 {
 	vertex.BoneData.NumBones = 0;
 	vertex.BoneData.BoneIDs[0] = -1;
-	vertex.BoneData.Weights[0] = 0.0f;	
+	vertex.BoneData.Weights[0] = 0.0f;
 }
 
 

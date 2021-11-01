@@ -13,7 +13,6 @@ void RenderGUI(StatusManager& status)
 	RenderCameraInfo(status);
 	RenderAnimatorInfo(status);
 	RenderRenderInfo(status);
-	RenderSculptingPanel(status);
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -125,7 +124,6 @@ void RenderMenuBar(StatusManager& status)
 	if (ImGui::BeginMainMenuBar())
 	{
 		RenderFileMenuSection(status);
-		//RenderEditMenuSection(status);
 		RenderWindowMenuSection(status);
 		ImGui::EndMainMenuBar();
 	}
@@ -171,52 +169,15 @@ void RenderWindowMenuSection(StatusManager& status)
 		if (ImGui::MenuItem("Show Render Info")) {
 			showRenderInfo = true;
 		}
-		if (ImGui::MenuItem("Open Sculpting Panel")) {
-			showSculptingPanel = true;
-		}
 		ImGui::EndMenu();
 	}
 }
 
 void RenderModelInfo(StatusManager& status)
 {
-	static bool uniform = true;
-	static float scale = 1.0f;
-	if (!(showModel && status.animatedModel))
+	if (!showModel)
 		return;
 	ImGui::Begin("Model", &showModel);
-	ImGui::InputFloat3("Position", status.animatedModel->modelPos);
-	ImGui::InputFloat3("Rotation", status.animatedModel->modelRot);
-	status.animatedModel->modelRot[0] = std::clamp(status.animatedModel->modelRot[0], 0.0f, 360.0f);
-	status.animatedModel->modelRot[1] = std::clamp(status.animatedModel->modelRot[1], 0.0f, 360.0f);
-	status.animatedModel->modelRot[2] = std::clamp(status.animatedModel->modelRot[2], 0.0f, 360.0f);
-	ImGui::Checkbox("Uniform Scale (RESETS SCALE TO 1.0)", &uniform);
-	if (uniform)
-	{
-		ImGui::InputFloat("Scale", &scale);
-		status.animatedModel->modelScale[0] = scale;
-		status.animatedModel->modelScale[1] = scale;
-		status.animatedModel->modelScale[2] = scale;
-	}
-	else {
-		ImGui::InputFloat3("Scale", status.animatedModel->modelScale);
-	}
-	if (ImGui::Button("Reset Model Settings")) {
-		scale = 1.0f;
-		uniform = true;
-		//Reset position
-		status.animatedModel->modelPos[0] = 0.0f;
-		status.animatedModel->modelPos[1] = 0.0f;
-		status.animatedModel->modelPos[2] = 0.0f;
-		//Reset rotation
-		status.animatedModel->modelRot[0] = 0.0f;
-		status.animatedModel->modelRot[1] = 0.0f;
-		status.animatedModel->modelRot[2] = 0.0f;
-		//Reset scaling
-		status.animatedModel->modelScale[0] = scale;
-		status.animatedModel->modelScale[1] = scale;
-		status.animatedModel->modelScale[2] = scale;
-	}
 	if (ImGui::Button("Bake")) {
 		status.BakeModel();
 	}
@@ -273,7 +234,6 @@ void RenderAnimatorInfo(StatusManager& status)
 
 	ImGui::SameLine();
 	if (ImGui::Button(status.pause ? "Play" : "Pause")) {
-		status.activeBrush.reset();
 		status.pause = !status.pause;
 	}
 
@@ -343,56 +303,15 @@ void RenderRenderInfo(StatusManager& status)
 {
 	if (!showRenderInfo)
 		return;
-	ImGui::Begin("Render Info");
-	ImGui::Checkbox("Wireframe", &status.wireframe);
-	if (status.wireframe) {
-		ImGui::Checkbox("Hidden line mode", &status.hiddenLine);
-	}
+	ImGui::Begin("Render Info", &showRenderInfo);
+	ImGui::Checkbox("Show Wireframe", &status.wireframeEnabled);
 	std::string fps = "Current FPS: " + std::to_string(1.0f / status.deltaTime);
 	ImGui::Text(fps.c_str());
 	std::string aspectRatioWin = "Window aspect ratio: " + std::to_string(status.aspect_ratio);
 	ImGui::Text(aspectRatioWin.c_str());
+	std::string winSize = "Window size: " + std::to_string(status.width) + ", " + std::to_string(status.height);
+	ImGui::Text(winSize.c_str());
 	ImGui::End();
-}
-
-void RenderSculptingPanel(StatusManager& status)
-{
-	if (!showSculptingPanel) {
-		status.activeBrush.reset();
-		return;
-	}
-	ImGui::Begin("Sculpting", &showSculptingPanel);
-	if (status.activeBrush)
-		DrawBrushInfo(**status.activeBrush);
-	if (ImGui::Button("Brush 1")) {
-		status.activeBrush.emplace(brushesRef.brush1.get());
-	}
-	if (ImGui::Button("Brush 2")) {
-		status.activeBrush.emplace(brushesRef.brush2.get());
-	}
-	if (ImGui::Button("Brush 3")) {
-		status.activeBrush.emplace(brushesRef.brush3.get());
-	}
-	if (ImGui::Button("Reset Selected Vertex")) {
-		for (Mesh& m : status.animatedModel->meshes) {
-			for (Vertex& v : m.vertices)
-				v.Selected = 0;
-			m.Reload();
-		}
-
-	}
-	ImGui::End();
-}
-
-void DrawBrushInfo(Brush& brush) {
-	ImGui::Text(brush.name.c_str());
-	ImGui::InputFloat("Radius", &brush.radius);
-	if (brush.radius <= 0.0f) brush.radius = 0.1f;
-	ImGui::SliderFloat("Smoothness", &brush.smoothness, 0.001f, 1.0f);
-	ImGui::InputFloat("Impact", &brush.impact);
-	if (brush.impact <= 0.0f) brush.impact = 0.001f;
-	ImGui::Checkbox("Reverse normals", &brush.reverseNormal);
-	ImGui::Separator();
 }
 
 void RenderMeshesInfo(StatusManager& status)
@@ -420,25 +339,27 @@ void RenderCameraInfo(StatusManager& status)
 		return;
 	ImGui::Begin("Camera", &showCamera);
 	// Camera Position
-	float* cameraPos = glm::value_ptr(status.camera.Position);
+	float* cameraPos = glm::value_ptr(status.camera.position);
 	ImGui::InputFloat3("Position", cameraPos);
-	status.camera.Position = glm::make_vec3(cameraPos);
+	status.camera.position = glm::make_vec3(cameraPos);
 	// Camera Rotation
-	float yaw = status.camera.Yaw;
-	ImGui::InputFloat("X rotation", &yaw, -360.0f, 360.0f);
-	yaw = std::clamp(yaw, -360.0f, 360.0f);
-	float pitch = status.camera.Pitch;
-	ImGui::InputFloat("Y rotation", &pitch, -89.0f, 89.0f);
-	pitch = std::clamp(pitch, -90.0f, 90.0f);
-	if (status.camera.Yaw - yaw || status.camera.Pitch - pitch) {
-		status.camera.Yaw = yaw;
-		status.camera.Pitch = pitch;
-		status.camera.updateCameraVectors();
-	}
+	ImGui::BeginDisabled();
+	ImGui::InputFloat3("Pivot", glm::value_ptr(status.animatedModel.value().pivot));
+	ImGui::EndDisabled();
+	float yaw = status.animatedModel.value().yaw;
+	ImGui::InputFloat("X rotation", &yaw);
+	yaw =  yaw-(int)yaw+ ((int) yaw % 360);
+	float pitch = status.animatedModel.value().pitch;
+	ImGui::InputFloat("Y rotation", &pitch);
+	float yOffset = status.animatedModel.value().yaw - yaw;
+	float xOffset = status.animatedModel.value().pitch - pitch;
+	/*if (yOffset || xOffset) {
+		status.animatedModel.value().Rotate(xOffset, yOffset);
+	}*/
 	// Camera Settings
-	ImGui::InputFloat("Movement speed", &status.camera.MovementSpeed);
-	ImGui::InputFloat("Rotation speed", &status.camera.MouseSensitivity);
-	ImGui::InputFloat("Zoom speed", &status.camera.ZoomSpeed);
+	ImGui::InputFloat("Movement speed", &status.camera.movementSpeed);
+	ImGui::InputFloat("Rotation speed", &status.animatedModel.value().rotationSpeed);
+	ImGui::InputFloat("Zoom speed", &status.camera.zoomSpeed);
 	if (ImGui::Button("Reset Camera Settings"))
 		status.camera.Reset();
 	ImGui::End();

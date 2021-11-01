@@ -1,29 +1,14 @@
 #include <reskinner/Mesh.h>
 
 // constructor
-Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<int>&& texIndices) 
-	: 
-	loaded(true), 
-	vertices(std::move(vertices)), 
-	faces(std::move(faces)), 
-	texIndices(std::move(texIndices)),
-	adjVV(std::vector<std::set<int>>())
+Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<int>&& texIndices)
+	:
+	loaded(true),
+	vertices(std::move(vertices)),
+	faces(std::move(faces)),
+	texIndices(std::move(texIndices))
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
-	//TODO ottimizzare
-	/*for (int i = 0; i < this->vertices.size(); i++) {
-		std::set<int> adj;
-		for (int j = 0; j < this->faces.size(); j++) {
-			for (int index = 0; index < 3; index++) {
-				if (this->faces[j].indices[index] == i) {
-					adj.insert(this->faces[j].indices[(index + 1) % 3]);
-					adj.insert(this->faces[j].indices[(index + 2) % 3]);
-					break;
-				}
-			}
-		}
-		adjVV.push_back(adj);
-	}*/
 	setupMesh();
 }
 
@@ -65,10 +50,10 @@ void Mesh::Bake(std::vector<glm::mat4>& matrices)
 }
 
 // render the mesh
-void Mesh::Draw(Shader& shader, bool faces, bool lines)
+void Mesh::Draw(Shader& shader, bool wireframeEnabled)
 {
 	//draw lines
-	if (lines) {
+	if (wireframeEnabled) {
 		shader.use();
 		shader.wireframeMode(true);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -77,15 +62,14 @@ void Mesh::Draw(Shader& shader, bool faces, bool lines)
 	}
 
 	// draw mesh aka faces
-	if (faces || !lines) { //we want to draw at least something
-		shader.use();
-		shader.wireframeMode(false);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.0, 1.0);
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, this->faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
-	}
+	shader.use();
+	shader.wireframeMode(false);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1.0, 1.0);
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, this->faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
+
 
 	// always good practice to set everything back to defaults once configured.
 	glBindVertexArray(0);
@@ -146,8 +130,6 @@ void Mesh::setupMesh()
 	// num bones
 	glEnableVertexAttribArray(7);
 	glVertexAttribIPointer(7, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.NumBones));
-	glEnableVertexAttribArray(8);
-	glVertexAttribIPointer(8, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, Selected));
 	glBindVertexArray(0);
 }
 
