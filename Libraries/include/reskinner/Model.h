@@ -25,9 +25,6 @@
 #include <reskinner/Face.h>
 #include <reskinner/TextureManager.h>
 
-constexpr float YAW = 0.0f;
-constexpr float PITCH = 0.0f;
-constexpr float ROTATION_SPEED = 0.005f;
 
 class Model
 {
@@ -37,11 +34,6 @@ public:
 	std::string directory;
 	TextureManager& texMan;
 	bool gammaCorrection;
-
-	float yaw;
-	float pitch;
-	float rotationSpeed;
-	glm::vec3 pivot = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// default constructor
 	Model() = default;
@@ -53,8 +45,6 @@ public:
 	void Draw(Shader& shader, bool wireframeEnabled = false);
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
 	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
-	void Rotate(float xOffset, float yOffset); 
-	glm::mat4 GetModelMatrix();
 private:
 
 	std::map<std::string, BoneInfo> m_BoneInfoMap;

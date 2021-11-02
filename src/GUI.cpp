@@ -344,21 +344,21 @@ void RenderCameraInfo(StatusManager& status)
 	status.camera.position = glm::make_vec3(cameraPos);
 	// Camera Rotation
 	ImGui::BeginDisabled();
-	ImGui::InputFloat3("Pivot", glm::value_ptr(status.animatedModel.value().pivot));
+	ImGui::InputFloat3("Pivot", glm::value_ptr(status.camera.pivot));
 	ImGui::EndDisabled();
-	float yaw = status.animatedModel.value().yaw;
+	float yaw = status.camera.yaw;
 	ImGui::InputFloat("X rotation", &yaw);
 	yaw =  yaw-(int)yaw+ ((int) yaw % 360);
-	float pitch = status.animatedModel.value().pitch;
+	float pitch = status.camera.pitch;
 	ImGui::InputFloat("Y rotation", &pitch);
-	float yOffset = status.animatedModel.value().yaw - yaw;
-	float xOffset = status.animatedModel.value().pitch - pitch;
+	float yOffset = status.camera.yaw - yaw;
+	float xOffset = status.camera.pitch - pitch;
 	/*if (yOffset || xOffset) {
 		status.animatedModel.value().Rotate(xOffset, yOffset);
 	}*/
 	// Camera Settings
 	ImGui::InputFloat("Movement speed", &status.camera.movementSpeed);
-	ImGui::InputFloat("Rotation speed", &status.animatedModel.value().rotationSpeed);
+	ImGui::InputFloat("Rotation speed", &status.camera.rotationSpeed);
 	ImGui::InputFloat("Zoom speed", &status.camera.zoomSpeed);
 	if (ImGui::Button("Reset Camera Settings"))
 		status.camera.Reset();

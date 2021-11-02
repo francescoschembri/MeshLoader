@@ -6,11 +6,7 @@
 Model::Model(std::string& path, TextureManager& texManager, bool gamma)
 	:
 	gammaCorrection(gamma), 
-	texMan(texManager),
-	yaw(YAW),
-	pitch(PITCH),
-	rotationSpeed(ROTATION_SPEED),
-	pivot(glm::vec3(0.0f, 0.0f, 0.0f))
+	texMan(texManager)
 {
 	loadModel(path);
 }
@@ -51,29 +47,6 @@ const BoneInfo& Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
 }
 
 std::map<std::string, BoneInfo> Model::GetBoneInfoMap() { return m_BoneInfoMap; }
-
-void Model::Rotate(float xOffset, float yOffset)
-{
-	xOffset *= rotationSpeed;
-	yOffset *= rotationSpeed;
-
-	yaw += xOffset;
-	pitch += yOffset;
-
-	// make sure that when pitch is out of bounds, screen doesn't get flipped
-	pitch = std::clamp(pitch, -89.9f, 89.9f);
-	yaw = std::clamp(yaw, -200.0f, 200.0f);
-}
-
-glm::mat4 Model::GetModelMatrix()
-{
-	glm::mat4 model = glm::mat4(1.0f);
-	//model = glm::translate(model, -pivot);
-	model = glm::rotate(model, glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-	//model = glm::translate(model, pivot);
-	return model;
-}
 
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 void Model::loadModel(std::string& path)

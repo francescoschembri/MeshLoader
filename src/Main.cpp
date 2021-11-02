@@ -199,7 +199,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	if (status.pause && status.rotating) {
 		float xoffset = xpos - status.mouseLastPos.x;
 		float yoffset = status.mouseLastPos.y - ypos; // reversed since y-coordinates go from bottom to top
-		status.animatedModel.value().Rotate(xoffset, yoffset);
+		status.camera.ProcessMouseMovement(xoffset, yoffset);
 	}
 	else {
 		status.mouseLastPos.x = xpos;

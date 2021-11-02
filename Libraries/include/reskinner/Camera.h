@@ -18,10 +18,13 @@ enum Camera_Movement {
 
 // Default camera values
 constexpr float MOVEMENT_SPEED = 2.5f;
+constexpr float ROTATION_SPEED = 0.005f;
 constexpr float ZOOM_SPEED = 0.2f;
 constexpr float FOV = 45.0f;
 constexpr float NEAR_PLANE = 0.1f;
 constexpr float FAR_PLANE = 100.0f;
+constexpr float YAW = 0.0f;
+constexpr float PITCH = 0.0f;
 
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -30,12 +33,18 @@ class Camera
 public:
 	// camera Attributes
 	glm::vec3 position, sPosition;
-	const glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
-	const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	const glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+	const glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::mat4 viewCamera;
+	float yaw;
+	float pitch;
+	glm::vec3 pivot = glm::vec3(0.0f, 0.0f, 0.0f);
 	// camera options
 	float movementSpeed;
 	float zoomSpeed;
+	float rotationSpeed;
 
 	// constructor with vectors
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
@@ -46,9 +55,17 @@ public:
 	// processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 	void ProcessMouseScroll(float yoffset);
 
+	// processes mouse movement rotating the camera around the pivot
+	void ProcessMouseMovement(float xoffset, float yoffset);
+
 	// resets camera to starting values
 	void Reset();
 
-	// calculate view camera
+	// get view matrix
 	glm::mat4 GetViewMatrix();
+
+	// update view matrix
+	void UpdateViewMatrix();
+	// update camera versors
+	void UpdateCameraDirs();
 };

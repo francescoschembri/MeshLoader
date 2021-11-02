@@ -84,10 +84,10 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 			auto indices = info.face.value().indices;
 			Mesh& hittedMesh = bakedModel->meshes[info.meshIndex];
 			int closestIndex = getClosestVertexIndex(info.hitPoint.value(), hittedMesh, indices[0], indices[1], indices[2]);
-			animatedModel.value().pivot = hittedMesh.vertices[closestIndex].Position;
+			camera.pivot = hittedMesh.vertices[closestIndex].Position;
 		}
 		else {
-			animatedModel.value().pivot = glm::vec3(0.0f, 0.0f, 0.0f);
+			camera.pivot = glm::vec3(0.0f, 0.0f, 0.0f);
 		}
 		//restore status
 		isModelBaked = bakupBaked;
@@ -182,11 +182,7 @@ PickingInfo StatusManager::FacePicking(bool reload)
 
 glm::mat4 StatusManager::GetModelViewMatrix()
 {
-	glm::mat4 model = glm::mat4(1.0f);
-	if (animatedModel) {
-		model = animatedModel.value().GetModelMatrix();
-	}
-	return camera.GetViewMatrix() * model;
+	return camera.GetViewMatrix() ;
 }
 
 void StatusManager::LoadModel(std::string& path)
@@ -198,5 +194,5 @@ void StatusManager::LoadModel(std::string& path)
 	animator.currentAnimationIndex = 0;
 	texMan.textures.clear();
 	animatedModel.emplace(Model(path, texMan));
-	animatedModel.value().pivot = glm::vec3(-0.3f, 1.3f, 0.3f);
+	camera.pivot = glm::vec3(-0.3f, 1.3f, 0.3f);
 }
