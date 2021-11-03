@@ -1,8 +1,4 @@
-﻿  Model.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(181,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
-  StatusManager.cpp
+﻿  StatusManager.cpp
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(7,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(41,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-  Generazione del codice in corso...
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(41): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

@@ -284,9 +284,20 @@ void StatusManager::DrawModel() {
 }
 
 void StatusManager::DrawHoveredFace() {
+	hoverShader.use();
 	glBindVertexArray(HVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(hoveredVertices), &hoveredVertices);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0.0, 0.0);
+
+	// model/view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(FOV), aspect_ratio, NEAR_PLANE, FAR_PLANE);
+	glm::mat4 modelView = GetModelViewMatrix();
+	hoverShader.setMat4("modelView", modelView);
+	hoverShader.setMat4("projection", projection);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
