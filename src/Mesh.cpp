@@ -53,7 +53,7 @@ void Mesh::Bake(std::vector<glm::mat4>& matrices)
 void Mesh::Draw()
 {
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, this->faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
 
 	// always good practice to set everything back to defaults once configured.
 	glBindVertexArray(0);

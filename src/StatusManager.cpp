@@ -13,18 +13,27 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	changingMesh(false),
 	HVAO(0),
 	HVBO(0),
+	SVAO(0),
+	SVBO(0),
 	keys(0),
 	modelShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs")),
 	wireframeShader(Shader("./Shaders/wireframe.vs", "./Shaders/wireframe.fs")),
 	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
-	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs"))
+	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs")),
+	selectedShader(Shader("./Shaders/selected.vs", "./Shaders/selected.fs"))
 {
+	// setup selected vertices vao
+	glGenVertexArrays(1, &SVAO);
+	glGenBuffers(1, &SVBO);
+
+	// setup hovered vertices vao
 	glGenVertexArrays(1, &HVAO);
 	glGenBuffers(1, &HVBO);
 	glBindVertexArray(HVAO);
 	// load data into vertex buffers
 	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
 	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+	// we only care about the position
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glBindVertexArray(0);
@@ -196,6 +205,45 @@ PickingInfo StatusManager::FacePicking()
 	return res;
 }
 
+void StatusManager::DrawSelectedVertices()
+{
+	glBindVertexArray(SVAO);
+	// load data into vertex buffers
+	glBindBuffer(GL_ARRAY_BUFFER, SVBO);
+	glBufferData(GL_ARRAY_BUFFER, selectedVertices.size() * sizeof(Vertex), &selectedVertices[0], GL_STREAM_DRAW);
+	// position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
+	// bone ids
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(1, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.BoneIDs[0]));
+	// weights
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.Weights[0]));
+	// num bones
+	glEnableVertexAttribArray(3);
+	glVertexAttribIPointer(3, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.NumBones));
+	selectedShader.use();
+	// model/view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(FOV), aspect_ratio, NEAR_PLANE, FAR_PLANE);
+	glm::mat4 modelView = GetModelViewMatrix();
+	selectedShader.setMat4("modelView", modelView);
+	selectedShader.setMat4("projection", projection);
+	// pass bones matrices to the shader
+	auto transforms = animator.GetFinalBoneMatrices();
+	for (int i = 0; i < transforms.size(); ++i)
+		selectedShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0.0, 0.0);
+
+	glPointSize(5.0f);
+	glDrawArrays(GL_POINTS, 0, selectedVertices.size());
+	//unbind
+	glBindVertexArray(0);
+}
+
 glm::mat4 StatusManager::GetModelViewMatrix()
 {
 	return camera.GetViewMatrix();
@@ -227,23 +275,24 @@ void StatusManager::Render()
 	// check if something is hovered and shoudl be drawn
 	if (rotating || !bakedModel)
 		return;
-	auto hoveredInfo = FacePicking();
-	if (!hoveredInfo.hitPoint)
+	// render selected vertices
+	auto info = FacePicking();
+	if (!info.hitPoint)
 		return;
-	//Mesh& m = bakedModel.value().meshes[hoveredInfo.meshIndex];
-	//Face& f = hoveredInfo.face.value();
-	//int index = getClosestVertexIndex(hoveredInfo.hitPoint.value(), m, f);
-	////vertex 2
-	//hoveredVertices[3] = m.vertices[f.indices[1]].Position.x;
-	//hoveredVertices[4] = m.vertices[f.indices[1]].Position.y;
-	//hoveredVertices[5] = m.vertices[f.indices[1]].Position.z;
-	////DrawHoveredLine();
-	////vertex 3
-	//hoveredVertices[6] = m.vertices[f.indices[2]].Position.x;
-	//hoveredVertices[7] = m.vertices[f.indices[2]].Position.y;
-	//hoveredVertices[8] = m.vertices[f.indices[2]].Position.z;
-	//DrawHoveredFace();
-	DrawHoveredLine(hoveredInfo);
+	Mesh& m = bakedModel.value().meshes[info.meshIndex];
+	Face& f = info.face.value();
+	Vertex& v1 = animatedModel->meshes[info.meshIndex].vertices[f.indices[0]];
+	Vertex& v2 = animatedModel->meshes[info.meshIndex].vertices[f.indices[1]];
+	Vertex& v3 = animatedModel->meshes[info.meshIndex].vertices[f.indices[2]];
+	selectedVertices.push_back(v1);
+	selectedVertices.push_back(v2);
+	selectedVertices.push_back(v3);
+	DrawSelectedVertices();
+	selectedVertices.pop_back();
+	selectedVertices.pop_back();
+	selectedVertices.pop_back();
+	DrawHoveredLine(info);
+	DrawHoveredPoint(info);
 }
 
 void StatusManager::DrawWireframe() {
@@ -336,7 +385,7 @@ void StatusManager::DrawHoveredPoint(PickingInfo info) {
 	hoverShader.setMat4("modelView", modelView);
 	hoverShader.setMat4("projection", projection);
 
-	glPointSize(10.0f);
+	glPointSize(8.0f);
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	//unbind

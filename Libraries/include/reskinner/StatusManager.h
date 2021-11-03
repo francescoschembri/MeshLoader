@@ -58,10 +58,12 @@ public:
 	float height = 800.0f;
 	std::vector<Vertex> selectedVertices;
 	GLuint HVBO, HVAO;
+	GLuint SVBO, SVAO;
 	Shader modelShader;
 	Shader wireframeShader;
 	Shader mouseShader;
 	Shader hoverShader;
+	Shader selectedShader;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 
@@ -80,6 +82,7 @@ public:
 	void Render();
 	void DrawWireframe();
 	void DrawModel();
+	void DrawSelectedVertices();
 	void DrawHoveredFace(PickingInfo info);
 	void DrawHoveredLine(PickingInfo info);
 	void DrawHoveredPoint(PickingInfo info);

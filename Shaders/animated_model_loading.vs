@@ -11,10 +11,7 @@ layout(location = 7) in int numBones;
 	
 uniform mat4 projection;
 uniform mat4 modelView;
-
-const int MAX_BONES = 100;
-const int MAX_BONE_INFLUENCE = 4;
-uniform mat4 finalBonesMatrices[MAX_BONES];
+uniform mat4 finalBonesMatrices[100];
 	
 out vec2 TexCoords;
 flat out vec3 Norm;
