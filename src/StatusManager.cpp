@@ -24,7 +24,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	glBindVertexArray(HVAO);
 	// load data into vertex buffers
 	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(hoveredVertices), NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glBindVertexArray(0);
@@ -230,21 +230,20 @@ void StatusManager::Render()
 	auto hoveredInfo = FacePicking();
 	if (!hoveredInfo.hitPoint)
 		return;
-	Mesh& m = bakedModel.value().meshes[hoveredInfo.meshIndex];
-	Face& f = hoveredInfo.face.value();
-	//vertex 1
-	hoveredVertices[0] = m.vertices[f.indices[0]].Position.x;
-	hoveredVertices[1] = m.vertices[f.indices[0]].Position.y;
-	hoveredVertices[2] = m.vertices[f.indices[0]].Position.z;
-	//vertex 2
-	hoveredVertices[3] = m.vertices[f.indices[1]].Position.x;
-	hoveredVertices[4] = m.vertices[f.indices[1]].Position.y;
-	hoveredVertices[5] = m.vertices[f.indices[1]].Position.z;
-	//vertex 3
-	hoveredVertices[6] = m.vertices[f.indices[2]].Position.x;
-	hoveredVertices[7] = m.vertices[f.indices[2]].Position.y;
-	hoveredVertices[8] = m.vertices[f.indices[2]].Position.z;
-	DrawHoveredFace();
+	//Mesh& m = bakedModel.value().meshes[hoveredInfo.meshIndex];
+	//Face& f = hoveredInfo.face.value();
+	//int index = getClosestVertexIndex(hoveredInfo.hitPoint.value(), m, f);
+	////vertex 2
+	//hoveredVertices[3] = m.vertices[f.indices[1]].Position.x;
+	//hoveredVertices[4] = m.vertices[f.indices[1]].Position.y;
+	//hoveredVertices[5] = m.vertices[f.indices[1]].Position.z;
+	////DrawHoveredLine();
+	////vertex 3
+	//hoveredVertices[6] = m.vertices[f.indices[2]].Position.x;
+	//hoveredVertices[7] = m.vertices[f.indices[2]].Position.y;
+	//hoveredVertices[8] = m.vertices[f.indices[2]].Position.z;
+	//DrawHoveredFace();
+	DrawHoveredLine(hoveredInfo);
 }
 
 void StatusManager::DrawWireframe() {
@@ -283,7 +282,16 @@ void StatusManager::DrawModel() {
 	animatedModel.value().Draw(modelShader);
 }
 
-void StatusManager::DrawHoveredFace() {
+void StatusManager::DrawHoveredFace(PickingInfo info) {
+	Mesh& m = bakedModel.value().meshes[info.meshIndex];
+	Face& f = info.face.value();
+
+	//vertex
+	float hoveredVertices[9] = {
+		m.vertices[f.indices[0]].Position.x, m.vertices[f.indices[0]].Position.y, m.vertices[f.indices[0]].Position.z,
+		m.vertices[f.indices[1]].Position.x, m.vertices[f.indices[1]].Position.y, m.vertices[f.indices[1]].Position.z,
+		m.vertices[f.indices[2]].Position.x, m.vertices[f.indices[2]].Position.y, m.vertices[f.indices[2]].Position.z,
+	};
 	hoverShader.use();
 	glBindVertexArray(HVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
@@ -300,6 +308,72 @@ void StatusManager::DrawHoveredFace() {
 	hoverShader.setMat4("projection", projection);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	//unbind
+	glBindVertexArray(0);
+}
+
+void StatusManager::DrawHoveredPoint(PickingInfo info) {
+	Mesh& m = bakedModel.value().meshes[info.meshIndex];
+	Face& f = info.face.value();
+	int index = getClosestVertexIndex(info.hitPoint.value(), m, f);
+
+	//vertex
+	float hoveredVertices[3] = { m.vertices[index].Position.x, m.vertices[index].Position.y, m.vertices[index].Position.z };
+
+	hoverShader.use();
+	glBindVertexArray(HVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 3 * sizeof(float), &hoveredVertices);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0.0, 0.0);
+
+	// model/view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(FOV), aspect_ratio, NEAR_PLANE, FAR_PLANE);
+	glm::mat4 modelView = GetModelViewMatrix();
+	hoverShader.setMat4("modelView", modelView);
+	hoverShader.setMat4("projection", projection);
+
+	glPointSize(10.0f);
+	glDrawArrays(GL_POINTS, 0, 1);
+
+	//unbind
+	glBindVertexArray(0);
+}
+
+
+
+void StatusManager::DrawHoveredLine(PickingInfo info) {
+	Mesh& m = bakedModel.value().meshes[info.meshIndex];
+	Face& f = info.face.value();
+	auto line = getClosestLineIndex(info.hitPoint.value(), m, f);
+
+	//vertex
+	float hoveredVertices[6] = {
+		m.vertices[line.v1].Position.x, m.vertices[line.v1].Position.y, m.vertices[line.v1].Position.z,
+		m.vertices[line.v2].Position.x, m.vertices[line.v2].Position.y, m.vertices[line.v2].Position.z
+	};
+
+	hoverShader.use();
+	glBindVertexArray(HVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(hoveredVertices), &hoveredVertices);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0.0, 0.0);
+
+	// model/view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(FOV), aspect_ratio, NEAR_PLANE, FAR_PLANE);
+	glm::mat4 modelView = GetModelViewMatrix();
+	hoverShader.setMat4("modelView", modelView);
+	hoverShader.setMat4("projection", projection);
+
+	glLineWidth(3.0f);
+	glDrawArrays(GL_LINES, 0, 2);
+	glLineWidth(1.0f);
 
 	//unbind
 	glBindVertexArray(0);

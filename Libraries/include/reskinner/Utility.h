@@ -35,5 +35,6 @@ IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3
 int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3);
 int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, Face& f);
 Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3);
+Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, Face& f);
 float getPointLineDist(const glm::vec3 l1, const glm::vec3 l2, const glm::vec3 point);
 //void tweaking(Vertex& v, Camera& cam, float xoffset, float yoffset);

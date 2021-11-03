@@ -58,7 +58,6 @@ public:
 	float height = 800.0f;
 	std::vector<Vertex> selectedVertices;
 	GLuint HVBO, HVAO;
-	float hoveredVertices[9] = { 0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f };
 	Shader modelShader;
 	Shader wireframeShader;
 	Shader mouseShader;
@@ -81,7 +80,7 @@ public:
 	void Render();
 	void DrawWireframe();
 	void DrawModel();
-	void DrawHoveredFace();
-	void DrawHoveredLine();
-	void DrawHoveredPoint();
+	void DrawHoveredFace(PickingInfo info);
+	void DrawHoveredLine(PickingInfo info);
+	void DrawHoveredPoint(PickingInfo info);
 };

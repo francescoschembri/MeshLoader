@@ -81,13 +81,13 @@
     <ClCompile Include="src\TextureManager.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="Libraries\include\reskinner\Utility.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="src\GUI.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="src\StatusManager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

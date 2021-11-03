@@ -86,6 +86,11 @@ int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, Face& f)
 	return getClosestVertexIndex(point, m, f.indices[0], f.indices[1], f.indices[2]);
 }
 
+Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, Face& f)
+{
+	return getClosestLineIndex(point, m, f.indices[0], f.indices[1], f.indices[2]);
+}
+
 Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3)
 {
 	Line res{};
