@@ -79,7 +79,7 @@ int TextureManager::LoadTextureFromFile(const char* path, std::string type)
 	return textures.size() - 1;
 }
 
-void TextureManager::BindTextures(std::vector<int>& texIndices, Shader& shader)
+void TextureManager::BindTextures(std::vector<int>& texIndices, const Shader& shader)
 {
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;

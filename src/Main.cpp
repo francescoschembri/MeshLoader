@@ -20,8 +20,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-StatusManager status;
-
 constexpr int SCREEN_INITIAL_WIDTH = 800;
 constexpr int SCREEN_INITIAL_HEIGHT = 800;
 
@@ -58,21 +56,18 @@ int main()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
 	}
 
-	SetupImGui(window);
+	StatusManager status;
+	glfwSetWindowUserPointer(window, (void*)&status);
 
+	SetupImGui(window);
 
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 
-	// build and compile shaders
-	// -------------------------
-	Shader ourShader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs");
-	Shader mouseShader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs");
 	// load models
 	// -----------
 	std::string modelPath = std::string("./Animations/Capoeira/Capoeira.dae");
@@ -126,9 +121,6 @@ int main()
 			status.Update(window);
 			animTime = status.animator.m_CurrentTime;
 		}
-		// render
-		glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//mouseShader.use();
 		//mouseShader.setVec2("mousePos", status.mouseLastPos);
@@ -141,31 +133,7 @@ int main()
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glBindVertexArray(0);
 
-		if (status.animatedModel) {
-			// don't forget to enable shader before setting uniforms
-			ourShader.use();
-
-			// model/view/projection transformations
-			glm::mat4 projection = glm::perspective(glm::radians(FOV), status.aspect_ratio, NEAR_PLANE, FAR_PLANE);
-			glm::mat4 modelView = status.GetModelViewMatrix();
-			ourShader.setMat4("modelView", modelView);
-			ourShader.setMat4("projection", projection);
-
-			// pass bones matrices to the shader
-			auto transforms = status.animator.GetFinalBoneMatrices();
-			for (int i = 0; i < transforms.size(); ++i)
-				ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-
-			// render the loaded model
-			status.animatedModel->Draw(ourShader, status.wireframeEnabled);
-			//if (status.bakedModel) {
-			//	//std::cout << "print baked\n";
-			//	status.bakedModel->Draw(ourShader, status.DrawFaces(), status.DrawLines());
-			//}
-
-		}
-
-
+		status.Render();
 		RenderGUI(status);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -187,25 +155,27 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
-	status.aspect_ratio = (float)width / (float)height;
-	status.width = float(width);
-	status.height = float(height);
+	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
+	status->aspect_ratio = (float)width / (float)height;
+	status->width = float(width);
+	status->height = float(height);
 }
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (status.pause && status.rotating) {
-		float xoffset = xpos - status.mouseLastPos.x;
-		float yoffset = status.mouseLastPos.y - ypos; // reversed since y-coordinates go from bottom to top
-		status.camera.ProcessMouseMovement(xoffset, yoffset);
+	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
+	if (status->pause && status->rotating) {
+		float xoffset = xpos - status->mouseLastPos.x;
+		float yoffset = status->mouseLastPos.y - ypos; // reversed since y-coordinates go from bottom to top
+		status->camera.ProcessMouseMovement(xoffset, yoffset);
 	}
 	else {
-		status.mouseLastPos.x = xpos;
-		status.mouseLastPos.y = ypos;
-		if (status.isModelBaked)
-			status.FacePicking();
+		status->mouseLastPos.x = xpos;
+		status->mouseLastPos.y = ypos;
+		if (status->isModelBaked)
+			status->FacePicking();
 	}
 }
 
@@ -213,5 +183,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	status.camera.ProcessMouseScroll(yoffset);
+	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
+	status->camera.ProcessMouseScroll(yoffset);
 }

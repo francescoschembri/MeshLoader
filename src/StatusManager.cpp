@@ -11,8 +11,24 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	isModelBaked(false),
 	rotating(false),
 	changingMesh(false),
-	keys(0)
-{}
+	HVAO(0),
+	HVBO(0),
+	keys(0),
+	modelShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs")),
+	wireframeShader(Shader("./Shaders/wireframe.vs", "./Shaders/wireframe.fs")),
+	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
+	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs"))
+{
+	glGenVertexArrays(1, &HVAO);
+	glGenBuffers(1, &HVBO);
+	glBindVertexArray(HVAO);
+	// load data into vertex buffers
+	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(hoveredVertices), NULL, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindVertexArray(0);
+}
 
 void StatusManager::AddAnimation(const char* path)
 {
@@ -79,7 +95,7 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 	{
 		bool bakupBaked = isModelBaked;
 		BakeModel();
-		auto info = FacePicking(false);
+		auto info = FacePicking();
 		if (info.hitPoint) {
 			auto indices = info.face.value().indices;
 			Mesh& hittedMesh = bakedModel->meshes[info.meshIndex];
@@ -127,10 +143,10 @@ void StatusManager::BakeModel() {
 
 void StatusManager::ChangeMesh()
 {
-	auto info = FacePicking(false);
+	auto info = FacePicking();
 }
 
-PickingInfo StatusManager::FacePicking(bool reload)
+PickingInfo StatusManager::FacePicking()
 {
 	glm::vec2 mousePos = (mouseLastPos / glm::vec2(width, height)) * 2.0f - 1.0f;
 	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
@@ -182,7 +198,7 @@ PickingInfo StatusManager::FacePicking(bool reload)
 
 glm::mat4 StatusManager::GetModelViewMatrix()
 {
-	return camera.GetViewMatrix() ;
+	return camera.GetViewMatrix();
 }
 
 void StatusManager::LoadModel(std::string& path)
@@ -195,4 +211,85 @@ void StatusManager::LoadModel(std::string& path)
 	texMan.textures.clear();
 	animatedModel.emplace(Model(path, texMan));
 	camera.pivot = glm::vec3(-0.3f, 1.3f, 0.3f);
+}
+
+void StatusManager::Render()
+{
+	glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (!animatedModel)
+		return;
+	// draw wireframe if enabled
+	if (wireframeEnabled)
+		DrawWireframe();
+	// draw model
+	DrawModel();
+	// check if something is hovered and shoudl be drawn
+	if (rotating || !bakedModel)
+		return;
+	auto hoveredInfo = FacePicking();
+	if (!hoveredInfo.hitPoint)
+		return;
+	Mesh& m = bakedModel.value().meshes[hoveredInfo.meshIndex];
+	Face& f = hoveredInfo.face.value();
+	//vertex 1
+	hoveredVertices[0] = m.vertices[f.indices[0]].Position.x;
+	hoveredVertices[1] = m.vertices[f.indices[0]].Position.y;
+	hoveredVertices[2] = m.vertices[f.indices[0]].Position.z;
+	//vertex 2
+	hoveredVertices[3] = m.vertices[f.indices[1]].Position.x;
+	hoveredVertices[4] = m.vertices[f.indices[1]].Position.y;
+	hoveredVertices[5] = m.vertices[f.indices[1]].Position.z;
+	//vertex 3
+	hoveredVertices[6] = m.vertices[f.indices[2]].Position.x;
+	hoveredVertices[7] = m.vertices[f.indices[2]].Position.y;
+	hoveredVertices[8] = m.vertices[f.indices[2]].Position.z;
+	DrawHoveredFace();
+}
+
+void StatusManager::DrawWireframe() {
+	wireframeShader.use();
+	// model/view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(FOV), aspect_ratio, NEAR_PLANE, FAR_PLANE);
+	glm::mat4 modelView = GetModelViewMatrix();
+	wireframeShader.setMat4("modelView", modelView);
+	wireframeShader.setMat4("projection", projection);
+
+	// pass bones matrices to the shader
+	auto transforms = animator.GetFinalBoneMatrices();
+	for (int i = 0; i < transforms.size(); ++i)
+		wireframeShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	animatedModel.value().Draw(wireframeShader);
+}
+
+void StatusManager::DrawModel() {
+	modelShader.use();
+	// model/view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(FOV), aspect_ratio, NEAR_PLANE, FAR_PLANE);
+	glm::mat4 modelView = GetModelViewMatrix();
+	modelShader.setMat4("modelView", modelView);
+	modelShader.setMat4("projection", projection);
+
+	// pass bones matrices to the shader
+	auto transforms = animator.GetFinalBoneMatrices();
+	for (int i = 0; i < transforms.size(); ++i)
+		modelShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1.0, 1.0);
+	animatedModel.value().Draw(modelShader);
+}
+
+void StatusManager::DrawHoveredFace() {
+	glBindVertexArray(HVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(hoveredVertices), &hoveredVertices);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	//unbind
+	glBindVertexArray(0);
 }

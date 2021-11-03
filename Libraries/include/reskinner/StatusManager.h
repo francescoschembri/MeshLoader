@@ -9,6 +9,7 @@
 #include <reskinner/Animator.h>
 #include <reskinner/TextureManager.h>
 #include <reskinner/Utility.h>
+#include <reskinner/Shader.h>
 
 #include <GLFW/glfw3.h>
 
@@ -55,10 +56,16 @@ public:
 	float aspect_ratio = 1.0f;
 	float width = 800.0f;
 	float height = 800.0f;
+	std::vector<Vertex> selectedVertices;
+	GLuint HVBO, HVAO;
+	float hoveredVertices[9] = { 0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f };
+	Shader modelShader;
+	Shader wireframeShader;
+	Shader mouseShader;
+	Shader hoverShader;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 
-	bool DrawWireframe() const;
 	void AddAnimation(const char* path);
 	void Update(GLFWwindow* window);
 	void UpdateDeltaTime();
@@ -67,6 +74,14 @@ public:
 	void SwitchAnimation();
 	void ChangeMesh();
 	void LoadModel(std::string& path);
-	PickingInfo FacePicking(bool reload = true);
+	PickingInfo FacePicking();
 	glm::mat4 GetModelViewMatrix();
+
+	// rendering functions
+	void Render();
+	void DrawWireframe();
+	void DrawModel();
+	void DrawHoveredFace();
+	void DrawHoveredLine();
+	void DrawHoveredPoint();
 };

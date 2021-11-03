@@ -50,26 +50,10 @@ void Mesh::Bake(std::vector<glm::mat4>& matrices)
 }
 
 // render the mesh
-void Mesh::Draw(Shader& shader, bool wireframeEnabled)
+void Mesh::Draw()
 {
-	//draw lines
-	if (wireframeEnabled) {
-		shader.use();
-		shader.wireframeMode(true);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, this->faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
-	}
-
-	// draw mesh aka faces
-	shader.use();
-	shader.wireframeMode(false);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(1.0, 1.0);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, this->faces.size() * sizeof(Face), GL_UNSIGNED_INT, 0);
-
 
 	// always good practice to set everything back to defaults once configured.
 	glBindVertexArray(0);

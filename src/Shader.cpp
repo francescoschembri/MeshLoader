@@ -83,7 +83,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
 }
 // activate the shader
 // ------------------------------------------------------------------------
-void Shader::use()
+void Shader::use() const
 {
 	glUseProgram(ID);
 }
@@ -175,8 +175,4 @@ void Shader::checkCompileErrors(GLuint shader, std::string type)
 			std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
 		}
 	}
-}
-
-void Shader::wireframeMode(bool mode) {
-	setBool("wireframe", mode);
 }

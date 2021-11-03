@@ -20,13 +20,13 @@ Model Model::Bake(std::vector<glm::mat4>& matrices)
 }
 
 // draws the model, and thus all its meshes
-void Model::Draw(Shader& shader, bool wireframeEnabled)
+void Model::Draw(const Shader& shader)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		// Bind textures for the mesh
 		texMan.BindTextures(meshes[i].texIndices, shader);
 		// Draw the mesh
-		meshes[i].Draw(shader, wireframeEnabled);
+		meshes[i].Draw();
 	}
 }
 

@@ -202,9 +202,15 @@
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.fs" />
     <None Include="Shaders\animated_model_loading.vs" />
+    <None Include="Shaders\hover.fs" />
+    <None Include="Shaders\hover.vs" />
     <None Include="Shaders\mouse_shader.fs" />
     <None Include="Shaders\mouse_shader.vs" />
     <None Include="Shaders\screen_shader.fs" />
+    <None Include="Shaders\selected.fs" />
+    <None Include="Shaders\selected.vs" />
+    <None Include="Shaders\wireframe.fs" />
+    <None Include="Shaders\wireframe.vs" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\screen_shader.vs" />

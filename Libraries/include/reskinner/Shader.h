@@ -18,7 +18,7 @@ public:
 	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 	// activate the shader
 	// ------------------------------------------------------------------------
-	void use();
+	void use() const;
 	// destroy the shader
 	// ------------------------------------------------------------------------
 	~Shader();
@@ -44,9 +44,6 @@ public:
 	void setMat3(const std::string& name, const glm::mat3& mat) const;
 	// ------------------------------------------------------------------------
 	void setMat4(const std::string& name, const glm::mat4& mat) const;
-	// ------------------------------------------------------------------------
-	// enable wireframe mode, hidden line.
-	void wireframeMode(bool mode);
 
 private:
 	// utility function for checking shader compilation/linking errors.

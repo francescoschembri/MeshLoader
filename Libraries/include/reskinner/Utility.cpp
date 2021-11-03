@@ -106,3 +106,8 @@ float getPointLineDist(const glm::vec3 l1, const glm::vec3 l2, const glm::vec3 p
 	float base = magnitude(l12);
 	return area / base;
 }
+
+//void tweaking(Vertex& v, Camera& cam, float xoffset, float yoffset)
+//{
+//	v.Position += cam.right * xoffset + cam.up * yoffset;
+//}

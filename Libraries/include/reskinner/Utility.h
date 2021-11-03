@@ -4,6 +4,7 @@
 
 #include <optional>
 #include <reskinner/Mesh.h>
+#include <reskinner/Camera.h>
 
 //struct PickingInfo {
 //	std::optional<Vertex> closestVertex;
@@ -34,3 +35,4 @@ IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3
 int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3);
 Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3);
 float getPointLineDist(const glm::vec3 l1, const glm::vec3 l2, const glm::vec3 point);
+//void tweaking(Vertex& v, Camera& cam, float xoffset, float yoffset);

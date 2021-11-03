@@ -16,7 +16,7 @@ public:
 	// loads the texture from a file and return the index in textures of the texture loaded 
 	int LoadTextureFromFile(const char* filename, std::string type = "");
 	// bind the corrisponding textures to the given shader
-	void BindTextures(std::vector<int>& texIndices, Shader& shader);
+	void BindTextures(std::vector<int>& texIndices, const Shader& shader);
 	// change the setting of stbi. Default flip = true;
 	void FlipTextures(bool flip);
 };

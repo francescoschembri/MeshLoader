@@ -42,7 +42,7 @@ public:
 	// bake the model
 	Model Bake(std::vector<glm::mat4>& matrices);
 	// draws the model, and thus all its meshes
-	void Draw(Shader& shader, bool wireframeEnabled = false);
+	void Draw(const Shader& shader);
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
 	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
 private:

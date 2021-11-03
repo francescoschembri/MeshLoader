@@ -31,7 +31,7 @@ public:
 	// bake the mesh
 	void Bake(std::vector<glm::mat4>& matrices);
 	// render the mesh
-	void Draw(Shader& shader, bool wireframeEnabled = false);
+	void Draw();
 	// reload opengl data for the mesh
 	void Reload();
 

@@ -190,6 +190,24 @@
     <None Include="Shaders\mouse_shader.fs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
+    <None Include="Shaders\wireframe.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\wireframe.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\hover.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\hover.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\selected.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\selected.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\screen_shader.vs">
