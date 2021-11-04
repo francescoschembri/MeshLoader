@@ -88,15 +88,25 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 
-	// controlla tweaking
-	/*if (glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS) {
-		changingMesh = true;
-		ChangeMesh();
+	if (bakedModel && glfwGetMouseButton(window, SELECT_KEY) == GLFW_PRESS && !keys[SELECT_KEY_PRESSED]) {
+		//check for multiple selection
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
+			selectedVertices.clear();
+		auto info = FacePicking();
+		if (info.hitPoint) {
+			Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
+			Face& f = info.face.value();
+			Mesh& aMesh = animatedModel.value().meshes[info.meshIndex];
+			Vertex& v = aMesh.vertices[getClosestVertexIndex(info.hitPoint.value(), bMesh, f)];
+			
+			//avoid duplicates and allow removing selected vertices
+			auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), v);
+			if (iter == selectedVertices.end())
+				selectedVertices.push_back(v);
+			else
+				selectedVertices.erase(iter);
+		}
 	}
-	if (changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_RELEASE) {
-		changingMesh = false;
-		BakeModel();
-	}*/
 	// keep rotating only if the rotation key is still pressed. 
 	// This way it starts rotating when it is pressed and keeps rotating until is released
 	rotating = glfwGetMouseButton(window, ROTATE_KEY) == GLFW_PRESS;
@@ -125,6 +135,7 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 	keys[WIREFRAME_KEY_PRESSED] = glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS;
 	keys[PAUSE_KEY_PRESSED] = glfwGetKey(window, PAUSE_KEY) == GLFW_PRESS;
 	keys[ROTATION_KEY_PRESSED] = glfwGetMouseButton(window, ROTATE_KEY) == GLFW_PRESS;
+	keys[SELECT_KEY_PRESSED] = glfwGetMouseButton(window, SELECT_KEY) == GLFW_PRESS;
 }
 
 void StatusManager::Update(GLFWwindow* window)
@@ -207,6 +218,7 @@ PickingInfo StatusManager::FacePicking()
 
 void StatusManager::DrawSelectedVertices()
 {
+	if (selectedVertices.size() == 0) return;
 	glBindVertexArray(SVAO);
 	// load data into vertex buffers
 	glBindBuffer(GL_ARRAY_BUFFER, SVBO);
@@ -276,21 +288,10 @@ void StatusManager::Render()
 	if (rotating || !bakedModel)
 		return;
 	// render selected vertices
+	DrawSelectedVertices();
 	auto info = FacePicking();
 	if (!info.hitPoint)
 		return;
-	Mesh& m = bakedModel.value().meshes[info.meshIndex];
-	Face& f = info.face.value();
-	Vertex& v1 = animatedModel->meshes[info.meshIndex].vertices[f.indices[0]];
-	Vertex& v2 = animatedModel->meshes[info.meshIndex].vertices[f.indices[1]];
-	Vertex& v3 = animatedModel->meshes[info.meshIndex].vertices[f.indices[2]];
-	selectedVertices.push_back(v1);
-	selectedVertices.push_back(v2);
-	selectedVertices.push_back(v3);
-	DrawSelectedVertices();
-	selectedVertices.pop_back();
-	selectedVertices.pop_back();
-	selectedVertices.pop_back();
 	DrawHoveredLine(info);
 	DrawHoveredPoint(info);
 }

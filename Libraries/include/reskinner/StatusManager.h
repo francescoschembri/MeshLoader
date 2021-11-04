@@ -29,6 +29,7 @@ constexpr int CAMERA_RIGHT_KEY = GLFW_KEY_RIGHT;
 constexpr int BAKE_MODEL_KEY = GLFW_KEY_B;
 constexpr int PAUSE_KEY = GLFW_KEY_P;
 constexpr int CHANGE_MESH_KEY = GLFW_MOUSE_BUTTON_LEFT;
+constexpr int SELECT_KEY = GLFW_MOUSE_BUTTON_LEFT;
 constexpr int SWITCH_ANIMATION_KEY = GLFW_KEY_S;
 // keys status (indices in the bitset)
 constexpr int WIREFRAME_KEY_PRESSED = 0;
