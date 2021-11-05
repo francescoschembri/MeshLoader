@@ -33,10 +33,9 @@ void Change::Undo() {
 	}
 }
 
-void Change::Modify(glm::vec3 addoffest)
+void Change::Modify(glm::vec3 newoffset)
 {
-	glm::vec3 newoffset = offset + addoffest;
-	offset = addoffest;
+	offset = newoffset - offset;
 	Apply();
 	offset = newoffset;
 }

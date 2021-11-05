@@ -90,6 +90,9 @@
     <ClCompile Include="src\Utility.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Change.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\reskinner\Animation.h">
@@ -171,6 +174,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\include\reskinner\Utility.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\include\reskinner\Change.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

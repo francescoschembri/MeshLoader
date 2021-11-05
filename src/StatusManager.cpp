@@ -88,25 +88,53 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 
-	if (bakedModel && glfwGetMouseButton(window, SELECT_KEY) == GLFW_PRESS && !keys[SELECT_KEY_PRESSED]) {
+	//tweaking
+	//if (changingMesh) {
+	//	glm::vec2 displacement = mouseLastPos - startChangingPos;
+	//	glm::vec3 offset = displacement.x * camera.right - displacement.y * camera.up;
+	//	Change& c = changes[changes.size() - 1];
+	//	c.Modify(offset * CHANGE_VELOCITY);
+	//}
+	if (!changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
+	{
+		changingMesh = true;
+		startChangingPos = mouseLastPos;
+		changes.push_back(Change(animatedModel.value(), selectedVerticesIndices, glm::vec3(0.0f, 0.0f, 0.0f)));
+	}
+	else if (changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_RELEASE) {
+		changingMesh = false;
+		BakeModel();
+	}
+
+	//selection
+	if (bakedModel && !changingMesh && glfwGetMouseButton(window, SELECT_KEY) == GLFW_PRESS && !keys[SELECT_KEY_PRESSED]) {
 		//check for multiple selection
-		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
 			selectedVertices.clear();
+			selectedVerticesIndices.clear();
+		}
 		auto info = FacePicking();
 		if (info.hitPoint) {
 			Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
 			Face& f = info.face.value();
 			Mesh& aMesh = animatedModel.value().meshes[info.meshIndex];
-			Vertex& v = aMesh.vertices[getClosestVertexIndex(info.hitPoint.value(), bMesh, f)];
-			
+			int vertexIndex = getClosestVertexIndex(info.hitPoint.value(), bMesh, f);
+			Vertex& v = aMesh.vertices[vertexIndex];
+
 			//avoid duplicates and allow removing selected vertices
 			auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), v);
-			if (iter == selectedVertices.end())
+			int pos = iter - selectedVertices.begin();
+			if (iter == selectedVertices.end()) {
 				selectedVertices.push_back(v);
-			else
-				selectedVertices.erase(iter);
+				selectedVerticesIndices.push_back(std::pair<int, int>(info.meshIndex, vertexIndex));
+			}
+			else {
+				selectedVertices.erase(selectedVertices.begin() + pos);
+				selectedVerticesIndices.erase(selectedVerticesIndices.begin() + pos);
+			}
 		}
 	}
+
 	// keep rotating only if the rotation key is still pressed. 
 	// This way it starts rotating when it is pressed and keeps rotating until is released
 	rotating = glfwGetMouseButton(window, ROTATE_KEY) == GLFW_PRESS;

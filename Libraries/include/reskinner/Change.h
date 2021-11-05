@@ -13,7 +13,7 @@ public:
 	Change(Model& m, std::vector<std::pair<int, int>>& changedVertices, glm::vec3 offset, bool apply = true);
 	void Apply();
 	void Undo();
-	void Modify(glm::vec3 addoffest);
+	void Modify(glm::vec3 newoffset);
 private:
 	Model m;
 	std::vector<std::pair<int, int>> changedVertices;

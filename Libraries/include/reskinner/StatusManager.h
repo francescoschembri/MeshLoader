@@ -2,6 +2,7 @@
 
 #include <bitset>
 #include <optional>
+#include <tuple>
 #include <utility>
 
 #include <glm/glm.hpp>
@@ -10,6 +11,7 @@
 #include <reskinner/TextureManager.h>
 #include <reskinner/Utility.h>
 #include <reskinner/Shader.h>
+#include <reskinner/Change.h>
 
 #include <GLFW/glfw3.h>
 
@@ -38,6 +40,8 @@ constexpr int SWITCH_ANIMATION_KEY_PRESSED = 2;
 constexpr int SELECT_KEY_PRESSED = 3;
 constexpr int ROTATION_KEY_PRESSED = 4;
 
+constexpr float CHANGE_VELOCITY = 0.1f;
+
 class StatusManager
 {
 public:
@@ -58,6 +62,9 @@ public:
 	float width = 800.0f;
 	float height = 800.0f;
 	std::vector<Vertex> selectedVertices;
+	std::vector<std::pair<int, int>> selectedVerticesIndices;
+	std::vector<Change> changes;
+	glm::vec2 startChangingPos = glm::vec2(0.0, 0.0);
 	GLuint HVBO, HVAO;
 	GLuint SVBO, SVAO;
 	Shader modelShader;
