@@ -46,6 +46,13 @@ const BoneInfo& Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
 
 }
 
+void Model::Reload()
+{
+	for (Mesh& m : meshes) {
+		m.Reload();
+	}
+}
+
 std::map<std::string, BoneInfo> Model::GetBoneInfoMap() { return m_BoneInfoMap; }
 
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.

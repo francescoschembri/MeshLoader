@@ -45,6 +45,7 @@ public:
 	void Draw(const Shader& shader);
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
 	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
+	void Reload();
 private:
 
 	std::map<std::string, BoneInfo> m_BoneInfoMap;
