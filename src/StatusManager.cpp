@@ -89,21 +89,27 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 	}
 
 	//tweaking
-	//if (changingMesh) {
-	//	glm::vec2 displacement = mouseLastPos - startChangingPos;
-	//	glm::vec3 offset = displacement.x * camera.right - displacement.y * camera.up;
-	//	Change& c = changes[changes.size() - 1];
-	//	c.Modify(offset * CHANGE_VELOCITY);
-	//}
 	if (!changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
 	{
 		changingMesh = true;
 		startChangingPos = mouseLastPos;
-		changes.push_back(Change(animatedModel.value(), selectedVerticesIndices, glm::vec3(0.0f, 0.0f, 0.0f)));
+		changes.push_back(Change(selectedVerticesPointers, glm::vec3(0.0f, 0.0f, 0.0f)));
 	}
 	else if (changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_RELEASE) {
 		changingMesh = false;
 		BakeModel();
+	}
+	if (changingMesh) {
+		glm::vec2 displacement = mouseLastPos - startChangingPos;
+		glm::vec3 offset = displacement.x * camera.right - displacement.y * camera.up;
+		Change& c = changes[changes.size() - 1];
+		c.Modify(offset * CHANGE_VELOCITY);
+		selectedVertices.clear();
+		for (Vertex* v : selectedVerticesPointers) {
+			selectedVertices.push_back(*v);
+		}
+		animatedModel.value().Reload();
+
 	}
 
 	//selection
@@ -111,7 +117,7 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 		//check for multiple selection
 		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
 			selectedVertices.clear();
-			selectedVerticesIndices.clear();
+			selectedVerticesPointers.clear();
 		}
 		auto info = FacePicking();
 		if (info.hitPoint) {
@@ -119,18 +125,18 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 			Face& f = info.face.value();
 			Mesh& aMesh = animatedModel.value().meshes[info.meshIndex];
 			int vertexIndex = getClosestVertexIndex(info.hitPoint.value(), bMesh, f);
-			Vertex& v = aMesh.vertices[vertexIndex];
+			Vertex* v = &aMesh.vertices[vertexIndex];
 
 			//avoid duplicates and allow removing selected vertices
-			auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), v);
-			int pos = iter - selectedVertices.begin();
+			auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v);
+			auto iterP = std::find(selectedVerticesPointers.begin(), selectedVerticesPointers.end(), v);
 			if (iter == selectedVertices.end()) {
-				selectedVertices.push_back(v);
-				selectedVerticesIndices.push_back(std::pair<int, int>(info.meshIndex, vertexIndex));
+				selectedVertices.push_back(*v);
+				selectedVerticesPointers.push_back(v);
 			}
 			else {
-				selectedVertices.erase(selectedVertices.begin() + pos);
-				selectedVerticesIndices.erase(selectedVerticesIndices.begin() + pos);
+				selectedVertices.erase(iter);
+				selectedVerticesPointers.erase(iterP);
 			}
 		}
 	}

@@ -1,20 +1,17 @@
 #pragma once
 
 #include <vector>
-#include <set>
-#include <iostream>
 
-#include <reskinner/Model.h>
+#include <reskinner/Vertex.h>
 
 class Change {
 public:
 	glm::vec3 offset;
 
-	Change(Model& m, std::vector<std::pair<int, int>>& changedVertices, glm::vec3 offset, bool apply = true);
+	Change(std::vector<Vertex*>& changedVertices, glm::vec3 offset, bool apply = true);
 	void Apply();
 	void Undo();
 	void Modify(glm::vec3 newoffset);
 private:
-	Model m;
-	std::vector<std::pair<int, int>> changedVertices;
+	std::vector<Vertex*> changedVertices;
 };

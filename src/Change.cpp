@@ -1,8 +1,7 @@
 #include <reskinner/Change.h>
 
-Change::Change(Model& m, std::vector<std::pair<int, int>>& changedVertices, glm::vec3 offset, bool apply) 
+Change::Change(std::vector<Vertex*>& changedVertices, glm::vec3 offset, bool apply) 
 	:
-	m(m),
 	changedVertices(changedVertices), 
 	offset(offset)
 {
@@ -10,26 +9,14 @@ Change::Change(Model& m, std::vector<std::pair<int, int>>& changedVertices, glm:
 }
 
 void Change::Apply() {
-	std::set<int> modifiedMesh;
-	for (auto p : changedVertices) {
-		Vertex& v = m.meshes[p.first].vertices[p.second];
-		v.Position += offset;
-		modifiedMesh.insert(p.first);
-	}
-	for (int index : modifiedMesh) {
-		m.meshes[index].Reload();
+	for (Vertex* v : changedVertices) {
+		v->Position += offset;
 	}
 }
 
 void Change::Undo() {
-	std::set<int> modifiedMesh;
-	for (auto p : changedVertices) {
-		Vertex& v = m.meshes[p.first].vertices[p.second];
-		v.Position -= offset;
-		modifiedMesh.insert(p.first);
-	}
-	for (int index : modifiedMesh) {
-		m.meshes[index].Reload();
+	for (Vertex* v : changedVertices) {
+		v->Position -= offset;
 	}
 }
 

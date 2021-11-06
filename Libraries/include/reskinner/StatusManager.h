@@ -4,6 +4,7 @@
 #include <optional>
 #include <tuple>
 #include <utility>
+#include <algorithm>
 
 #include <glm/glm.hpp>
 #include <reskinner/Camera.h>
@@ -40,7 +41,7 @@ constexpr int SWITCH_ANIMATION_KEY_PRESSED = 2;
 constexpr int SELECT_KEY_PRESSED = 3;
 constexpr int ROTATION_KEY_PRESSED = 4;
 
-constexpr float CHANGE_VELOCITY = 0.1f;
+constexpr float CHANGE_VELOCITY = 0.2f;
 
 class StatusManager
 {
@@ -62,7 +63,8 @@ public:
 	float width = 800.0f;
 	float height = 800.0f;
 	std::vector<Vertex> selectedVertices;
-	std::vector<std::pair<int, int>> selectedVerticesIndices;
+	std::vector<Vertex*> selectedVerticesPointers;
+	//std::vector<std::pair<int, int>> selectedVerticesIndices;
 	std::vector<Change> changes;
 	glm::vec2 startChangingPos = glm::vec2(0.0, 0.0);
 	GLuint HVBO, HVAO;
