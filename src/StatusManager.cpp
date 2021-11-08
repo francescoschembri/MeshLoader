@@ -94,6 +94,7 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 		changingMesh = true;
 		startChangingPos = mouseLastPos;
 		changes.push_back(Change(selectedVerticesPointers, glm::vec3(0.0f, 0.0f, 0.0f)));
+		changeIndex++;
 	}
 	else if (changingMesh && glfwGetMouseButton(window, CHANGE_MESH_KEY) == GLFW_RELEASE) {
 		changingMesh = false;
@@ -164,6 +165,22 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 			bakedModel.reset();
 		}
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS && !keys[UNDO_KEY_PRESSED]) {
+		keys[UNDO_KEY_PRESSED].flip();
+		Undo();
+	}
+	else {
+		keys[UNDO_KEY_PRESSED] = false;
+	}
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && !keys[REDO_KEY_PRESSED]) {
+		keys[REDO_KEY_PRESSED] = true;
+		Redo();
+	}
+	else {
+		keys[REDO_KEY_PRESSED] = false;
+	}
+
 	// reset status of keys released
 	keys[SWITCH_ANIMATION_KEY_PRESSED] = glfwGetKey(window, SWITCH_ANIMATION_KEY) == GLFW_PRESS;
 	keys[WIREFRAME_KEY_PRESSED] = glfwGetKey(window, WIREFRAME_KEY) == GLFW_PRESS;
@@ -293,6 +310,24 @@ void StatusManager::DrawSelectedVertices()
 glm::mat4 StatusManager::GetModelViewMatrix()
 {
 	return camera.GetViewMatrix();
+}
+
+void StatusManager::Undo()
+{
+	if (changeIndex < changes.size()) {
+		changes[changeIndex--].Undo();
+		animatedModel.value().Reload();
+	}
+}
+
+void StatusManager::Redo()
+{
+
+	int size = changes.size() - 1;
+	if (changeIndex < size) {
+		changes[++changeIndex].Apply();
+		animatedModel.value().Reload();
+	}
 }
 
 void StatusManager::LoadModel(std::string& path)

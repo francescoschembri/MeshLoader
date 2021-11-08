@@ -40,6 +40,9 @@ constexpr int PAUSE_KEY_PRESSED = 1;
 constexpr int SWITCH_ANIMATION_KEY_PRESSED = 2;
 constexpr int SELECT_KEY_PRESSED = 3;
 constexpr int ROTATION_KEY_PRESSED = 4;
+constexpr int UNDO_KEY_PRESSED = 5;
+constexpr int REDO_KEY_PRESSED = 6;
+
 
 constexpr float CHANGE_VELOCITY = 0.2f;
 
@@ -58,7 +61,7 @@ public:
 	bool isModelBaked;
 	bool rotating;
 	bool changingMesh;
-	std::bitset<5> keys;
+	std::bitset<7> keys;
 	float aspect_ratio = 1.0f;
 	float width = 800.0f;
 	float height = 800.0f;
@@ -66,6 +69,7 @@ public:
 	std::vector<Vertex*> selectedVerticesPointers;
 	//std::vector<std::pair<int, int>> selectedVerticesIndices;
 	std::vector<Change> changes;
+	int changeIndex = -1;
 	glm::vec2 startChangingPos = glm::vec2(0.0, 0.0);
 	GLuint HVBO, HVAO;
 	GLuint SVBO, SVAO;
@@ -87,6 +91,8 @@ public:
 	void LoadModel(std::string& path);
 	PickingInfo FacePicking();
 	glm::mat4 GetModelViewMatrix();
+	void Undo();
+	void Redo();
 
 	// rendering functions
 	void Render();
