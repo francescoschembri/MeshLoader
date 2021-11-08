@@ -1,4 +1,5 @@
-﻿  GUI.cpp
+﻿  Camera.cpp
+  GUI.cpp
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(83,1): warning C4312: 'cast di tipo': conversione da 'GLuint' a 'void *', di dimensioni maggiori
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(87,1): warning C4311: 'cast di tipo': troncamento puntatore da 'void *' a 'GLuint'
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(87,1): warning C4302: 'cast di tipo': troncamento da 'void *' a 'GLuint'

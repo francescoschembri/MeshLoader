@@ -30,9 +30,9 @@ void Camera::UpdateViewMatrix()
 void Camera::UpdateCameraDirs()
 {
 	// needed for camera position update
-	float dist = glm::dot(pivot - position, front);
-	glm::vec3 tPosition = pivot - front * dist;
-	glm::vec3 offset = position - tPosition;
+	float fDist = glm::dot(position - pivot, front);
+	float uDist = glm::dot(position - pivot, up);
+	float rDist = glm::dot(position - pivot, right);
 
 	glm::vec3 f;
 	f.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -43,7 +43,7 @@ void Camera::UpdateCameraDirs()
 	right = glm::normalize(glm::cross(front, worldUp)); 
 	up = glm::normalize(glm::cross(right, front));
 	// update camera position
-	position = pivot - front * dist + offset;
+	position = pivot + front * fDist + up*uDist + right * rDist;
 	UpdateViewMatrix();
 }
 
