@@ -87,7 +87,6 @@ public:
 	void ProcessInput(GLFWwindow* window);
 	void BakeModel();
 	void SwitchAnimation();
-	void ChangeMesh();
 	void LoadModel(std::string& path);
 	PickingInfo FacePicking();
 	glm::mat4 GetModelViewMatrix();
