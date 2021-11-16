@@ -93,6 +93,14 @@ void StatusManager::ProcessInput(GLFWwindow* window)
 	{
 		changingMesh = true;
 		startChangingPos = mouseLastPos;
+
+		//remove changes that were rollbacked from the history
+		int currSize = changes.size();
+		for (int i = changeIndex + 1; i < currSize; i++) {
+			changes.pop_back();
+		}
+
+		//add the new change
 		changes.push_back(Change(selectedVerticesPointers, glm::vec3(0.0f, 0.0f, 0.0f)));
 		changeIndex++;
 	}
