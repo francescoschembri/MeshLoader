@@ -1,8 +1,4 @@
-#include <reskinner/TextureManager.h>
-
-#include <glad/glad.h>
-#include <stb/stb_image.h>
-#include "..\Libraries\include\reskinner\TextureManager.h"
+#include "TextureManager.h"
 
 
 TextureManager::TextureManager() {

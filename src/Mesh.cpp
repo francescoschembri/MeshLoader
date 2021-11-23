@@ -1,4 +1,4 @@
-#include <reskinner/Mesh.h>
+#include "Mesh.h"
 
 // constructor
 Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<int>&& texIndices)
@@ -9,6 +9,9 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	texIndices(std::move(texIndices))
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 	setupMesh();
 }
 
@@ -62,22 +65,12 @@ void Mesh::Draw()
 
 void Mesh::Reload()
 {
-	if (loaded) {
-		glDeleteVertexArrays(1, &VAO);
-		glDeleteBuffers(1, &VBO);
-		glDeleteBuffers(1, &EBO);
-	}
 	setupMesh();
 }
 
 // initializes all the buffer objects/arrays
 void Mesh::setupMesh()
 {
-	// create buffers/arrays
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
 	glBindVertexArray(VAO);
 	// load data into vertex buffers
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);

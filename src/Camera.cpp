@@ -1,4 +1,4 @@
-#include  <reskinner/Camera.h>
+#include  "Camera.h"
 
 // constructor with vectors
 Camera::Camera(glm::vec3 position)
@@ -18,13 +18,9 @@ Camera::Camera(glm::vec3 position)
 	UpdateViewMatrix();
 }
 
-glm::mat4 Camera::GetViewMatrix() {
-	return viewCamera;
-}
-
 void Camera::UpdateViewMatrix()
 {
-	viewCamera = glm::lookAt(position, position + front, up);
+	viewMatrix = glm::lookAt(position, position + front, up);
 }
 
 void Camera::UpdateCameraDirs()

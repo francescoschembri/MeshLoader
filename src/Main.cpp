@@ -1,32 +1,15 @@
-#include <glad/glad.h>
+#include "Window.h"
+#include "StatusManager.h"
+#include "GUI.h"
+
 #include <GLFW/glfw3.h>
-
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
-#include <FileBrowser/ImFileDialog.h>
-#include <reskinner/GUI.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <reskinner/Model.h>
-#include <reskinner/StatusManager.h>
 
 #include <iostream>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
-constexpr int SCREEN_INITIAL_WIDTH = 800;
-constexpr int SCREEN_INITIAL_HEIGHT = 800;
 
 int main()
 {
 	// glfw: initialize and configure
-	// ------------------------------
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -36,153 +19,51 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-	// glfw window creation
-	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCREEN_INITIAL_WIDTH, SCREEN_INITIAL_HEIGHT, "Animated Mesh Loader", NULL, NULL);
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+	GLFWwindow* window = CreateWindow();
+	//Sanity Check
+	if (window == NULL) {
+		std::cout << "Failed to create GLFW window\n";
 		glfwTerminate();
 		return -1;
 	}
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1); // Enable vsync
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
 
 	// glad: load all OpenGL function pointers
-	// ---------------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
+		std::cout << "Failed to initialize GLAD\n";
+		return -1;
 	}
 
+	// create and attach a status to the window
 	StatusManager status;
 	glfwSetWindowUserPointer(window, (void*)&status);
 
 	SetupImGui(window);
 
 	// configure global opengl state
-	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 
-	// load models
-	// -----------
+	// TEST - load a model and an animation - remove in the final app
 	std::string modelPath = std::string("./Animations/Capoeira/Capoeira.dae");
 	status.LoadModel(modelPath);
 	status.AddAnimation(modelPath.c_str());
 
-	// Our gui state
-	float animTime = 0.0f;
-
-	//mouse effect setup
-	unsigned int mouseVAO, mouseVBO, mouseEBO;
-	float screenVertices[] = {
-		1.0f, 1.0f, 
-		1.0f, -1.0f,
-		-1.0f, -1.0f,
-		-1.0f, 1.0f
-	};
-
-	unsigned int screenIndices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
-	glGenVertexArrays(1, &mouseVAO);
-	glGenBuffers(1, &mouseVBO);
-	glGenBuffers(1, &mouseEBO);
-	glBindVertexArray(mouseVAO);
-	// load data into vertex buffers
-	glBindBuffer(GL_ARRAY_BUFFER, mouseVBO);
-	// A great thing about structs is that their memory layout is sequential for all its items.
-	// The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
-	// again translates to 3/2 floats which translates to a byte array.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices) * sizeof(float), &screenVertices[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mouseEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(screenIndices), &screenIndices[0], GL_STATIC_DRAW);
-
-	// set the vertex attribute pointers
-	// vertex Positions
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-	glBindVertexArray(0);
-	//end mouse effect setup
-
 	// render loop
-	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
-		// update the status before rendering based on user input
-		if (status.animatedModel) {
-			status.Update(window);
-			animTime = status.animator.m_CurrentTime;
-		}
-
-		//mouseShader.use();
-		//mouseShader.setVec2("mousePos", status.mouseLastPos);
-		//mouseShader.setVec2("resolution", status.width, status.height);
-		//if (status.activeBrush)
-		//	mouseShader.setFloat("radius", status.activeBrush.value()->radius);
-		//else
-		//	mouseShader.setFloat("radius", 1.0f);
-		//glBindVertexArray(mouseVAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glBindVertexArray(0);
+		// glfw: poll IO events(keys pressed / released, mouse moved etc.)
+		glfwPollEvents();
 
 		status.Render();
 		RenderGUI(status);
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
+		// glfw: swap buffers
 		glfwSwapBuffers(window);
-		glfwPollEvents();
 	}
 
+	// Clean memory
 	CloseImGui();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
-}
-
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
-	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
-	status->aspect_ratio = (float)width / (float)height;
-	status->width = float(width);
-	status->height = float(height);
-}
-
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
-	if (status->pause && status->rotating) {
-		float xoffset = xpos - status->mouseLastPos.x;
-		float yoffset = status->mouseLastPos.y - ypos; // reversed since y-coordinates go from bottom to top
-		status->camera.ProcessMouseMovement(xoffset, yoffset);
-	}
-	else {
-		status->mouseLastPos.x = xpos;
-		status->mouseLastPos.y = ypos;
-		if (status->isModelBaked)
-			status->FacePicking();
-	}
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
-	status->camera.ProcessMouseScroll(yoffset);
 }

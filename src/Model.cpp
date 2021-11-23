@@ -1,6 +1,4 @@
-#include <reskinner/Model.h>
-
-#include <algorithm>
+#include "Model.h"
 
 // constructor, expects a filepath to a 3D model.
 Model::Model(std::string& path, TextureManager& texManager, bool gamma)

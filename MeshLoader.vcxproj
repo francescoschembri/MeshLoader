@@ -170,6 +170,7 @@
     <ClCompile Include="src\StatusManager.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
     <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\include\imgui\imgui.h" />
@@ -181,25 +182,26 @@
     <ClInclude Include="Libraries\include\imgui\imstb_rectpack.h" />
     <ClInclude Include="Libraries\include\imgui\imstb_textedit.h" />
     <ClInclude Include="Libraries\include\imgui\imstb_truetype.h" />
-    <ClInclude Include="Libraries\include\reskinner\Animation.h" />
-    <ClInclude Include="Libraries\include\reskinner\Animator.h" />
-    <ClInclude Include="Libraries\include\reskinner\AssimpNodeData.h" />
-    <ClInclude Include="Libraries\include\reskinner\BoneInfo.h" />
-    <ClInclude Include="Libraries\include\reskinner\assimp_glm_helpers.h" />
-    <ClInclude Include="Libraries\include\reskinner\Bone.h" />
-    <ClInclude Include="Libraries\include\reskinner\Camera.h" />
-    <ClInclude Include="Libraries\include\reskinner\Change.h" />
-    <ClInclude Include="Libraries\include\reskinner\Face.h" />
-    <ClInclude Include="Libraries\include\reskinner\GUI.h" />
-    <ClInclude Include="Libraries\include\reskinner\Mesh.h" />
-    <ClInclude Include="Libraries\include\reskinner\Model.h" />
-    <ClInclude Include="Libraries\include\reskinner\Shader.h" />
-    <ClInclude Include="Libraries\include\reskinner\StatusManager.h" />
-    <ClInclude Include="Libraries\include\reskinner\Texture.h" />
-    <ClInclude Include="Libraries\include\reskinner\TextureManager.h" />
-    <ClInclude Include="Libraries\include\reskinner\Utility.h" />
-    <ClInclude Include="Libraries\include\reskinner\Vertex.h" />
-    <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h" />
+    <ClInclude Include="src\Animation.h" />
+    <ClInclude Include="src\Animator.h" />
+    <ClInclude Include="src\AssimpNodeData.h" />
+    <ClInclude Include="src\assimp_glm_helpers.h" />
+    <ClInclude Include="src\Bone.h" />
+    <ClInclude Include="src\BoneInfo.h" />
+    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Change.h" />
+    <ClInclude Include="src\Face.h" />
+    <ClInclude Include="src\GUI.h" />
+    <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\StatusManager.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\TextureManager.h" />
+    <ClInclude Include="src\Utility.h" />
+    <ClInclude Include="src\Vertex.h" />
+    <ClInclude Include="src\VertexBoneData.h" />
+    <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.fs" />

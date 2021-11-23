@@ -1,4 +1,4 @@
-#include  <reskinner/Animator.h>
+#include  "Animator.h"
 
 
 Animator::Animator() : m_CurrentTime(0.0f), currentAnimationIndex(0), m_FinalBoneMatrices(100, glm::mat4(1.0f))

@@ -1,6 +1,5 @@
-#include <reskinner/Utility.h>
+#include "Utility.h"
 
-#include <cmath>
 
 float magnitude(glm::vec3 v) {
 	return sqrt(glm::dot(v, v));
@@ -84,6 +83,17 @@ int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, 
 int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, Face& f)
 {
 	return getClosestVertexIndex(point, m, f.indices[0], f.indices[1], f.indices[2]);
+}
+
+Vertex getClosestVertex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3)
+{
+	int res = getClosestVertexIndex(point, m, v1, v2, v3);
+	return m.vertices[res];
+}
+
+Vertex getClosestVertex(const glm::vec3 point, const Mesh& m, Face& f)
+{
+	return getClosestVertex(point, m, f.indices[0], f.indices[1], f.indices[2]);
 }
 
 Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, Face& f)

@@ -93,53 +93,11 @@
     <ClCompile Include="src\Change.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Window.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Libraries\include\reskinner\Animation.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Animator.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\BoneInfo.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\assimp_glm_helpers.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Bone.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Camera.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Mesh.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Model.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Shader.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Face.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\AssimpNodeData.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\StatusManager.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Vertex.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Texture.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\VertexBoneData.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="Libraries\include\imgui\imgui.h">
       <Filter>File di intestazione\external</Filter>
     </ClInclude>
@@ -167,16 +125,64 @@
     <ClInclude Include="Libraries\include\imgui\imstb_truetype.h">
       <Filter>File di intestazione\external</Filter>
     </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\TextureManager.h">
+    <ClInclude Include="src\Window.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\GUI.h">
+    <ClInclude Include="src\Animation.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Utility.h">
+    <ClInclude Include="src\Animator.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Libraries\include\reskinner\Change.h">
+    <ClInclude Include="src\assimp_glm_helpers.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AssimpNodeData.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Bone.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BoneInfo.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Change.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Face.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StatusManager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TextureManager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vertex.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexBoneData.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

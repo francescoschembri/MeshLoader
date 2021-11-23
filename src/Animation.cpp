@@ -1,4 +1,4 @@
-#include <reskinner/Animation.h>
+#include "Animation.h"
 
 
 Animation::Animation(const std::string& animationPath, Model& model)

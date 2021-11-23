@@ -1,6 +1,6 @@
-#include <reskinner/Change.h>
+#include "Change.h"
 
-Change::Change(std::vector<Vertex*>& changedVertices, glm::vec3 offset, bool apply) 
+Change::Change(std::vector<Vertex>& changedVertices, glm::vec3 offset, bool apply) 
 	:
 	changedVertices(changedVertices), 
 	offset(offset)
@@ -9,14 +9,14 @@ Change::Change(std::vector<Vertex*>& changedVertices, glm::vec3 offset, bool app
 }
 
 void Change::Apply() {
-	for (Vertex* v : changedVertices) {
-		v->Position += offset;
+	for (Vertex v : changedVertices) {
+		v.Position += offset;
 	}
 }
 
 void Change::Undo() {
-	for (Vertex* v : changedVertices) {
-		v->Position -= offset;
+	for (Vertex v : changedVertices) {
+		v.Position -= offset;
 	}
 }
 

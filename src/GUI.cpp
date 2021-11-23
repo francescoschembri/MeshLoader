@@ -1,4 +1,4 @@
-#include <reskinner/GUI.h>
+#include "GUI.h"
 
 void RenderGUI(StatusManager& status)
 {
@@ -307,8 +307,6 @@ void RenderRenderInfo(StatusManager& status)
 	ImGui::Checkbox("Show Wireframe", &status.wireframeEnabled);
 	std::string fps = "Current FPS: " + std::to_string(1.0f / status.deltaTime);
 	ImGui::Text(fps.c_str());
-	std::string aspectRatioWin = "Window aspect ratio: " + std::to_string(status.aspect_ratio);
-	ImGui::Text(aspectRatioWin.c_str());
 	std::string winSize = "Window size: " + std::to_string(status.width) + ", " + std::to_string(status.height);
 	ImGui::Text(winSize.c_str());
 	ImGui::End();
