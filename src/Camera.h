@@ -22,7 +22,7 @@ constexpr float ZOOM_SPEED = 0.2f;
 constexpr float FOV = 45.0f;
 constexpr float NEAR_PLANE = 0.1f;
 constexpr float FAR_PLANE = 100.0f;
-constexpr float YAW = 0.0f;
+constexpr float YAW = -90.0f;
 constexpr float PITCH = 0.0f;
 
 

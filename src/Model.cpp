@@ -12,8 +12,8 @@ Model::Model(std::string& path, TextureManager& texManager, bool gamma)
 Model Model::Bake(std::vector<glm::mat4>& matrices)
 {
 	Model m(*this);
-	for (Mesh& mesh : m.meshes)
-		mesh.Bake(matrices);
+	for (int i = 0; i < meshes.size(); i++)
+		m.meshes[i].Bake(matrices, meshes[i].vertices);
 	return m;
 }
 
@@ -140,6 +140,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		SetVertexBoneDataToDefault(vertex);
 		vertex.Position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
 		vertex.Normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
+		vertex.associatedWeightMatrix = glm::mat4(1.0f);
+		vertex.originalVertex = NULL;
 
 		if (mesh->mTextureCoords[0])
 		{

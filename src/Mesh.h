@@ -28,7 +28,7 @@ public:
 	Mesh() = default;
 	Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& indices, std::vector<int>&& texIndices);
 	// bake the mesh
-	void Bake(std::vector<glm::mat4>& matrices);
+	void Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex> animatedVertices);
 	// render the mesh
 	void Draw();
 	// reload opengl data for the mesh

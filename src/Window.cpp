@@ -10,6 +10,7 @@ GLFWwindow* CreateWindow() {
 	glfwSwapInterval(1);
 
 	//Setup callbacks
+	process_mouse_movement = &update_mouse_last_pos;
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -46,10 +47,32 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void key_press_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (action != GLFW_PRESS)
+	if (action == GLFW_RELEASE)
 		return;
 
 	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
+
+	// move camera position
+	bool cameraMove = false;
+	if (glfwGetKey(window, CAMERA_UP_KEY) == GLFW_PRESS) {
+		status->camera.ProcessKeyboard(UP, status->deltaTime);
+		cameraMove = true;
+	}
+	if (glfwGetKey(window, CAMERA_DOWN_KEY) == GLFW_PRESS) {
+		status->camera.ProcessKeyboard(DOWN, status->deltaTime);
+		cameraMove = true;
+	}
+	if (glfwGetKey(window, CAMERA_LEFT_KEY) == GLFW_PRESS) {
+		status->camera.ProcessKeyboard(LEFT, status->deltaTime);
+		cameraMove = true;
+	}
+	if (glfwGetKey(window, CAMERA_RIGHT_KEY) == GLFW_PRESS) {
+		status->camera.ProcessKeyboard(RIGHT, status->deltaTime);
+		cameraMove = true;
+	}
+
+	if (action != GLFW_PRESS || cameraMove)
+		return;
 
 	// enable/disable wireframe mode
 	if (key == WIREFRAME_KEY) {
@@ -75,24 +98,6 @@ void key_press_callback(GLFWwindow* window, int key, int scancode, int action, i
 	// reset camera position
 	if (key == RESET_CAMERA_KEY) {
 		status->camera.Reset();
-		return;
-	}
-
-	// move camera position
-	if (key == CAMERA_UP_KEY) {
-		status->camera.ProcessKeyboard(UP, status->deltaTime);
-		return;
-	}
-	if (key == CAMERA_DOWN_KEY) {
-		status->camera.ProcessKeyboard(DOWN, status->deltaTime);
-		return;
-	}
-	if (key == CAMERA_LEFT_KEY) {
-		status->camera.ProcessKeyboard(LEFT, status->deltaTime);
-		return;
-	}
-	if (key == CAMERA_RIGHT_KEY) {
-		status->camera.ProcessKeyboard(RIGHT, status->deltaTime);
 		return;
 	}
 
@@ -127,6 +132,7 @@ void on_mouse_click_callback(GLFWwindow* window, int button, int action, int mod
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS && status->pause) {
 		status->SetPivot();
+		status->info.hitPoint.reset();
 		process_mouse_movement = &rotate;
 		return;
 	}
@@ -165,7 +171,7 @@ void update_mouse_last_pos(GLFWwindow* window, float xpos, float ypos) {
 void picking(GLFWwindow* window, float xpos, float ypos) {
 	update_mouse_last_pos(window, xpos, ypos);
 	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
-	status->FacePicking();
+	status->Picking();
 }
 
 void tweak(GLFWwindow* window, float xpos, float ypos) {

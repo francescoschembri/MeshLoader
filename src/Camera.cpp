@@ -10,12 +10,9 @@ Camera::Camera(glm::vec3 position)
 	position(position),
 	yaw(YAW),
 	pitch(PITCH),
-	front(glm::vec3(0.0f, 0.0f, -1.0f)),
-	up(glm::vec3(0.0f, 1.0f, 0.0f)),
-	right(glm::vec3(1.0f, 0.0f, 0.0f)),
 	pivot(glm::vec3(0.0f, 0.0f, 0.0f))
 {
-	UpdateViewMatrix();
+	UpdateCameraDirs();
 }
 
 void Camera::UpdateViewMatrix()
@@ -36,10 +33,10 @@ void Camera::UpdateCameraDirs()
 	f.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	front = glm::normalize(f);
 	// also re-calculate the Right and Up vector
-	right = glm::normalize(glm::cross(front, worldUp)); 
+	right = glm::normalize(glm::cross(front, worldUp));
 	up = glm::normalize(glm::cross(right, front));
 	// update camera position
-	position = pivot + front * fDist + up*uDist + right * rDist;
+	position = pivot + front * fDist + up * uDist + right * rDist;
 	UpdateViewMatrix();
 }
 
@@ -82,7 +79,8 @@ void Camera::Reset()
 	rotationSpeed = ROTATION_SPEED;
 	zoomSpeed = ZOOM_SPEED;
 	yaw = YAW;
-	pitch = PITCH,
+	pitch = PITCH;
 	position = sPosition;
+	pivot = glm::vec3(0.0f, 0.0f, 0.0f);
 	UpdateCameraDirs();
 }

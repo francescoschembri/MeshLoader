@@ -9,13 +9,10 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	pause(false),
 	wireframeEnabled(false),
 	isModelBaked(false),
-	rotating(false),
-	changingMesh(false),
 	HVAO(0),
 	HVBO(0),
 	SVAO(0),
 	SVBO(0),
-	keys(0),
 	modelShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs")),
 	wireframeShader(Shader("./Shaders/wireframe.vs", "./Shaders/wireframe.fs")),
 	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
@@ -59,7 +56,7 @@ void StatusManager::SetPivot()
 	if (!backup)
 		BakeModel();
 
-	auto info = FacePicking();
+	auto info = Picking();
 	if (info.hitPoint) {
 		auto indices = info.face.value().indices;
 		Mesh& hittedMesh = bakedModel->meshes[info.meshIndex];
@@ -106,7 +103,7 @@ void StatusManager::UnbakeModel()
 	bakedModel.reset();
 }
 
-PickingInfo StatusManager::FacePicking()
+PickingInfo StatusManager::Picking()
 {
 	glm::vec2 mousePos = (mouseLastPos / glm::vec2(width, height)) * 2.0f - 1.0f;
 	mousePos.y = -mousePos.y; //origin is top-left and +y mouse is down
@@ -114,7 +111,7 @@ PickingInfo StatusManager::FacePicking()
 	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
 	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
 
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 
 	glm::mat4 toWorld = glm::inverse(projection * modelView);
 
@@ -176,7 +173,7 @@ void StatusManager::DrawSelectedVertices()
 	glVertexAttribIPointer(3, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.NumBones));
 	selectedShader.use();
 	// model/view/projection transformations
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 	selectedShader.setMat4("modelView", modelView);
 	selectedShader.setMat4("projection", projection);
 	// pass bones matrices to the shader
@@ -192,11 +189,6 @@ void StatusManager::DrawSelectedVertices()
 	glDrawArrays(GL_POINTS, 0, selectedVertices.size());
 	//unbind
 	glBindVertexArray(0);
-}
-
-glm::mat4 StatusManager::GetModelViewMatrix()
-{
-	return camera.viewMatrix;
 }
 
 void StatusManager::Undo()
@@ -275,7 +267,7 @@ void StatusManager::TweakSelectedVertices()
 	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
 	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
 
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 
 	glm::mat4 toWorld = glm::inverse(projection * modelView);
 
@@ -295,31 +287,30 @@ void StatusManager::TweakSelectedVertices()
 
 void StatusManager::Render()
 {
+	//TODO REVIEW
 	glClearColor(1.0f, 0.5f, 0.05f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (!animatedModel)
 		return;
+	Update();
 	// draw wireframe if enabled
 	if (wireframeEnabled)
 		DrawWireframe();
 	// draw model
 	DrawModel();
-	// check if something is hovered and shoudl be drawn
-	if (rotating || !bakedModel)
-		return;
 	// render selected vertices
 	DrawSelectedVertices();
-	auto info = FacePicking();
 	if (!info.hitPoint)
 		return;
-	DrawHoveredLine(info);
-	DrawHoveredPoint(info);
+	DrawHoveredPoint();
+	DrawHoveredLine();
+	DrawHoveredFace();
 }
 
 void StatusManager::DrawWireframe() {
 	wireframeShader.use();
 	// model/view/projection transformations
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 	wireframeShader.setMat4("modelView", modelView);
 	wireframeShader.setMat4("projection", projection);
 
@@ -335,7 +326,7 @@ void StatusManager::DrawWireframe() {
 void StatusManager::DrawModel() {
 	modelShader.use();
 	// model/view/projection transformations
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 	modelShader.setMat4("modelView", modelView);
 	modelShader.setMat4("projection", projection);
 
@@ -350,7 +341,7 @@ void StatusManager::DrawModel() {
 	animatedModel.value().Draw(modelShader);
 }
 
-void StatusManager::DrawHoveredFace(PickingInfo info) {
+void StatusManager::DrawHoveredFace() {
 	Mesh& m = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 
@@ -370,7 +361,7 @@ void StatusManager::DrawHoveredFace(PickingInfo info) {
 	glPolygonOffset(0.0, 0.0);
 
 	// model/view/projection transformations
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 	hoverShader.setMat4("modelView", modelView);
 	hoverShader.setMat4("projection", projection);
 
@@ -380,7 +371,7 @@ void StatusManager::DrawHoveredFace(PickingInfo info) {
 	glBindVertexArray(0);
 }
 
-void StatusManager::DrawHoveredPoint(PickingInfo info) {
+void StatusManager::DrawHoveredPoint() {
 	Mesh& m = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 	int index = getClosestVertexIndex(info.hitPoint.value(), m, f);
@@ -398,7 +389,7 @@ void StatusManager::DrawHoveredPoint(PickingInfo info) {
 	glPolygonOffset(0.0, 0.0);
 
 	// model/view/projection transformations
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 	hoverShader.setMat4("modelView", modelView);
 	hoverShader.setMat4("projection", projection);
 
@@ -411,7 +402,7 @@ void StatusManager::DrawHoveredPoint(PickingInfo info) {
 
 
 
-void StatusManager::DrawHoveredLine(PickingInfo info) {
+void StatusManager::DrawHoveredLine() {
 	Mesh& m = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 	auto line = getClosestLineIndex(info.hitPoint.value(), m, f);
@@ -432,7 +423,7 @@ void StatusManager::DrawHoveredLine(PickingInfo info) {
 	glPolygonOffset(0.0, 0.0);
 
 	// model/view/projection transformations
-	glm::mat4 modelView = GetModelViewMatrix();
+	glm::mat4 modelView = camera.viewMatrix;
 	hoverShader.setMat4("modelView", modelView);
 	hoverShader.setMat4("projection", projection);
 

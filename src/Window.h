@@ -34,7 +34,7 @@ void key_press_callback(GLFWwindow* window, int key, int scancode, int action, i
 void on_mouse_click_callback(GLFWwindow* window, int button, int action, int mods);
 
 //mouse movement
-void (*process_mouse_movement)(GLFWwindow*, float, float);
+inline void (*process_mouse_movement)(GLFWwindow*, float, float);
 void rotate(GLFWwindow* window, float xpos, float ypos);
 void update_mouse_last_pos(GLFWwindow* window, float xpos, float ypos);
 void picking(GLFWwindow* window, float xpos, float ypos);

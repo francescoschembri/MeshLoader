@@ -56,7 +56,7 @@ IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3
 	// while if B in on the right of A, dot(cross(A,B), normal)<0
 	// if instead of B we use the intersection point P, than we have to check for each edge if P is on the left of the edge
 
-	bool checkEdge1 = glm::dot(glm::normalize(glm::cross(e12, intersectionPoint - v1.Position)), normalPlane) < 0.9;
+	bool checkEdge1 = glm::dot(glm::normalize(glm::cross(e12, intersectionPoint - v1.Position)), normalPlane) < 0.9f;
 	if (checkEdge1) return result;
 	bool checkEdge2 = glm::dot(glm::normalize(glm::cross(e23, intersectionPoint - v2.Position)), normalPlane) < 0.9f;
 	if (checkEdge2) return result;

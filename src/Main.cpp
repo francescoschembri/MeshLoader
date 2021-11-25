@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "StatusManager.h"
-#include "GUI.h"
+//#include "GUI.h"
 
 #include <GLFW/glfw3.h>
 
@@ -38,7 +38,10 @@ int main()
 	StatusManager status;
 	glfwSetWindowUserPointer(window, (void*)&status);
 
-	SetupImGui(window);
+	//create the projection matrix
+	status.projection = glm::perspective(glm::radians(FOV), (float)SCREEN_INITIAL_WIDTH / (float)SCREEN_INITIAL_HEIGHT, NEAR_PLANE, FAR_PLANE);
+
+	//SetupImGui(window);
 
 	// configure global opengl state
 	glEnable(GL_DEPTH_TEST);
@@ -56,13 +59,13 @@ int main()
 		glfwPollEvents();
 
 		status.Render();
-		RenderGUI(status);
+		//RenderGUI(status);
 		// glfw: swap buffers
 		glfwSwapBuffers(window);
 	}
 
 	// Clean memory
-	CloseImGui();
+	//CloseImGui();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
