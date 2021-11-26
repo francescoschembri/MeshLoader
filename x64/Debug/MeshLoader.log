@@ -1,3 +1,3 @@
-﻿  Mesh.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(45,78): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+﻿  Utility.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Utility.cpp(12,10): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

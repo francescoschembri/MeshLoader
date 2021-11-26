@@ -70,11 +70,15 @@ IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3
 int getClosestVertexIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, int v3)
 {
 	int res = v1;
-	float dist = magnitude(point - m.vertices[v1].Position);
-	if (magnitude(point - m.vertices[v2].Position) < dist) {
+	float v1dist = magnitude(m.vertices[v1].Position - point);
+	float v2dist = magnitude(m.vertices[v2].Position - point);
+	float v3dist = magnitude(m.vertices[v3].Position - point);
+	float dist = v1dist;
+	if (v2dist < dist) {
 		res = v2;
+		dist = v2dist;
 	}
-	if (magnitude(point - m.vertices[v3].Position) < dist) {
+	if (v3dist < dist) {
 		res = v3;
 	}
 	return res;
@@ -106,14 +110,19 @@ Line getClosestLineIndex(const glm::vec3 point, const Mesh& m, int v1, int v2, i
 	Line res{};
 	res.v1 = v1;
 	res.v2 = v2;
-	float dist = getPointLineDist(m.vertices[v1].Position, m.vertices[v2].Position, point);
-	if (getPointLineDist(m.vertices[v1].Position, m.vertices[v3].Position, point) < dist)
+	float e1dist = getPointLineDist(m.vertices[v1].Position, m.vertices[v2].Position, point);
+	float e2dist = getPointLineDist(m.vertices[v1].Position, m.vertices[v3].Position, point);
+	float e3dist = getPointLineDist(m.vertices[v2].Position, m.vertices[v3].Position, point);
+	float dist = e1dist;
+	if (e2dist < dist)
 	{
 		res.v2 = v3;
+		dist = e2dist;
 	}
-	if (getPointLineDist(m.vertices[v2].Position, m.vertices[v3].Position, point) < dist)
+	if (e3dist < dist)
 	{
-		res.v1 = v3;
+		res.v1 = v2;
+		res.v2 = v3;
 	}
 	return res;
 }
