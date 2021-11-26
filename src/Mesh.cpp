@@ -18,26 +18,14 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex> animatedVertices)
 {
 	// Modify the vertex data
-	std::vector<Vertex> bakedVertices = std::vector<Vertex>(animatedVertices.size());
+	std::vector<Vertex> bakedVertices = std::vector<Vertex>();
 	for (Vertex& v : animatedVertices) {
-		glm::vec4 totalPosition = glm::vec4(0.0f);
-		glm::vec4 totalNormal = glm::vec4(0.0f);
-		glm::vec4 totalTangent = glm::vec4(0.0f);
-		glm::vec4 totalBitangent = glm::vec4(0.0f);
 		glm::mat4 cumulativeMatrix = glm::mat4(0.0f);
 		for (int i = 0; i < v.BoneData.NumBones; i++)
 		{
-			if (v.BoneData.BoneIDs[i] >= MAX_BONE_INFLUENCE)
-			{
-				totalPosition = glm::vec4(v.Position, 1.0f);
-				totalNormal = glm::vec4(v.Normal, 0.0f);
-				totalTangent = glm::vec4(v.Tangent, 0.0f);
-				totalBitangent = glm::vec4(v.Bitangent, 0.0f);
-				break;
-			}
 			cumulativeMatrix += (v.BoneData.Weights[i] * matrices[v.BoneData.BoneIDs[i]]);
 		}
-		Vertex ver;
+		Vertex ver{};
 		ver.originalVertex = &v;
 		ver.associatedWeightMatrix = cumulativeMatrix;
 		ver.Position = glm::vec3(cumulativeMatrix * glm::vec4(v.Position, 1.0f));

@@ -83,11 +83,14 @@ void key_press_callback(GLFWwindow* window, int key, int scancode, int action, i
 	if (key == PAUSE_KEY)
 	{
 		status->Pause();
+		if (!status->pause)
+			process_mouse_movement = &update_mouse_last_pos;
 		return;
 	}
 	// bake the model in the current pose
 	if (key == BAKE_MODEL_KEY) {
 		status->BakeModel();
+		process_mouse_movement = &picking;
 		return;
 	}
 	// switch animation
@@ -171,7 +174,7 @@ void update_mouse_last_pos(GLFWwindow* window, float xpos, float ypos) {
 void picking(GLFWwindow* window, float xpos, float ypos) {
 	update_mouse_last_pos(window, xpos, ypos);
 	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
-	status->Picking();
+	status->info = status->Picking();
 }
 
 void tweak(GLFWwindow* window, float xpos, float ypos) {

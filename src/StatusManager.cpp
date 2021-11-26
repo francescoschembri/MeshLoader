@@ -111,9 +111,7 @@ PickingInfo StatusManager::Picking()
 	glm::vec4 rayStartPos = glm::vec4(mousePos, 0.0f, 1.0f);
 	glm::vec4 rayEndPos = glm::vec4(mousePos, 1.0f, 1.0f);
 
-	glm::mat4 modelView = camera.viewMatrix;
-
-	glm::mat4 toWorld = glm::inverse(projection * modelView);
+	glm::mat4 toWorld = glm::inverse(projection * camera.viewMatrix);
 
 	rayStartPos = toWorld * rayStartPos;
 	rayEndPos = toWorld * rayEndPos;
@@ -134,16 +132,16 @@ PickingInfo StatusManager::Picking()
 			Vertex& ver1 = m.vertices[f.indices[0]];
 			Vertex& ver2 = m.vertices[f.indices[1]];
 			Vertex& ver3 = m.vertices[f.indices[2]];
-			IntersectionInfo info = rayPlaneIntersection(rayStartPos, dir, ver1, ver2, ver3);
-			if (info.distance > 0.0)
+			IntersectionInfo tmpInfo = rayPlaneIntersection(rayStartPos, dir, ver1, ver2, ver3);
+			if (tmpInfo.distance > 0.0)
 			{
 				//object i has been clicked. probably best to find the minimum t1 (front-most object)
-				if (!res.face || info.distance < minDist)
+				if (!res.face || tmpInfo.distance < minDist)
 				{
-					res.hitPoint = info.hitPoint;
+					res.hitPoint = tmpInfo.hitPoint;
 					res.face.emplace(f);
 					res.meshIndex = i;
-					res.distance = minDist = info.distance;
+					res.distance = minDist = tmpInfo.distance;
 				}
 			}
 		}
