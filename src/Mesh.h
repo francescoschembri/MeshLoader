@@ -27,8 +27,12 @@ public:
 	// constructors
 	Mesh() = default;
 	Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& indices, std::vector<int>&& texIndices);
+	// copy constructor
+	Mesh(const Mesh& m);
+	// move constructor
+	Mesh(Mesh&& m) = default;
 	// bake the mesh
-	void Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex> animatedVertices);
+	void Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex>& animatedVertices);
 	// render the mesh
 	void Draw();
 	// reload opengl data for the mesh

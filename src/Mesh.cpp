@@ -15,7 +15,20 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	setupMesh();
 }
 
-void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex> animatedVertices)
+// copy constructor
+Mesh::Mesh(const Mesh& m) :
+	loaded(true),
+	vertices(m.vertices),
+	faces(m.faces),
+	texIndices(m.texIndices)
+{
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+	setupMesh();
+}
+
+void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex>& animatedVertices)
 {
 	// Modify the vertex data
 	std::vector<Vertex> bakedVertices = std::vector<Vertex>();
@@ -33,6 +46,7 @@ void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex> animatedVe
 		ver.Normal = glm::normalize(glm::vec3(cumulativeMatrix * glm::vec4(v.Normal, 0.0f)));
 		ver.Tangent = glm::normalize(glm::vec3(cumulativeMatrix * glm::vec4(v.Tangent, 0.0f)));
 		ver.Bitangent = glm::normalize(glm::vec3(cumulativeMatrix * glm::vec4(v.Bitangent, 0.0f)));
+		ver.TexCoords = v.TexCoords;
 		ver.BoneData.NumBones = 0;
 		bakedVertices.push_back(ver);
 	}

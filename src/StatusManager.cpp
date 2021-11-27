@@ -217,7 +217,7 @@ void StatusManager::LoadModel(std::string& path)
 	animator.animations.clear();
 	animator.currentAnimationIndex = 0;
 	texMan.textures.clear();
-	animatedModel.emplace(Model(path, texMan));
+	animatedModel.emplace(path, texMan);
 	camera.pivot = glm::vec3(-0.3f, 1.3f, 0.3f);
 }
 

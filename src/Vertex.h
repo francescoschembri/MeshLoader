@@ -18,8 +18,8 @@ struct Vertex {
 	// bone data
 	VertexBoneData BoneData;
 	// data usefull to refer the original vertex when the vertex is one of the vertices of the baked model
-	Vertex* originalVertex;
-	glm::mat4 associatedWeightMatrix;
+	Vertex* originalVertex = nullptr;
+	glm::mat4 associatedWeightMatrix = glm::mat4(0.0f);
 
 	friend bool operator==(const Vertex& v1, const Vertex& v2)
 	{

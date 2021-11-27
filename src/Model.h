@@ -39,6 +39,10 @@ public:
 
 	// default constructor
 	Model() = default;
+	// copy constructor
+	Model(const Model& m) = default;
+	// move constructor
+	Model(Model&& m) = default;
 	// constructor, expects a filepath to a 3D model.
 	Model(std::string& path, TextureManager& texMan, bool gamma = false);
 	// bake the model
