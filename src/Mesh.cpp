@@ -19,14 +19,15 @@ void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex> animatedVe
 {
 	// Modify the vertex data
 	std::vector<Vertex> bakedVertices = std::vector<Vertex>();
-	for (Vertex& v : animatedVertices) {
+	for (int i = 0; i < animatedVertices.size(); i++) {
+		Vertex& v = animatedVertices[i];
 		glm::mat4 cumulativeMatrix = glm::mat4(0.0f);
 		for (int i = 0; i < v.BoneData.NumBones; i++)
 		{
 			cumulativeMatrix += (v.BoneData.Weights[i] * matrices[v.BoneData.BoneIDs[i]]);
 		}
 		Vertex ver{};
-		ver.originalVertex = &v;
+		ver.originalVertex = &animatedVertices[i];
 		ver.associatedWeightMatrix = cumulativeMatrix;
 		ver.Position = glm::vec3(cumulativeMatrix * glm::vec4(v.Position, 1.0f));
 		ver.Normal = glm::normalize(glm::vec3(cumulativeMatrix * glm::vec4(v.Normal, 0.0f)));

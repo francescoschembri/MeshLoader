@@ -18,7 +18,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
 	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs")),
 	selectedShader(Shader("./Shaders/selected.vs", "./Shaders/selected.fs")),
-	currentChange(Change(selectedVertices, glm::vec3(0.0f, 0.0f, 0.0f)))
+	currentChange(Change(selectedVertices))
 {
 	// setup selected vertices vao
 	glGenVertexArrays(1, &SVAO);
@@ -99,8 +99,10 @@ void StatusManager::BakeModel() {
 
 void StatusManager::UnbakeModel()
 {
+	info.hitPoint.reset();
 	isModelBaked = false;
 	bakedModel.reset();
+	selectedVertices.clear();
 }
 
 PickingInfo StatusManager::Picking()
@@ -246,14 +248,15 @@ void StatusManager::StartChange()
 		changes.pop_back();
 	}
 
-	currentChange = Change(selectedVertices, glm::vec3(0.0f, 0.0f, 0.0f));
+	currentChange = Change(selectedVertices);
 }
 
 void StatusManager::EndChange()
 {
 	changes.push_back(currentChange);
 	changeIndex++;
-	BakeModel();
+	//TODO change animated mesh
+	//BakeModel();
 }
 
 void StatusManager::TweakSelectedVertices()
@@ -301,8 +304,8 @@ void StatusManager::Render()
 	if (!info.hitPoint)
 		return;
 	DrawHoveredPoint();
-	DrawHoveredLine();
-	DrawHoveredFace();
+	//DrawHoveredLine();
+	//DrawHoveredFace();
 }
 
 void StatusManager::DrawWireframe() {
@@ -336,7 +339,10 @@ void StatusManager::DrawModel() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0, 1.0);
-	animatedModel.value().Draw(modelShader);
+	if (!isModelBaked)
+		animatedModel.value().Draw(modelShader);
+	else
+		bakedModel.value().Draw(modelShader);
 }
 
 void StatusManager::DrawHoveredFace() {

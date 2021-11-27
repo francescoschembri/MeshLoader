@@ -1,3 +1,5 @@
-﻿  Utility.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Utility.cpp(12,10): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+﻿  Window.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Window.cpp(38,39): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Window.cpp(38,33): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Window.cpp(45,36): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

@@ -145,13 +145,15 @@ void on_mouse_click_callback(GLFWwindow* window, int button, int action, int mod
 
 	// selection
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		//check for multiple selection
-		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
-			status->selectedVertices.clear();
+		if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE) {
+			//check for multiple selection
+			if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
+				status->selectedVertices.clear();
+			}
+			if (!status->info.hitPoint)
+				return;
+			status->SelectHoveredVertex();
 		}
-		if (!status->info.hitPoint)
-			return;
-		status->SelectHoveredVertex();
 		status->StartChange();
 		process_mouse_movement = &tweak;
 		return;
