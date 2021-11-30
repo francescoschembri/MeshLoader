@@ -149,6 +149,7 @@ void on_mouse_click_callback(GLFWwindow* window, int button, int action, int mod
 			//check for multiple selection
 			if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
 				status->selectedVertices.clear();
+				status->selectedVerticesPointers.clear();
 			}
 			if (!status->info.hitPoint)
 				return;

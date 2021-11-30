@@ -18,7 +18,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
 	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs")),
 	selectedShader(Shader("./Shaders/selected.vs", "./Shaders/selected.fs")),
-	currentChange(Change(selectedVertices))
+	currentChange(Change(selectedVerticesPointers))
 {
 	// setup selected vertices vao
 	glGenVertexArrays(1, &SVAO);
@@ -225,15 +225,18 @@ void StatusManager::SelectHoveredVertex()
 {
 	Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
-	Vertex v = getClosestVertex(info.hitPoint.value(), bMesh, f);;
-
+	int verIndex = getClosestVertexIndex(info.hitPoint.value(), bMesh, f);
+	Vertex* v = &bMesh.vertices[verIndex];
 	//avoid duplicates and allow removing selected vertices
-	auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), v);
+	auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v);
+	int index = iter - selectedVertices.begin();
 	if (iter == selectedVertices.end()) {
-		selectedVertices.push_back(v);;
+		selectedVertices.push_back(*v);
+		selectedVerticesPointers.push_back(v);
 	}
 	else {
 		selectedVertices.erase(iter);
+		selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
 	}
 }
 
@@ -248,7 +251,7 @@ void StatusManager::StartChange()
 		changes.pop_back();
 	}
 
-	currentChange = Change(selectedVertices);
+	currentChange = Change(selectedVerticesPointers);
 }
 
 void StatusManager::EndChange()
@@ -280,10 +283,14 @@ void StatusManager::TweakSelectedVertices()
 
 	glm::vec3 dir = glm::normalize(glm::vec3(rayEndPos - rayStartPos));
 
-	glm::vec3 hotpoint = glm::vec3(rayStartPos) + dir * rayLenghtOnChangeStart;
-	glm::vec3 offset = hotpoint - startChangingPos;
+	hotPoint = glm::vec3(rayStartPos) + dir * rayLenghtOnChangeStart;
+	glm::vec3 offset = hotPoint - startChangingPos;
 	currentChange.Modify(offset);
 	animatedModel.value().Reload();
+	//update selectedVertices
+	selectedVertices.clear();
+	for (Vertex* v : selectedVerticesPointers)
+		selectedVertices.push_back(*v);
 }
 
 void StatusManager::Render()
@@ -304,6 +311,7 @@ void StatusManager::Render()
 	if (!info.hitPoint)
 		return;
 	DrawHoveredPoint();
+	DrawHotPoint();
 	//DrawHoveredLine();
 	//DrawHoveredFace();
 }
@@ -339,10 +347,7 @@ void StatusManager::DrawModel() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0, 1.0);
-	if (!isModelBaked)
-		animatedModel.value().Draw(modelShader);
-	else
-		bakedModel.value().Draw(modelShader);
+	animatedModel.value().Draw(modelShader);
 }
 
 void StatusManager::DrawHoveredFace() {
@@ -387,6 +392,31 @@ void StatusManager::DrawHoveredPoint() {
 	glBindVertexArray(HVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 3 * sizeof(float), &hoveredVertices);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0.0, 0.0);
+
+	// model/view/projection transformations
+	glm::mat4 modelView = camera.viewMatrix;
+	hoverShader.setMat4("modelView", modelView);
+	hoverShader.setMat4("projection", projection);
+
+	glPointSize(8.0f);
+	glDrawArrays(GL_POINTS, 0, 1);
+
+	//unbind
+	glBindVertexArray(0);
+}
+
+void StatusManager::DrawHotPoint()
+{
+	float hotVertices[3] = { hotPoint.x, hotPoint.y, hotPoint.z };
+
+	hoverShader.use();
+	glBindVertexArray(HVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, HVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 3 * sizeof(float), &hotVertices);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_POLYGON_OFFSET_FILL);

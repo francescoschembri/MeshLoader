@@ -35,12 +35,14 @@ public:
 	glm::mat4 projection = glm::mat4(1.0f);
 	//additional info
 	std::vector<Vertex> selectedVertices;
+	std::vector<Vertex*> selectedVerticesPointers;
 	PickingInfo info;
 	//variables for tweaking
 	Change currentChange;
 	std::vector<Change> changes;
 	int changeIndex = -1;
 	glm::vec3 startChangingPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 hotPoint = glm::vec3(0.0f, 0.0f, 0.0f);
 	float rayLenghtOnChangeStart = -1.0f;
 	//buffers to render hovered and selected stuffs
 	GLuint HVBO, HVAO;
@@ -86,4 +88,5 @@ public:
 	void DrawHoveredFace();
 	void DrawHoveredLine();
 	void DrawHoveredPoint();
+	void DrawHotPoint();
 };
