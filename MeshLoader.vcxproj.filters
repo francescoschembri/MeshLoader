@@ -220,6 +220,9 @@
     <None Include="Shaders\selected.fs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
+    <None Include="Shaders\animated_model_loading.gs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\screen_shader.vs">

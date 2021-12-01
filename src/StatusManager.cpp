@@ -13,7 +13,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	HVBO(0),
 	SVAO(0),
 	SVBO(0),
-	modelShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs")),
+	modelShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs", "./Shaders/animated_model_loading.gs")),
 	wireframeShader(Shader("./Shaders/wireframe.vs", "./Shaders/wireframe.fs")),
 	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
 	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs")),

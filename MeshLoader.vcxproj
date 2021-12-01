@@ -205,6 +205,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.fs" />
+    <None Include="Shaders\animated_model_loading.gs" />
     <None Include="Shaders\animated_model_loading.vs" />
     <None Include="Shaders\hover.fs" />
     <None Include="Shaders\hover.vs" />

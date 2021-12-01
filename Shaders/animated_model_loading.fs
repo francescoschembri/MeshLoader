@@ -2,7 +2,7 @@
 out vec4 FragColor;
 
 in vec2 TexCoords;
-flat in vec3 Norm;
+in vec3 Norm;
 
 uniform sampler2D texture_diffuse;
 uniform sampler2D texture_specular;

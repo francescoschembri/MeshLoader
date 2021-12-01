@@ -12,9 +12,11 @@ layout(location = 7) in int numBones;
 uniform mat4 projection;
 uniform mat4 modelView;
 uniform mat4 finalBonesMatrices[100];
-	
-out vec2 TexCoords;
-flat out vec3 Norm;
+
+out VS_OUT {
+    vec3 normal;
+    vec2 texCoords;
+} vs_out;
 	
 void main()
 {
@@ -26,6 +28,6 @@ void main()
         cumulativeMatrix += (finalBonesMatrices[boneIds[i]] * weights[i]);
     }
     gl_Position =  projection * modelView * cumulativeMatrix * vec4(pos, 1.0);
-    Norm = normalize((modelView * cumulativeMatrix * vec4(norm, 0.0)).xyz);
-    TexCoords = tex;
+    vs_out.normal = normalize((modelView * cumulativeMatrix * vec4(norm, 0.0)).xyz);
+    vs_out.texCoords = tex;
 }
