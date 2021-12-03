@@ -24,12 +24,16 @@ vec3 GetNormal()
 {
     vec3 a = vec3(gl_in[1].gl_Position) - vec3(gl_in[0].gl_Position);
     vec3 b = vec3(gl_in[2].gl_Position) - vec3(gl_in[0].gl_Position);
-    return normalize(cross(b, a));
+    return normalize(cross(a, b));
 }
 
 void main() {    
     vec3 normal = GetNormal();
-    //vec3 normal = normalize(gs_in[0].normal + gs_in[1].normal + gs_in[2].normal);
+    vec3 other_normal = normalize(gs_in[0].normal + gs_in[1].normal + gs_in[2].normal);
+    if(dot(normal,other_normal)<0.3f)
+    {
+        normal = -normal;
+    }
 
     adjust_vertex(gl_in[0].gl_Position, normal, gs_in[0].texCoords);
     adjust_vertex(gl_in[1].gl_Position, normal, gs_in[1].texCoords);

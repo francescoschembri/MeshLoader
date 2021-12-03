@@ -80,8 +80,12 @@ public:
 	void Undo();
 	void Redo();
 
-	// rendering functions
+	
 	void Render();
+	
+
+private:
+	// rendering functions
 	void DrawWireframe();
 	void DrawModel();
 	void DrawSelectedVertices();
@@ -89,4 +93,7 @@ public:
 	void DrawHoveredLine();
 	void DrawHoveredPoint();
 	void DrawHotPoint();
+
+	//utilities
+	void UpdateSelectedVertices();
 };

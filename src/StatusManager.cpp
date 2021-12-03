@@ -197,6 +197,7 @@ void StatusManager::Undo()
 		changes[changeIndex--].Undo();
 		animatedModel.value().Reload();
 	}
+	UpdateSelectedVertices();
 }
 
 void StatusManager::Redo()
@@ -207,6 +208,7 @@ void StatusManager::Redo()
 		changes[++changeIndex].Apply();
 		animatedModel.value().Reload();
 	}
+	UpdateSelectedVertices();
 }
 
 void StatusManager::LoadModel(std::string& path)
@@ -287,10 +289,7 @@ void StatusManager::TweakSelectedVertices()
 	glm::vec3 offset = hotPoint - startChangingPos;
 	currentChange.Modify(offset);
 	animatedModel.value().Reload();
-	//update selectedVertices
-	selectedVertices.clear();
-	for (Vertex* v : selectedVerticesPointers)
-		selectedVertices.push_back(*v);
+	UpdateSelectedVertices();
 }
 
 void StatusManager::Render()
@@ -432,6 +431,13 @@ void StatusManager::DrawHotPoint()
 
 	//unbind
 	glBindVertexArray(0);
+}
+
+void StatusManager::UpdateSelectedVertices()
+{
+	selectedVertices.clear();
+	for (Vertex* v : selectedVerticesPointers)
+		selectedVertices.push_back(*v);
 }
 
 
