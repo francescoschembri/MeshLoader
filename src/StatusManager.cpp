@@ -260,8 +260,7 @@ void StatusManager::EndChange()
 {
 	changes.push_back(currentChange);
 	changeIndex++;
-	//TODO change animated mesh
-	//BakeModel();
+	info.hitPoint.value() += currentChange.offset;
 }
 
 void StatusManager::TweakSelectedVertices()
