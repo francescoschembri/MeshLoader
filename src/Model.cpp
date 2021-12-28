@@ -7,6 +7,15 @@ Model::Model(std::string& path, TextureManager& texManager, bool gamma)
 	texMan(texManager)
 {
 	loadModel(path);
+	//weights propagation from each mesh to the other ones.
+	for (int i = 0; i < meshes.size(); i++) {
+		for (int j = i + 1; j < meshes.size(); j++)
+		{
+			meshes[i].PropagateWeightsToMesh(meshes[j]);
+			meshes[j].PropagateWeightsToMesh(meshes[i]);
+		}
+		meshes[i].Reload();
+	}
 }
 
 Model Model::Bake(std::vector<glm::mat4>& matrices)

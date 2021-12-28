@@ -40,6 +40,8 @@ public:
 	void Draw();
 	// reload opengl data for the mesh
 	void Reload();
+	// propagate weights of the mesh to another one
+	void PropagateWeightsToMesh(Mesh& m);
 
 private:
 	std::vector<std::set<int>> graph;
