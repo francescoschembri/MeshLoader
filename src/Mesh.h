@@ -47,4 +47,5 @@ private:
 	std::vector<std::set<int>> graph;
 	// initializes all the buffer objects/arrays
 	void SetupMesh();
+	float GetDiagonalLenOfBoundingBox();
 };

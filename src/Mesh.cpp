@@ -83,6 +83,8 @@ void Mesh::PropagateVerticesWeights()
 		}
 	}
 
+	float diag = GetDiagonalLenOfBoundingBox();
+
 	//for each bone of each vertex propagate the associated weight
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& v1 = vertices[i];
@@ -93,7 +95,7 @@ void Mesh::PropagateVerticesWeights()
 			for (int j = 0; j < vertices.size(); j++) {
 				if (i == j) continue;
 				Vertex& v2 = vertices[j];
-				float dist = glm::length(v1.Position - v2.Position);
+				float dist = glm::length(v1.Position - v2.Position)/diag;
 				float propagatedWeight = weights[i][boneID] / powf(1.1f, dist); // == w*b^-d
 				if (propagatedWeight > weights[j][boneID]) {
 					weights[j][boneID] = propagatedWeight;
@@ -159,5 +161,35 @@ void Mesh::SetupMesh()
 	glEnableVertexAttribArray(7);
 	glVertexAttribIPointer(7, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneData.NumBones));
 	glBindVertexArray(0);
+}
+
+float Mesh::GetDiagonalLenOfBoundingBox()
+{
+	float minX = vertices[0].Position.x;
+	float maxX = vertices[0].Position.x;
+	float minY = vertices[0].Position.y;
+	float maxY = vertices[0].Position.y;
+	float minZ = vertices[0].Position.z;
+	float maxZ = vertices[0].Position.z;
+	for (Vertex& v : vertices) {
+		if (v.Position.x < minX)
+			minX = v.Position.x;
+		else if (v.Position.x > maxX)
+			maxX = v.Position.x;
+
+		if (v.Position.y < minY)
+			minY = v.Position.y;
+		else if (v.Position.y > maxY)
+			maxY = v.Position.y;
+
+		if (v.Position.z < minZ)
+			minZ = v.Position.z;
+		else if (v.Position.z > maxZ)
+			maxZ = v.Position.z;
+	}
+	float h = maxZ - minZ;
+	float bl1 = maxX - minX;
+	float bl2 = maxY - minY;
+	return sqrt(h*h + bl1 * bl1 + bl2 * bl2);
 }
 
