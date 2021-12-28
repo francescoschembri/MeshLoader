@@ -3,19 +3,11 @@
 // constructor, expects a filepath to a 3D model.
 Model::Model(std::string& path, TextureManager& texManager, bool gamma)
 	:
-	gammaCorrection(gamma), 
+	gammaCorrection(gamma),
 	texMan(texManager)
 {
 	loadModel(path);
-	//weights propagation from each mesh to the other ones.
-	for (int i = 0; i < meshes.size(); i++) {
-		for (int j = i + 1; j < meshes.size(); j++)
-		{
-			meshes[i].PropagateWeightsToMesh(meshes[j]);
-			meshes[j].PropagateWeightsToMesh(meshes[i]);
-		}
-		meshes[i].Reload();
-	}
+	PropagateWeights();
 }
 
 Model Model::Bake(std::vector<glm::mat4>& matrices)
@@ -219,4 +211,26 @@ void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* 
 			SetVertexBoneData(vertices[vertexId], boneID, weight);
 		}
 	}
+}
+
+void Model::PropagateWeights()
+{
+	// Join meshes'vertices into a unique mesh
+	Mesh m;
+	for (int i = 0; i < meshes.size(); i++) {
+		// join vertices
+		m.vertices.insert(m.vertices.end(), meshes[i].vertices.begin(), meshes[i].vertices.end());
+	}
+	// propagate weights on the unique mesh
+	m.PropagateVerticesWeights();
+	// take the weights of each mesh from the unique mesh
+	int offset = 0;
+	for (int i = 0; i < meshes.size(); i++) {
+		// join vertices
+		for (int j = 0; j < meshes[i].vertices.size(); j++) {
+			meshes[i].vertices[j].BoneData = m.vertices[j + offset].BoneData;
+		}
+		offset += meshes[i].vertices.size();
+	}
+	Reload();
 }

@@ -40,13 +40,11 @@ public:
 	void Draw();
 	// reload opengl data for the mesh
 	void Reload();
-	// propagate weights of the mesh to another one
-	void PropagateWeightsToMesh(Mesh& m);
+	// propagate weights of the bones that influence the vertex to the next ones.
+	void PropagateVerticesWeights();
 
 private:
 	std::vector<std::set<int>> graph;
-	// propagate weights of the bones that influence the vertex to the next ones.
-	void PropagateVerticesWeights();
 	// initializes all the buffer objects/arrays
 	void SetupMesh();
 };

@@ -12,7 +12,6 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-	PropagateVerticesWeights();
 	//SetupMesh();
 }
 
@@ -71,54 +70,6 @@ void Mesh::Reload()
 	SetupMesh();
 }
 
-void Mesh::PropagateWeightsToMesh(Mesh& m)
-{
-	// initialize the temp weights array [DENSE]
-	std::vector<std::vector<double>> weights = std::vector<std::vector<double>>(m.vertices.size(), std::vector<double>(MAX_NUM_BONE + 1, 0.0));
-	for (int i = 0; i < m.vertices.size(); i++) {
-		Vertex& v = m.vertices[i];
-		for (int j = 0; j < v.BoneData.NumBones; j++) {
-			weights[i][m.vertices[i].BoneData.BoneIDs[j]] = abs(m.vertices[i].BoneData.Weights[j]);
-			//NOTE: we use abs because we are taking in consideration even meshes already modified with this tool
-			//      that could have some negative weights
-		}
-	}
-
-	//for each bone of each vertex propagate the associated weight
-	for (int i = 0; i < vertices.size(); i++) {
-		Vertex& v1 = vertices[i];
-		for (int b = 0; b < v1.BoneData.NumBones; b++) {
-			// NOTE: we want to propagate only the weights of the original bones,
-			// since the weights added during the propagation were already propagated. 
-			int boneID = v1.BoneData.BoneIDs[b];
-
-			for (int j = 0; j < m.vertices.size(); j++) {
-				Vertex& v2 = m.vertices[j];
-				float dist = glm::length(v1.Position - v2.Position);
-				float propagatedWeight = v1.BoneData.Weights[b] / powf(1.1f, dist); // == w*b^-d
-				if (propagatedWeight > weights[j][boneID]) {
-					weights[j][boneID] = propagatedWeight;
-				}
-			}
-		}
-	}
-
-
-	// add new bones to the original ones
-	for (int i = 0; i < m.vertices.size(); i++) {
-		Vertex& v = m.vertices[i];
-		for (int j = 0; j < v.BoneData.NumBones; j++) {
-			weights[i][v.BoneData.BoneIDs[j]] = -1.0f;
-		}
-		while (v.BoneData.NumBones < MAX_BONE_INFLUENCE) {
-			int boneID = std::distance(weights[i].begin(), std::max_element(weights[i].begin(), weights[i].end()));
-			weights[i][boneID] = -1.0f;
-			v.BoneData.BoneIDs[v.BoneData.NumBones] = boneID;
-			v.BoneData.Weights[v.BoneData.NumBones++] = 0.0f;
-		}
-	}
-}
-
 void Mesh::PropagateVerticesWeights()
 {
 	// initialize the temp weights array [DENSE]
@@ -160,7 +111,6 @@ void Mesh::PropagateVerticesWeights()
 		}
 		while (v.BoneData.NumBones < MAX_BONE_INFLUENCE) {
 			int boneID = std::distance(weights[i].begin(), std::max_element(weights[i].begin(), weights[i].end()));
-			if (weights[i][boneID] < FLT_EPSILON || weights[i][boneID] > -FLT_EPSILON) break;
 			weights[i][boneID] = -1.0f;
 			v.BoneData.BoneIDs[v.BoneData.NumBones] = boneID;
 			v.BoneData.Weights[v.BoneData.NumBones++] = 0.0f;
