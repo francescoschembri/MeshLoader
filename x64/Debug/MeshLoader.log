@@ -1,4 +1,43 @@
-﻿  Mesh.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(63,78): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(130,15): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+﻿  Animation.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(10,24): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(11,30): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(28,47): warning C4244: 'return': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animation.cpp(72,20): warning C4018: '<': errata corrispondenza tra signed e unsigned
+  Animator.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animator.cpp(23,44): warning C4267: '=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Animator.cpp(31,73): warning C4267: '=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  Camera.cpp
+  GUI.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(83,1): warning C4312: 'cast di tipo': conversione da 'GLuint' a 'void *', di dimensioni maggiori
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(87,1): warning C4311: 'cast di tipo': troncamento puntatore da 'void *' a 'GLuint'
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(87,1): warning C4302: 'cast di tipo': troncamento da 'void *' a 'GLuint'
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(219,33): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(219,26): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(265,46): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  Main.cpp
+  Mesh.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(62,78): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(98,28): warning C4244: 'inizializzazione': conversione da '_Ty' a 'float'. Possibile perdita di dati.
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Mesh.cpp(114,15): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+  Model.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(184,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
+  StatusManager.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(7,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(76,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(189,52): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(206,31): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(234,12): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(251,31): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  Utility.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Utility.cpp(12,10): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+  Window.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Window.cpp(38,39): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Window.cpp(38,33): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Window.cpp(45,36): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+  Generazione del codice in corso...
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(39): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

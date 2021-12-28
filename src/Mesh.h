@@ -45,8 +45,6 @@ private:
 	std::vector<std::set<int>> graph;
 	// propagate weights of the bones that influence the vertex to the next ones.
 	void PropagateVerticesWeights();
-	// makes an unoriented graph with the vertices
-	void BuildGraph();
 	// initializes all the buffer objects/arrays
 	void SetupMesh();
 };
