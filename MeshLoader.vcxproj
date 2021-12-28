@@ -190,6 +190,7 @@
     <ClInclude Include="src\BoneInfo.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Change.h" />
+    <ClInclude Include="src\eigen_glm_helpers.h" />
     <ClInclude Include="src\Face.h" />
     <ClInclude Include="src\GUI.h" />
     <ClInclude Include="src\Mesh.h" />

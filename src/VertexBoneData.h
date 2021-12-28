@@ -1,6 +1,7 @@
 #pragma once
 
-constexpr int MAX_BONE_INFLUENCE = 100;
+constexpr int MAX_BONE_INFLUENCE = 4;
+constexpr int MAX_NUM_BONE = 100;
 
 struct VertexBoneData {
 	//bone indexes which will influence this vertex

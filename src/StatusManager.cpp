@@ -261,6 +261,8 @@ void StatusManager::EndChange()
 	changes.push_back(currentChange);
 	changeIndex++;
 	info.hitPoint.value() += currentChange.offset;
+	currentChange.Reskin(animator.GetFinalBoneMatrices());
+	animatedModel.value().Reload();
 }
 
 void StatusManager::TweakSelectedVertices()
@@ -287,6 +289,7 @@ void StatusManager::TweakSelectedVertices()
 	hotPoint = glm::vec3(rayStartPos) + dir * rayLenghtOnChangeStart;
 	glm::vec3 offset = hotPoint - startChangingPos;
 	currentChange.Modify(offset);
+	currentChange.Reskin(animator.GetFinalBoneMatrices());
 	animatedModel.value().Reload();
 	UpdateSelectedVertices();
 }

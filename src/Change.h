@@ -13,6 +13,7 @@ public:
 	void Apply();
 	void Undo();
 	void Modify(glm::vec3 newoffset);
+	void Reskin(std::vector<glm::mat4>& matrices);
 private:
 	std::vector<Vertex*> changedVertices;
 };

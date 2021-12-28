@@ -2,7 +2,7 @@
 
 
 float magnitude(glm::vec3 v) {
-	return sqrt(glm::dot(v, v));
+	return glm::length(v);
 }
 
 float raySphereIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 sphereCenter, float radius)

@@ -133,7 +133,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	texIndices.insert(texIndices.end(), normalMaps.begin(), normalMaps.end());
 	std::vector<int> ambientMaps = texMan.loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ambient", directory);
 	texIndices.insert(texIndices.end(), ambientMaps.begin(), ambientMaps.end());
-
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
@@ -159,9 +158,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		Face f{};
 		aiFace face = mesh->mFaces[i];
-		if (face.mNumIndices > 3) {
-			std::cout << face.mNumIndices << "\n";
-		}
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
 			f.indices[j] = face.mIndices[j];
 		faces.push_back(f);

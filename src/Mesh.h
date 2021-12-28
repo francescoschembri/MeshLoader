@@ -11,12 +11,15 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <algorithm>
+#include <cmath>
+
 
 class Mesh {
 public:
 	// mesh Data
-	std::vector<Vertex>       vertices;
+	std::vector<Vertex> vertices;
 	std::vector<Face> faces;
 	std::vector<int> texIndices;
 	unsigned int VAO;
@@ -39,7 +42,11 @@ public:
 	void Reload();
 
 private:
-
+	std::vector<std::set<int>> graph;
+	// propagate weights of the bones that influence the vertex to the next ones.
+	void PropagateVerticesWeights();
+	// makes an unoriented graph with the vertices
+	void BuildGraph();
 	// initializes all the buffer objects/arrays
-	void setupMesh();
+	void SetupMesh();
 };

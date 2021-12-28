@@ -12,7 +12,9 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-	setupMesh();
+	BuildGraph();
+	PropagateVerticesWeights();
+	SetupMesh();
 }
 
 // copy constructor
@@ -20,12 +22,13 @@ Mesh::Mesh(const Mesh& m) :
 	loaded(true),
 	vertices(m.vertices),
 	faces(m.faces),
-	texIndices(m.texIndices)
+	texIndices(m.texIndices),
+	graph(m.graph)
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-	setupMesh();
+	SetupMesh();
 }
 
 void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex>& animatedVertices)
@@ -66,11 +69,90 @@ void Mesh::Draw()
 
 void Mesh::Reload()
 {
-	setupMesh();
+	SetupMesh();
+}
+
+void Mesh::PropagateVerticesWeights()
+{
+	// initialize the temp weights array [DENSE]
+	std::vector<std::vector<double>> weights = std::vector<std::vector<double>>(vertices.size(), std::vector<double>(MAX_NUM_BONE+1, 0.0));
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& v = vertices[i];
+		for (int j = 0; j < v.BoneData.NumBones; j++) {
+			weights[i][vertices[i].BoneData.BoneIDs[j]] = abs(vertices[i].BoneData.Weights[j]);
+		}
+	}
+
+	//for each bone of each vertex propagate the associated weight
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& v = vertices[i];
+		for (int j = 0; j < v.BoneData.NumBones; j++) {
+			// NOTE: we want to propagate only the weights of the original bones,
+			// since the weights added during the propagation were already propagated. 
+			int boneID = v.BoneData.BoneIDs[j];
+			std::set<int> frontier = graph[i];
+			std::vector<int> exploredVer;
+			exploredVer.push_back(i);
+			while (!frontier.empty()) {
+				int ver = *frontier.begin();
+				// calculate the propagated weight
+				double dist = glm::length(v.Position - vertices[ver].Position);
+				double propagatedWeight = weights[i][boneID] /* pow(1.00001, -dist*0.0000001)*/;
+
+				// check if the vertex exctracted from the frontier is already influenced by the bone
+				if (propagatedWeight > weights[ver][boneID])
+				{
+					weights[ver][boneID] = propagatedWeight;
+
+					// if the weight was updated, 
+					// add all the vertices close to ver that are not already explored
+					for (auto& adjVer : graph[ver])
+					{
+						if (std::find(exploredVer.begin(), exploredVer.end(), adjVer) == exploredVer.end())
+							frontier.insert(adjVer);
+					}
+				}
+
+				exploredVer.push_back(ver);
+				frontier.erase(ver);
+			}
+		}
+	}
+
+
+	// add new bones to the original ones
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& v = vertices[i];
+		for (int j = 0; j < v.BoneData.NumBones; j++) {
+			weights[i][v.BoneData.BoneIDs[j]] = -1.0f;
+		}
+		while (v.BoneData.NumBones < MAX_BONE_INFLUENCE) {
+			int boneID = std::distance(weights[i].begin(), std::max_element(weights[i].begin(), weights[i].end()));
+			weights[i][boneID] = -1.0f;
+			v.BoneData.BoneIDs[v.BoneData.NumBones] = boneID;
+			v.BoneData.Weights[v.BoneData.NumBones++] = 0.0f;
+		}
+	}
+}
+
+void Mesh::BuildGraph()
+{
+	graph = std::vector<std::set<int>>(vertices.size(), std::set<int>());
+	for (Face& f : faces) {
+		//v1
+		graph[f.indices[0]].insert(f.indices[1]);
+		graph[f.indices[0]].insert(f.indices[2]);
+		//v2
+		graph[f.indices[1]].insert(f.indices[0]);
+		graph[f.indices[1]].insert(f.indices[2]);
+		//v3
+		graph[f.indices[2]].insert(f.indices[0]);
+		graph[f.indices[2]].insert(f.indices[1]);
+	}
 }
 
 // initializes all the buffer objects/arrays
-void Mesh::setupMesh()
+void Mesh::SetupMesh()
 {
 	glBindVertexArray(VAO);
 	// load data into vertex buffers

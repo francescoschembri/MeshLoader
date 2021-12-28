@@ -185,6 +185,9 @@
     <ClInclude Include="src\VertexBoneData.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="src\eigen_glm_helpers.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\animated_model_loading.vs">
