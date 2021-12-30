@@ -1,5 +1,5 @@
 ﻿  Model.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(185,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(233,38): warning C4267: '+=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(182,36): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(230,38): warning C4267: '+=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
 C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\Model.cpp(40): warning C4172: verrà restituito l'indirizzo del valore : info temporaneo o della variabile locale
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe

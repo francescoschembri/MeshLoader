@@ -63,12 +63,9 @@ void Model::loadModel(std::string& path)
 	importer.SetPropertyInteger(AI_CONFIG_PP_FD_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
 	const aiScene* scene = importer.ReadFile(path,
 		aiProcess_Triangulate |
-		aiProcess_CalcTangentSpace |
-		aiProcess_GenSmoothNormals |
 		aiProcess_ImproveCacheLocality |
 		aiProcess_RemoveRedundantMaterials |
 		aiProcess_RemoveComponent |
-		aiProcess_SplitLargeMeshes |
 		aiProcess_GenUVCoords |
 		aiProcess_SortByPType |
 		aiProcess_FindDegenerates |
@@ -215,7 +212,7 @@ void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* 
 
 void Model::PropagateWeights()
 {
-	// Join meshes'vertices into a unique mesh
+	//// Join meshes'vertices into a unique mesh
 	Mesh m;
 	for (int i = 0; i < meshes.size(); i++) {
 		// join vertices

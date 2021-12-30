@@ -53,6 +53,7 @@ public:
 	Shader mouseShader;
 	Shader hoverShader;
 	Shader selectedShader;
+	Shader numBonesShader;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 
