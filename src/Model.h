@@ -50,7 +50,7 @@ public:
 	// draws the model, and thus all its meshes
 	void Draw(const Shader& shader);
 	std::map<std::string, BoneInfo> GetBoneInfoMap();
-	const BoneInfo& AddBoneInfo(std::string&& name, glm::mat4 offset);
+	int AddBoneInfo(std::string&& name, glm::mat4 offset);
 	void Reload();
 private:
 

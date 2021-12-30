@@ -44,21 +44,16 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
 	int size = animation->mNumChannels;
 
-	std::map<std::string, BoneInfo> boneInfoMap = model.GetBoneInfoMap();//getting m_BoneInfoMap from Model class
-
 	//reading channels(bones engaged in an animation and their keyframes)
 	for (int i = 0; i < size; i++)
 	{
 		auto channel = animation->mChannels[i];
 		auto boneName = channel->mNodeName.data;
 
-		const BoneInfo& info = model.AddBoneInfo(std::move(boneName), glm::mat4(1.0f));
-
-		Bone b = Bone(boneName, info.id, channel);
-		m_Bones.push_back(b);
+		m_Bones.push_back(Bone(boneName, model.AddBoneInfo(std::move(boneName), glm::mat4(1.0f)), channel));
 	}
 
-	m_BoneInfoMap = boneInfoMap;
+	m_BoneInfoMap = model.GetBoneInfoMap();
 }
 
 void Animation::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src)

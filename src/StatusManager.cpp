@@ -18,6 +18,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
 	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs")),
 	selectedShader(Shader("./Shaders/selected.vs", "./Shaders/selected.fs")),
+	numBonesShader(Shader("./Shaders/num_bones_visualization.vs", "./Shaders/num_bones_visualization.fs")),
 	currentChange(Change(selectedVerticesPointers))
 {
 	// setup selected vertices vao
@@ -334,21 +335,21 @@ void StatusManager::DrawWireframe() {
 }
 
 void StatusManager::DrawModel() {
-	modelShader.use();
+	numBonesShader.use();
 	// model/view/projection transformations
 	glm::mat4 modelView = camera.viewMatrix;
-	modelShader.setMat4("modelView", modelView);
-	modelShader.setMat4("projection", projection);
+	numBonesShader.setMat4("modelView", modelView);
+	numBonesShader.setMat4("projection", projection);
 
 	// pass bones matrices to the shader
 	auto transforms = animator.GetFinalBoneMatrices();
 	for (int i = 0; i < transforms.size(); ++i)
-		modelShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+		numBonesShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0, 1.0);
-	animatedModel.value().Draw(modelShader);
+	animatedModel.value().Draw(numBonesShader);
 }
 
 void StatusManager::DrawHoveredFace() {

@@ -226,9 +226,15 @@
     <None Include="Shaders\animated_model_loading.gs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
+    <None Include="Shaders\num_bones_visualization.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\screen_shader.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </Text>
+    <Text Include="Shaders\num_bones_visualization.vs">
       <Filter>File di risorse\Shaders</Filter>
     </Text>
   </ItemGroup>
