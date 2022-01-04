@@ -151,13 +151,13 @@ void on_mouse_click_callback(GLFWwindow* window, int button, int action, int mod
 				status->selectedVertices.clear();
 				status->selectedVerticesPointers.clear();
 			}
-			if (!status->info.hitPoint)
+			if (status->info.hitPoint && status->SelectHoveredVertex())
+			{
+				status->StartChange();
+				process_mouse_movement = &tweak;
 				return;
-			status->SelectHoveredVertex();
+			}
 		}
-		status->StartChange();
-		process_mouse_movement = &tweak;
-		return;
 	}
 }
 

@@ -224,12 +224,13 @@ void StatusManager::LoadModel(std::string& path)
 	camera.pivot = glm::vec3(-0.3f, 1.3f, 0.3f);
 }
 
-void StatusManager::SelectHoveredVertex()
+bool StatusManager::SelectHoveredVertex()
 {
 	Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 	int verIndex = getClosestVertexIndex(info.hitPoint.value(), bMesh, f);
 	Vertex* v = &bMesh.vertices[verIndex];
+	if (v->BoneData.NumBones < 4) return false;
 	//avoid duplicates and allow removing selected vertices
 	auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v);
 	int index = iter - selectedVertices.begin();
@@ -241,6 +242,7 @@ void StatusManager::SelectHoveredVertex()
 		selectedVertices.erase(iter);
 		selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
 	}
+	return true;
 }
 
 void StatusManager::StartChange()

@@ -72,7 +72,7 @@ public:
 	//utilities
 	PickingInfo Picking();
 	void SetPivot();
-	void SelectHoveredVertex();
+	bool SelectHoveredVertex();
 
 	//tweaking
 	void StartChange();
