@@ -12,7 +12,8 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-	//SetupMesh();
+	PropagateVerticesWeights();
+	SetupMesh();
 }
 
 // copy constructor
@@ -72,8 +73,9 @@ void Mesh::Reload()
 
 void Mesh::PropagateVerticesWeights()
 {
+	BuildGraph();
 	// initialize the temp weights array [DENSE]
-	std::vector<std::vector<double>> weights = std::vector<std::vector<double>>(vertices.size(), std::vector<double>(MAX_NUM_BONE + 1, 0.0));
+	std::vector<std::vector<double>> weights = std::vector<std::vector<double>>(vertices.size(), std::vector<double>(MAX_NUM_BONE, 0.0));
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& v = vertices[i];
 		for (int j = 0; j < v.BoneData.NumBones; j++) {
@@ -82,23 +84,25 @@ void Mesh::PropagateVerticesWeights()
 			//      that could have some negative weights
 		}
 	}
-
 	float diag = GetDiagonalLenOfBoundingBox();
-
 	//for each bone of each vertex propagate the associated weight
-	for (int i = 0; i < vertices.size(); i++) {
-		Vertex& v1 = vertices[i];
-		for (int b = 0; b < v1.BoneData.NumBones; b++) {
-			// NOTE: we want to propagate only the weights of the original bones,
-			// since the weights added during the propagation were already propagated. 
-			int boneID = v1.BoneData.BoneIDs[b];
-			for (int j = 0; j < vertices.size(); j++) {
-				if (i == j) continue;
-				Vertex& v2 = vertices[j];
-				float dist = glm::length(v1.Position - v2.Position)/diag;
-				float propagatedWeight = weights[i][boneID] / powf(1.1f, dist); // == w*b^-d
-				if (propagatedWeight > weights[j][boneID]) {
-					weights[j][boneID] = propagatedWeight;
+	bool changed = true;
+	while (changed) {
+		changed = false;
+		for (int i = 0; i < vertices.size(); i++) {
+			Vertex& v = vertices[i];
+			for (int j = 0; j < MAX_NUM_BONE; j++) {
+				if (weights[i][j] > -DBL_EPSILON && weights[i][j] < DBL_EPSILON) continue;
+				for (auto ver: graph[i]) {
+					// calculate the propagated weight
+					double dist = glm::length(v.Position - vertices[ver].Position) / diag;
+					double propagatedWeight = weights[i][j] / pow(1.1, dist);
+					// check if the vertex exctracted from the frontier is already influenced by the bone
+					if (propagatedWeight > weights[ver][j])
+					{
+						weights[ver][j] = propagatedWeight;
+						changed = true;
+					}
 				}
 			}
 		}
@@ -113,6 +117,7 @@ void Mesh::PropagateVerticesWeights()
 		}
 		while (v.BoneData.NumBones < MAX_BONE_INFLUENCE) {
 			int boneID = std::distance(weights[i].begin(), std::max_element(weights[i].begin(), weights[i].end()));
+			if (weights[i][boneID] > -DBL_EPSILON && weights[i][boneID] < DBL_EPSILON) break;
 			weights[i][boneID] = -1.0f;
 			v.BoneData.BoneIDs[v.BoneData.NumBones] = boneID;
 			v.BoneData.Weights[v.BoneData.NumBones++] = 0.0f;
@@ -120,6 +125,21 @@ void Mesh::PropagateVerticesWeights()
 	}
 }
 
+void Mesh::BuildGraph()
+{
+	graph = std::vector<std::set<int>>(vertices.size(), std::set<int>());
+	for (Face& f : faces) {
+		//v1
+		graph[f.indices[0]].insert(f.indices[1]);
+		graph[f.indices[0]].insert(f.indices[2]);
+		//v2
+		graph[f.indices[1]].insert(f.indices[0]);
+		graph[f.indices[1]].insert(f.indices[2]);
+		//v3
+		graph[f.indices[2]].insert(f.indices[0]);
+		graph[f.indices[2]].insert(f.indices[1]);
+	}
+}
 
 // initializes all the buffer objects/arrays
 void Mesh::SetupMesh()
@@ -190,6 +210,6 @@ float Mesh::GetDiagonalLenOfBoundingBox()
 	float h = maxZ - minZ;
 	float bl1 = maxX - minX;
 	float bl2 = maxY - minY;
-	return sqrt(h*h + bl1 * bl1 + bl2 * bl2);
+	return sqrt(h * h + bl1 * bl1 + bl2 * bl2);
 }
 

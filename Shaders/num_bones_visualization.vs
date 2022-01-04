@@ -13,7 +13,7 @@ uniform mat4 projection;
 uniform mat4 modelView;
 uniform mat4 finalBonesMatrices[100];
 
-flat out int NumBones;
+out vec4 aColor;
 	
 void main()
 {
@@ -25,5 +25,17 @@ void main()
         cumulativeMatrix += (finalBonesMatrices[boneIds[i]] * weights[i]);
     }
     gl_Position =  projection * modelView * cumulativeMatrix * vec4(pos, 1.0);
-    NumBones = numBones;
+
+    if(numBones == 0)
+        aColor = vec4(0, 0, 0, 1);
+    else if(numBones == 1)
+        aColor = vec4(1,0,0,1);
+    else if(numBones == 2)
+        aColor = vec4(1,0.5, 0.05, 1);
+    else if(numBones == 3)
+        aColor = vec4(1,1,0,1);
+    else if(numBones == 4)
+        aColor = vec4(0,1,0,1);
+    else
+        aColor = vec4(0, 0, 1, 1);
 }
