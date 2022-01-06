@@ -229,6 +229,12 @@
     <None Include="Shaders\num_bones_visualization.fs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
+    <None Include="Shaders\influence_of_single_bone.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\influence_of_single_bone.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\screen_shader.vs">

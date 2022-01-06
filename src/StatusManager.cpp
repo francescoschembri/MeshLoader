@@ -19,6 +19,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs")),
 	selectedShader(Shader("./Shaders/selected.vs", "./Shaders/selected.fs")),
 	numBonesShader(Shader("./Shaders/num_bones_visualization.vs", "./Shaders/num_bones_visualization.fs")),
+	currentBoneShader(Shader("./Shaders/influence_of_single_bone.vs", "./Shaders/influence_of_single_bone.fs")),
 	currentChange(Change(selectedVerticesPointers))
 {
 	// setup selected vertices vao
@@ -227,10 +228,12 @@ void StatusManager::LoadModel(std::string& path)
 bool StatusManager::SelectHoveredVertex()
 {
 	Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
+	Mesh& aMesh = animatedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 	int verIndex = getClosestVertexIndex(info.hitPoint.value(), bMesh, f);
 	Vertex* v = &bMesh.vertices[verIndex];
-	if (v->BoneData.NumBones < 4) return false;
+	Vertex& animatedVer = aMesh.vertices[verIndex];
+	if (animatedVer.BoneData.NumBones < 4) return false;
 	//avoid duplicates and allow removing selected vertices
 	auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v);
 	int index = iter - selectedVertices.begin();
@@ -297,6 +300,18 @@ void StatusManager::TweakSelectedVertices()
 	UpdateSelectedVertices();
 }
 
+void StatusManager::IncreaseCurrentBoneID()
+{
+	currentBoneID++;
+	std::cout << "bone ID: " << currentBoneID << "\n";
+}
+
+void StatusManager::DecreaseCurrentBoneID()
+{
+	currentBoneID--;
+	std::cout << "bone ID: " << currentBoneID << "\n";
+}
+
 void StatusManager::Render()
 {
 	//TODO REVIEW
@@ -337,21 +352,22 @@ void StatusManager::DrawWireframe() {
 }
 
 void StatusManager::DrawModel() {
-	numBonesShader.use();
+	modelShader.use();
 	// model/view/projection transformations
 	glm::mat4 modelView = camera.viewMatrix;
-	numBonesShader.setMat4("modelView", modelView);
-	numBonesShader.setMat4("projection", projection);
+	modelShader.setMat4("modelView", modelView);
+	modelShader.setMat4("projection", projection);
+	//currentBoneShader.setInt("currentBoneID", currentBoneID);
 
 	// pass bones matrices to the shader
 	auto transforms = animator.GetFinalBoneMatrices();
 	for (int i = 0; i < transforms.size(); ++i)
-		numBonesShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+		modelShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0, 1.0);
-	animatedModel.value().Draw(numBonesShader);
+	animatedModel.value().Draw(modelShader);
 }
 
 void StatusManager::DrawHoveredFace() {

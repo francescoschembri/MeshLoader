@@ -210,6 +210,8 @@
     <None Include="Shaders\animated_model_loading.vs" />
     <None Include="Shaders\hover.fs" />
     <None Include="Shaders\hover.vs" />
+    <None Include="Shaders\influence_of_single_bone.fs" />
+    <None Include="Shaders\influence_of_single_bone.vs" />
     <None Include="Shaders\mouse_shader.fs" />
     <None Include="Shaders\mouse_shader.vs" />
     <None Include="Shaders\num_bones_visualization.fs" />

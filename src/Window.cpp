@@ -104,14 +104,25 @@ void key_press_callback(GLFWwindow* window, int key, int scancode, int action, i
 		return;
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
+		return;
 	//Undo change
-	if (key == UNDO_CHANGE_KEY && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+	if (key == UNDO_CHANGE_KEY) {
 		status->Undo();
 		return;
 	}
 	//Redo change
-	if (key == REDO_CHANGE_KEY && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+	if (key == REDO_CHANGE_KEY) {
 		status->Redo();
+		return;
+	}
+	//switch current bone ID
+	if (key == INCREASE_CURR_BONE_ID) {
+		status->IncreaseCurrentBoneID();
+		return;
+	}
+	if (key == DECREASE_CURR_BONE_ID) {
+		status->DecreaseCurrentBoneID();
 		return;
 	}
 }

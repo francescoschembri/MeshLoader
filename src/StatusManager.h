@@ -54,6 +54,8 @@ public:
 	Shader hoverShader;
 	Shader selectedShader;
 	Shader numBonesShader;
+	Shader currentBoneShader;
+	int currentBoneID = -1;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 
@@ -81,7 +83,9 @@ public:
 	void Undo();
 	void Redo();
 
-	
+	//visual output
+	void IncreaseCurrentBoneID();
+	void DecreaseCurrentBoneID();
 	void Render();
 	
 

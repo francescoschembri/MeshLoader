@@ -23,6 +23,9 @@ constexpr int SWITCH_ANIMATION_KEY = GLFW_KEY_S;
 //undo and redo
 constexpr int UNDO_CHANGE_KEY = GLFW_KEY_Z;
 constexpr int REDO_CHANGE_KEY = GLFW_KEY_Y;
+//visual debugging
+constexpr int INCREASE_CURR_BONE_ID = GLFW_KEY_SPACE;
+constexpr int DECREASE_CURR_BONE_ID = GLFW_KEY_ENTER;
 
 GLFWwindow* CreateWindow();
 
