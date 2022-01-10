@@ -14,6 +14,12 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
+enum Mode
+{
+	Mode_Vertex,
+	Mode_Edge,
+	Mode_Face
+};
 
 class StatusManager
 {
@@ -56,6 +62,7 @@ public:
 	Shader numBonesShader;
 	Shader currentBoneShader;
 	int currentBoneID = -1;
+	int selectionMode = 0;
 
 	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
 
@@ -74,7 +81,9 @@ public:
 	//utilities
 	PickingInfo Picking();
 	void SetPivot();
-	bool SelectHoveredVertex();
+	bool SelectHoveredVertex(bool removeIfDouble = true);
+	bool SelectHoveredEdge(bool removeIfDouble = false);
+	bool SelectHoveredFace(bool removeIfDouble = false);
 
 	//tweaking
 	void StartChange();

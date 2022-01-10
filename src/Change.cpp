@@ -10,16 +10,16 @@ Change::Change(std::vector<Vertex*>& changedVertices)
 void Change::Apply() {
 	for (auto&& v : changedVertices) {
 		v->Position += offset;
-		//glm::mat4 inverse = glm::inverse(v->associatedWeightMatrix);
-		//v->originalVertex->Position += glm::vec3((inverse * glm::vec4(offset, 0.0f)));
+		glm::mat4 inverse = glm::inverse(v->associatedWeightMatrix);
+		v->originalVertex->Position += glm::vec3((inverse * glm::vec4(offset, 0.0f)));
 	}
 }
 
 void Change::Undo() {
 	for (auto&& v : changedVertices) {
 		v->Position -= offset;
-		//glm::mat4 inverse = glm::inverse(v->associatedWeightMatrix);
-		//v->originalVertex->Position -= glm::vec3((inverse * glm::vec4(offset, 0.0f)));
+		glm::mat4 inverse = glm::inverse(v->associatedWeightMatrix);
+		v->originalVertex->Position -= glm::vec3((inverse * glm::vec4(offset, 0.0f)));
 	}
 }
 

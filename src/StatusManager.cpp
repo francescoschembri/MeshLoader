@@ -225,15 +225,14 @@ void StatusManager::LoadModel(std::string& path)
 	camera.pivot = glm::vec3(-0.3f, 1.3f, 0.3f);
 }
 
-bool StatusManager::SelectHoveredVertex()
+bool StatusManager::SelectHoveredVertex(bool removeIfDouble)
 {
 	Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
 	Mesh& aMesh = animatedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 	int verIndex = getClosestVertexIndex(info.hitPoint.value(), bMesh, f);
 	Vertex* v = &bMesh.vertices[verIndex];
-	Vertex& animatedVer = aMesh.vertices[verIndex];
-	if (animatedVer.BoneData.NumBones < 4) return false;
+	if (aMesh.vertices[verIndex].BoneData.NumBones < 4) return false;
 	//avoid duplicates and allow removing selected vertices
 	auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v);
 	int index = iter - selectedVertices.begin();
@@ -241,11 +240,105 @@ bool StatusManager::SelectHoveredVertex()
 		selectedVertices.push_back(*v);
 		selectedVerticesPointers.push_back(v);
 	}
-	else {
+	else if (removeIfDouble) {
 		selectedVertices.erase(iter);
 		selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
 	}
 	return true;
+}
+
+bool StatusManager::SelectHoveredEdge(bool removeIfDouble)
+{
+	Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
+	Mesh& aMesh = animatedModel.value().meshes[info.meshIndex];
+	Face& f = info.face.value();
+	Line closestLine = getClosestLineIndex(info.hitPoint.value(), bMesh, f);
+	Vertex* v1 = &bMesh.vertices[closestLine.v1];
+	Vertex* v2 = &bMesh.vertices[closestLine.v2];
+	bool selected = false;
+	if (aMesh.vertices[f.indices[0]].BoneData.NumBones == 4) {
+		//avoid duplicates and allow removing selected vertices
+		auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v1);
+		int index = iter - selectedVertices.begin();
+		if (iter == selectedVertices.end()) {
+			selectedVertices.push_back(*v1);
+			selectedVerticesPointers.push_back(v1);
+		}
+		else if (removeIfDouble) {
+			selectedVertices.erase(iter);
+			selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
+		}
+		selected = true;
+	}
+	if (aMesh.vertices[f.indices[1]].BoneData.NumBones == 4) {
+		//avoid duplicates and allow removing selected vertices
+		auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v2);
+		int index = iter - selectedVertices.begin();
+		if (iter == selectedVertices.end()) {
+			selectedVertices.push_back(*v2);
+			selectedVerticesPointers.push_back(v2);
+		}
+		else if (removeIfDouble) {
+			selectedVertices.erase(iter);
+			selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
+		}
+		selected = true;
+	}
+	return selected;
+}
+
+bool StatusManager::SelectHoveredFace(bool removeIfDouble)
+{
+	Mesh& bMesh = bakedModel.value().meshes[info.meshIndex];
+	Mesh& aMesh = animatedModel.value().meshes[info.meshIndex];
+	Face& f = info.face.value();
+	Vertex* v1 = &bMesh.vertices[f.indices[0]];
+	Vertex* v2 = &bMesh.vertices[f.indices[1]];
+	Vertex* v3 = &bMesh.vertices[f.indices[2]];
+	bool selected = false;
+	if (aMesh.vertices[f.indices[0]].BoneData.NumBones == 4) {
+		//avoid duplicates and allow removing selected vertices
+		auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v1);
+		int index = iter - selectedVertices.begin();
+		if (iter == selectedVertices.end()) {
+			selectedVertices.push_back(*v1);
+			selectedVerticesPointers.push_back(v1);
+		}
+		else if (removeIfDouble) {
+			selectedVertices.erase(iter);
+			selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
+		}
+		selected = true;
+	}
+	if (aMesh.vertices[f.indices[1]].BoneData.NumBones == 4) {
+		//avoid duplicates and allow removing selected vertices
+		auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v2);
+		int index = iter - selectedVertices.begin();
+		if (iter == selectedVertices.end()) {
+			selectedVertices.push_back(*v2);
+			selectedVerticesPointers.push_back(v2);
+		}
+		else if (removeIfDouble) {
+			selectedVertices.erase(iter);
+			selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
+		}
+		selected = true;
+	}
+	if (aMesh.vertices[f.indices[2]].BoneData.NumBones == 4) {
+		//avoid duplicates and allow removing selected vertices
+		auto iter = std::find(selectedVertices.begin(), selectedVertices.end(), *v3);
+		int index = iter - selectedVertices.begin();
+		if (iter == selectedVertices.end()) {
+			selectedVertices.push_back(*v3);
+			selectedVerticesPointers.push_back(v3);
+		}
+		else if (removeIfDouble) {
+			selectedVertices.erase(iter);
+			selectedVerticesPointers.erase(selectedVerticesPointers.begin() + index);
+		}
+		selected = true;
+	}
+	return selected;
 }
 
 void StatusManager::StartChange()
@@ -267,8 +360,6 @@ void StatusManager::EndChange()
 	changes.push_back(currentChange);
 	changeIndex++;
 	info.hitPoint.value() += currentChange.offset;
-	currentChange.Reskin(animator.GetFinalBoneMatrices());
-	animatedModel.value().Reload();
 }
 
 void StatusManager::TweakSelectedVertices()
@@ -295,7 +386,6 @@ void StatusManager::TweakSelectedVertices()
 	hotPoint = glm::vec3(rayStartPos) + dir * rayLenghtOnChangeStart;
 	glm::vec3 offset = hotPoint - startChangingPos;
 	currentChange.Modify(offset);
-	currentChange.Reskin(animator.GetFinalBoneMatrices());
 	animatedModel.value().Reload();
 	UpdateSelectedVertices();
 }
@@ -329,10 +419,13 @@ void StatusManager::Render()
 	DrawSelectedVertices();
 	if (!info.hitPoint)
 		return;
-	DrawHoveredPoint();
 	DrawHotPoint();
-	//DrawHoveredLine();
-	//DrawHoveredFace();
+	if (selectionMode == Mode_Vertex)
+		DrawHoveredPoint();
+	if (selectionMode == Mode_Edge)
+		DrawHoveredLine();
+	if (selectionMode == Mode_Face)
+		DrawHoveredFace();
 }
 
 void StatusManager::DrawWireframe() {

@@ -11,6 +11,7 @@ void RenderGUI(StatusManager& status)
 	OpenAnimationDialog(status);
 	RenderModelInfo(status);
 	RenderCameraInfo(status);
+	RenderSelectionInfo(status);
 	RenderAnimatorInfo(status);
 	RenderRenderInfo(status);
 	// Rendering
@@ -329,6 +330,18 @@ void RenderMeshesInfo(StatusManager& status)
 		if (!m.texIndices.size())
 			ImGui::Text("There are no textures attached to this mesh.");
 	}
+}
+
+void RenderSelectionInfo(StatusManager& status)
+{
+	if (!showSelection)
+		return;
+	ImGui::Begin("Selection", &showSelection);
+	ImGui::Text("Selection mode:");
+	if (ImGui::RadioButton("Vertex", status.selectionMode == Mode_Vertex)) { status.selectionMode = Mode_Vertex; }
+	if (ImGui::RadioButton("Edge", status.selectionMode == Mode_Edge)) { status.selectionMode = Mode_Edge; }
+	if (ImGui::RadioButton("Face", status.selectionMode == Mode_Face)) { status.selectionMode = Mode_Face; }
+	ImGui::End();
 }
 
 void RenderCameraInfo(StatusManager& status)

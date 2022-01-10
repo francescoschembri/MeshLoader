@@ -162,14 +162,32 @@ void on_mouse_click_callback(GLFWwindow* window, int button, int action, int mod
 				status->selectedVertices.clear();
 				status->selectedVerticesPointers.clear();
 			}
-			if (status->info.hitPoint && status->SelectHoveredVertex())
+			if (!status->info.hitPoint) return;
+			if (status->selectionMode == Mode_Vertex && status->SelectHoveredVertex())
+			{
+				status->StartChange();
+				process_mouse_movement = &tweak;
+				return;
+			} else if (status->selectionMode == Mode_Edge && status->SelectHoveredEdge())
+			{
+				status->StartChange();
+				process_mouse_movement = &tweak;
+				return;
+			}
+			else if (status->selectionMode == Mode_Face && status->SelectHoveredFace())
 			{
 				status->StartChange();
 				process_mouse_movement = &tweak;
 				return;
 			}
 		}
+		else if (status->info.hitPoint){
+			status->StartChange();
+			process_mouse_movement = &tweak;
+			return;
+		}
 	}
+
 }
 
 void rotate(GLFWwindow* window, float xpos, float ypos) {
