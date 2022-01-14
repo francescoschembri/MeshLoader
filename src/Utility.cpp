@@ -20,7 +20,7 @@ float raySphereIntersection(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 sph
 	return -1.0f;
 }
 
-IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDir, const Vertex& v1, const Vertex& v2, const Vertex& v3)
+IntersectionInfo rayTriangleIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDir, const Vertex& v1, const Vertex& v2, const Vertex& v3)
 {
 	IntersectionInfo result{};
 	glm::vec3 e12 = glm::normalize(v2.Position - v1.Position);
@@ -30,7 +30,7 @@ IntersectionInfo rayPlaneIntersection(const glm::vec3 rayOrigin, const glm::vec3
 
 	//check if not parallel
 	float normalDotDirection = glm::dot(normalPlane, rayDir);
-	if (normalDotDirection == 0.0f) //it means direction and normal of the plane are perpendicular, so the ray is parallel to the plane
+	if (normalDotDirection >= -FLT_EPSILON && normalDotDirection <= FLT_EPSILON) //it means direction and normal of the plane are perpendicular, so the ray is parallel to the plane
 		return result;
 
 	// dot((P-P0), normal) = 0, normal<-->[a,b,c]

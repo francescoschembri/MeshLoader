@@ -17,9 +17,7 @@ constexpr int CAMERA_DOWN_KEY = GLFW_KEY_DOWN;
 constexpr int CAMERA_LEFT_KEY = GLFW_KEY_LEFT;
 constexpr int CAMERA_RIGHT_KEY = GLFW_KEY_RIGHT;
 //animation control
-constexpr int BAKE_MODEL_KEY = GLFW_KEY_B;
 constexpr int PAUSE_KEY = GLFW_KEY_P;
-constexpr int SWITCH_ANIMATION_KEY = GLFW_KEY_S;
 //undo and redo
 constexpr int UNDO_CHANGE_KEY = GLFW_KEY_Z;
 constexpr int REDO_CHANGE_KEY = GLFW_KEY_Y;

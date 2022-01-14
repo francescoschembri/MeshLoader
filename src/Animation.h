@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <map>
+#include <string>
 
 #include <glm/glm.hpp>
 #include <assimp/scene.h>
@@ -15,6 +16,11 @@
 class Animation
 {
 public:
+	std::string name;
+	float startFrom = 0.0f; 
+	float endAt;
+	float speed;
+
 	Animation(const std::string& animationPath, Model& model);
 
 	Bone* FindBone(const std::string& name);
@@ -35,4 +41,3 @@ private:
 	AssimpNodeData m_RootNode;
 	std::map<std::string, BoneInfo> m_BoneInfoMap;
 };
-

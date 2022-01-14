@@ -35,11 +35,8 @@ int main()
 	}
 
 	// create and attach a status to the window
-	StatusManager status;
+	StatusManager status(SCREEN_INITIAL_WIDTH, SCREEN_INITIAL_HEIGHT);
 	glfwSetWindowUserPointer(window, (void*)&status);
-
-	//create the projection matrix
-	status.projection = glm::perspective(glm::radians(FOV), (float)SCREEN_INITIAL_WIDTH / (float)SCREEN_INITIAL_HEIGHT, NEAR_PLANE, FAR_PLANE);
 
 	SetupImGui(window);
 
@@ -65,7 +62,7 @@ int main()
 	}
 
 	// Clean memory
-	//CloseImGui();
+	CloseImGui();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

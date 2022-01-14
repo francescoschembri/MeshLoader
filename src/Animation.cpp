@@ -1,13 +1,14 @@
 #include "Animation.h"
 
 
-Animation::Animation(const std::string& animationPath, Model& model)
+Animation::Animation(const std::string& animationPath, Model& model) : speed(1.0f)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
 	auto animation = scene->mAnimations[0];
-	m_Duration = animation->mDuration;
+	name = animation->mName.C_Str();
+	endAt = m_Duration = animation->mDuration;
 	m_TicksPerSecond = animation->mTicksPerSecond;
 	ReadHeirarchyData(m_RootNode, scene->mRootNode);
 	ReadMissingBones(animation, model);
@@ -35,7 +36,8 @@ glm::mat4 Animation::GetNodeTransform(const AssimpNodeData* node, float currentT
 	auto iter = std::find_if(std::begin(m_Bones), std::end(m_Bones), [&node](const auto& bone) {
 		return bone.GetBoneName() == node->name;
 		});
-	if (iter == std::end(m_Bones)) return node->transformation;
+	if (iter == std::end(m_Bones)) 
+		return node->transformation;
 	iter->Update(currentTime);
 	return iter->GetLocalTransform();
 }

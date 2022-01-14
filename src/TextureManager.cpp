@@ -108,3 +108,8 @@ void TextureManager::FlipTextures(bool flip)
 	// tell stb_image.h if it has to flip loaded texture's on the y-axis (before loading model).
 	stbi_set_flip_vertically_on_load(flip);
 }
+
+void TextureManager::ClearTextures()
+{
+	textures.clear();
+}

@@ -47,7 +47,7 @@ int Model::AddBoneInfo(std::string&& name, glm::mat4 offset)
 void Model::Reload()
 {
 	for (Mesh& m : meshes) {
-		m.Reload();
+		m.SendMeshToGPU();
 	}
 }
 

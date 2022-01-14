@@ -11,8 +11,8 @@ void Animator::UpdateAnimation(float dt)
 	Animation currentAnimation = animations[currentAnimationIndex];
 	if (&currentAnimation)
 	{
-		m_CurrentTime += currentAnimation.GetTicksPerSecond() * dt;
-		m_CurrentTime = fmod(m_CurrentTime, currentAnimation.GetDuration());
+		m_CurrentTime += currentAnimation.GetTicksPerSecond() * dt * currentAnimation.speed;
+		m_CurrentTime = std::clamp(fmod(m_CurrentTime,currentAnimation.endAt), currentAnimation.startFrom, currentAnimation.endAt);
 		CalculateBoneTransform(&currentAnimation.GetRootNode(), glm::mat4(1.0f));
 	}
 }

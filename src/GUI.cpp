@@ -179,9 +179,6 @@ void RenderModelInfo(StatusManager& status)
 	if (!showModel)
 		return;
 	ImGui::Begin("Model", &showModel);
-	if (ImGui::Button("Bake")) {
-		status.BakeModel();
-	}
 
 	RenderMeshesInfo(status);
 	ImGui::End();
@@ -230,25 +227,28 @@ void RenderAnimatorInfo(StatusManager& status)
 		return;
 	ImGui::Begin("Animator", &showAnimator);
 	int animIndex = status.animator.currentAnimationIndex;
-	std::string currentAnim = "Current animation: " + std::to_string(animIndex);
+	Animation& anim = status.animator.animations[animIndex];
+	std::string currentAnim = "Current animation: " + anim.name;
 	ImGui::Text(currentAnim.c_str());
+	std::string currentIndex = "Current index: " + std::to_string(animIndex);
+	ImGui::Text(currentIndex.c_str());
 
 	ImGui::SameLine();
 	if (ImGui::Button(status.pause ? "Play" : "Pause")) {
 		status.pause = !status.pause;
 	}
 
-	Animation& anim = status.animator.animations[animIndex];
 	float animDuration = anim.GetDuration();
 	std::string durationText = "Duration: " + std::to_string(animDuration);
 	ImGui::Text(durationText.c_str());
 
-	std::string ticks = "Tick per second: " + std::to_string(anim.GetTicksPerSecond());
-	ImGui::Text(ticks.c_str());
-
 	ImGui::Separator();
 	float currentTime = status.animator.m_CurrentTime;
 	ImGui::SliderFloat("Current Time", &currentTime, 0.0f, animDuration);
+	float& start = anim.startFrom;
+	float& end = anim.endAt;
+	ImGui::DragFloatRange2("Current Range", &start, &end, 1.0f, 0.0f, animDuration);
+	currentTime = std::clamp(currentTime, start, end);
 	if (currentTime != status.animator.m_CurrentTime)
 	{
 		status.animator.m_CurrentTime = currentTime;
@@ -283,6 +283,8 @@ void RenderAnimatorInfo(StatusManager& status)
 
 void ShowAnimationNInfo(Animator& animator, int n) {
 	Animation& anim = animator.animations[n];
+	std::string animNameText = "Animation name: " + anim.name;
+	ImGui::Text(animNameText.c_str());
 	std::string animIndexText = "Animation index: " + std::to_string(n);
 	ImGui::Text(animIndexText.c_str());
 
@@ -341,6 +343,7 @@ void RenderSelectionInfo(StatusManager& status)
 	if (ImGui::RadioButton("Vertex", status.selectionMode == Mode_Vertex)) { status.selectionMode = Mode_Vertex; }
 	if (ImGui::RadioButton("Edge", status.selectionMode == Mode_Edge)) { status.selectionMode = Mode_Edge; }
 	if (ImGui::RadioButton("Face", status.selectionMode == Mode_Face)) { status.selectionMode = Mode_Face; }
+	ImGui::Checkbox("Remove if double", &status.removeIfDouble);
 	ImGui::End();
 }
 
@@ -349,28 +352,6 @@ void RenderCameraInfo(StatusManager& status)
 	if (!showCamera)
 		return;
 	ImGui::Begin("Camera", &showCamera);
-	// Camera Position
-	float* cameraPos = glm::value_ptr(status.camera.position);
-	ImGui::InputFloat3("Position", cameraPos);
-	status.camera.position = glm::make_vec3(cameraPos);
-	// Camera Rotation
-	ImGui::BeginDisabled();
-	ImGui::InputFloat3("Pivot", glm::value_ptr(status.camera.pivot));
-	ImGui::EndDisabled();
-	float yaw = status.camera.yaw;
-	ImGui::InputFloat("X rotation", &yaw);
-	yaw =  yaw-(int)yaw+ ((int) yaw % 360);
-	float pitch = status.camera.pitch;
-	ImGui::InputFloat("Y rotation", &pitch);
-	float yOffset = status.camera.yaw - yaw;
-	float xOffset = status.camera.pitch - pitch;
-	/*if (yOffset || xOffset) {
-		status.animatedModel.value().Rotate(xOffset, yOffset);
-	}*/
-	// Camera Settings
-	ImGui::InputFloat("Movement speed", &status.camera.movementSpeed);
-	ImGui::InputFloat("Rotation speed", &status.camera.rotationSpeed);
-	ImGui::InputFloat("Zoom speed", &status.camera.zoomSpeed);
 	if (ImGui::Button("Reset Camera Settings"))
 		status.camera.Reset();
 	ImGui::End();

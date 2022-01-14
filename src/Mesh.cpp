@@ -3,7 +3,6 @@
 // constructor
 Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vector<int>&& texIndices)
 	:
-	loaded(true),
 	vertices(std::move(vertices)),
 	faces(std::move(faces)),
 	texIndices(std::move(texIndices))
@@ -13,12 +12,11 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
 	PropagateVerticesWeights();
-	SetupMesh();
+	SendMeshToGPU();
 }
 
 // copy constructor
 Mesh::Mesh(const Mesh& m) :
-	loaded(true),
 	vertices(m.vertices),
 	faces(m.faces),
 	texIndices(m.texIndices),
@@ -27,13 +25,13 @@ Mesh::Mesh(const Mesh& m) :
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-	SetupMesh();
+	SendMeshToGPU();
 }
 
 void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex>& animatedVertices)
 {
 	// Modify the vertex data
-	std::vector<Vertex> bakedVertices = std::vector<Vertex>();
+	vertices.clear();
 	for (int i = 0; i < animatedVertices.size(); i++) {
 		Vertex& v = animatedVertices[i];
 		glm::mat4 cumulativeMatrix = glm::mat4(0.0f);
@@ -50,9 +48,8 @@ void Mesh::Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex>& animatedV
 		ver.Bitangent = glm::normalize(glm::vec3(cumulativeMatrix * glm::vec4(v.Bitangent, 0.0f)));
 		ver.TexCoords = v.TexCoords;
 		ver.BoneData.NumBones = 0;
-		bakedVertices.push_back(ver);
+		vertices.push_back(ver);
 	}
-	vertices = bakedVertices;
 }
 
 // render the mesh
@@ -66,10 +63,6 @@ void Mesh::Draw()
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void Mesh::Reload()
-{
-	SetupMesh();
-}
 
 void Mesh::PropagateVerticesWeights()
 {
@@ -142,7 +135,7 @@ void Mesh::BuildGraph()
 }
 
 // initializes all the buffer objects/arrays
-void Mesh::SetupMesh()
+void Mesh::SendMeshToGPU()
 {
 	glBindVertexArray(VAO);
 	// load data into vertex buffers

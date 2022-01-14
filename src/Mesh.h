@@ -22,10 +22,9 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<Face> faces;
 	std::vector<int> texIndices;
-	unsigned int VAO;
 	// render data 
+	unsigned int VAO;
 	unsigned int VBO, EBO;
-	bool loaded = false;
 
 	// constructors
 	Mesh() = default;
@@ -34,19 +33,19 @@ public:
 	Mesh(const Mesh& m);
 	// move constructor
 	Mesh(Mesh&& m) = default;
+
+
 	// bake the mesh
 	void Bake(std::vector<glm::mat4>& matrices, std::vector<Vertex>& animatedVertices);
 	// render the mesh
 	void Draw();
-	// reload opengl data for the mesh
-	void Reload();
-	// propagate weights of the bones that influence the vertex to the next ones.
-	void PropagateVerticesWeights();
+	// send opengl data for the mesh to the gpu
+	void SendMeshToGPU();
 
 private:
 	std::vector<std::set<int>> graph;
-	// initializes all the buffer objects/arrays
-	void SetupMesh();
 	void BuildGraph();
 	float GetDiagonalLenOfBoundingBox();
+	// propagate weights of the bones that influence the vertex to the next ones.
+	void PropagateVerticesWeights();
 };

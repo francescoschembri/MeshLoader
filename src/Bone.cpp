@@ -29,10 +29,10 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 		m_Rotations.push_back(data);
 	}
 
-	for (int keyIndex = 0; keyIndex < m_NumScalings; ++keyIndex)
+	for (int scaleIndex = 0; scaleIndex < m_NumScalings; ++scaleIndex)
 	{
-		aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
-		float timeStamp = channel->mScalingKeys[keyIndex].mTime;
+		aiVector3D scale = channel->mScalingKeys[scaleIndex].mValue;
+		float timeStamp = channel->mScalingKeys[scaleIndex].mTime;
 		KeyScale data;
 		data.scale = AssimpGLMHelpers::GetGLMVec(scale);
 		data.timeStamp = timeStamp;
@@ -52,39 +52,35 @@ glm::mat4 Bone::GetLocalTransform() { return m_LocalTransform; }
 std::string Bone::GetBoneName() const { return m_Name; }
 int Bone::GetBoneID() { return m_ID; }
 
-
-
 int Bone::GetPositionIndex(float animationTime)
 {
-	for (int index = 0; index < m_NumPositions - 1; ++index)
+	for (int index = 1; index < m_NumPositions; ++index)
 	{
-		if (animationTime < m_Positions[index + 1].timeStamp)
-			return index;
+		if (animationTime < m_Positions[index].timeStamp)
+			return index - 1;
 	}
 	assert(0);
 }
 
 int Bone::GetRotationIndex(float animationTime)
 {
-	for (int index = 0; index < m_NumRotations - 1; ++index)
+	for (int index = 1; index < m_NumRotations; ++index)
 	{
-		if (animationTime < m_Rotations[index + 1].timeStamp)
-			return index;
+		if (animationTime < m_Rotations[index].timeStamp)
+			return index - 1;
 	}
 	assert(0);
 }
 
 int Bone::GetScaleIndex(float animationTime)
 {
-	for (int index = 0; index < m_NumScalings - 1; ++index)
+	for (int index = 1; index < m_NumScalings; ++index)
 	{
-		if (animationTime < m_Scales[index + 1].timeStamp)
-			return index;
+		if (animationTime < m_Scales[index].timeStamp)
+			return index - 1;
 	}
 	assert(0);
 }
-
-
 
 float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {

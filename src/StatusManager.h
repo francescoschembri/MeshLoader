@@ -10,6 +10,7 @@
 #include <optional>
 #include <utility>
 #include <algorithm>
+#include <cassert>
 
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
@@ -34,7 +35,6 @@ public:
 	//status of the render
 	bool pause;
 	bool wireframeEnabled;
-	bool isModelBaked;
 	//info about the window
 	float width = 800.0f;
 	float height = 800.0f;
@@ -63,8 +63,9 @@ public:
 	Shader currentBoneShader;
 	int currentBoneID = -1;
 	int selectionMode = 0;
+	bool removeIfDouble = false;
 
-	StatusManager(float screenWidth = 800.0f, float screenHeight = 800.0f);
+	StatusManager(float screenWidth, float screenHeight);
 
 	//loading functions
 	void AddAnimation(const char* path);
@@ -72,18 +73,17 @@ public:
 
 	//animation management
 	void Pause();
-	void BakeModel();
-	void UnbakeModel();
-	void SwitchAnimation();
+	void NextAnimation();
+	void PrevAnimation();
 	void Update();
 	void UpdateDeltaTime();
 
 	//utilities
 	PickingInfo Picking();
 	void SetPivot();
-	bool SelectHoveredVertex(bool removeIfDouble = true);
-	bool SelectHoveredEdge(bool removeIfDouble = false);
-	bool SelectHoveredFace(bool removeIfDouble = false);
+	bool SelectHoveredVertex();
+	bool SelectHoveredEdge();
+	bool SelectHoveredFace();
 
 	//tweaking
 	void StartChange();
@@ -91,6 +91,7 @@ public:
 	void TweakSelectedVertices();
 	void Undo();
 	void Redo();
+	bool IsChanging();
 
 	//visual output
 	void IncreaseCurrentBoneID();
@@ -110,4 +111,6 @@ private:
 
 	//utilities
 	void UpdateSelectedVertices();
+	void BakeModel();
+	void UnbakeModel();
 };

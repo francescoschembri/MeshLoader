@@ -47,7 +47,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void key_press_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (action == GLFW_RELEASE)
+	if (action == GLFW_RELEASE || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 		return;
 
 	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
@@ -74,38 +74,34 @@ void key_press_callback(GLFWwindow* window, int key, int scancode, int action, i
 	if (action != GLFW_PRESS || cameraMove)
 		return;
 
-	// enable/disable wireframe mode
-	if (key == WIREFRAME_KEY) {
-		status->wireframeEnabled = !status->wireframeEnabled;
-		return;
-	}
-	// pause/unpause animation. If is a baked model there are no bones -> no animation -> always paused
-	if (key == PAUSE_KEY)
-	{
-		status->Pause();
-		if (!status->pause)
-			process_mouse_movement = &update_mouse_last_pos;
-		return;
-	}
-	// bake the model in the current pose
-	if (key == BAKE_MODEL_KEY) {
-		status->BakeModel();
-		process_mouse_movement = &picking;
-		return;
-	}
-	// switch animation
-	if (key == SWITCH_ANIMATION_KEY) {
-		status->SwitchAnimation();
-		return;
-	}
+	assert(action == GLFW_PRESS);
+
 	// reset camera position
 	if (key == RESET_CAMERA_KEY) {
 		status->camera.Reset();
 		return;
 	}
 
+	// enable/disable wireframe mode
+	if (key == WIREFRAME_KEY) {
+		status->wireframeEnabled = !status->wireframeEnabled;
+		return;
+	}
+
+	// pause/unpause animation. If is a baked model there are no bones -> no animation -> always paused
+	if (key == PAUSE_KEY)
+	{
+		status->Pause();
+		if (status->pause)
+			process_mouse_movement = &picking;
+		else
+			process_mouse_movement = &update_mouse_last_pos;
+		return;
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
 		return;
+
 	//Undo change
 	if (key == UNDO_CHANGE_KEY) {
 		status->Undo();
@@ -131,63 +127,64 @@ void on_mouse_click_callback(GLFWwindow* window, int button, int action, int mod
 {
 	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
 
-	if (action == GLFW_RELEASE && status->isModelBaked)
-	{
-		process_mouse_movement = &picking;
-		if (button == GLFW_MOUSE_BUTTON_LEFT && status->currentChange.offset != glm::vec3(0.0f, 0.0f, 0.0f))
-			status->EndChange();
-		return;
-	}
 
-	if (action == GLFW_RELEASE && !status->isModelBaked) {
+	if (!status->pause) {
 		process_mouse_movement = &update_mouse_last_pos;
 		return;
 	}
 
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS && status->pause) {
+	assert(status->bakedModel.has_value());
+
+	if (action == GLFW_RELEASE)
+	{
+		process_mouse_movement = &picking;
+		if (button == GLFW_MOUSE_BUTTON_LEFT && status->IsChanging())
+			status->EndChange();
+		return;
+	}
+
+	if (action != GLFW_PRESS || !status->info.hitPoint) return;
+
+	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		status->SetPivot();
-		status->info.hitPoint.reset();
 		process_mouse_movement = &rotate;
 		return;
 	}
 
-	if (!status->bakedModel)
+	if (button != GLFW_MOUSE_BUTTON_LEFT)
 		return;
 
 	// selection
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE) {
-			//check for multiple selection
-			if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
-				status->selectedVertices.clear();
-				status->selectedVerticesPointers.clear();
-			}
-			if (!status->info.hitPoint) return;
-			if (status->selectionMode == Mode_Vertex && status->SelectHoveredVertex())
-			{
-				status->StartChange();
-				process_mouse_movement = &tweak;
-				return;
-			} else if (status->selectionMode == Mode_Edge && status->SelectHoveredEdge())
-			{
-				status->StartChange();
-				process_mouse_movement = &tweak;
-				return;
-			}
-			else if (status->selectionMode == Mode_Face && status->SelectHoveredFace())
-			{
-				status->StartChange();
-				process_mouse_movement = &tweak;
-				return;
-			}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE) {
+		//check for multiple selection
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
+			status->selectedVertices.clear();
+			status->selectedVerticesPointers.clear();
 		}
-		else if (status->info.hitPoint){
+		if (status->selectionMode == Mode_Vertex && status->SelectHoveredVertex())
+		{
+			status->StartChange();
+			process_mouse_movement = &tweak;
+			return;
+		}
+		else if (status->selectionMode == Mode_Edge && status->SelectHoveredEdge())
+		{
+			status->StartChange();
+			process_mouse_movement = &tweak;
+			return;
+		}
+		else if (status->selectionMode == Mode_Face && status->SelectHoveredFace())
+		{
 			status->StartChange();
 			process_mouse_movement = &tweak;
 			return;
 		}
 	}
-
+	else{
+		status->StartChange();
+		process_mouse_movement = &tweak;
+		return;
+	}
 }
 
 void rotate(GLFWwindow* window, float xpos, float ypos) {
@@ -204,8 +201,9 @@ void update_mouse_last_pos(GLFWwindow* window, float xpos, float ypos) {
 }
 
 void picking(GLFWwindow* window, float xpos, float ypos) {
-	update_mouse_last_pos(window, xpos, ypos);
 	StatusManager* status = (StatusManager*)glfwGetWindowUserPointer(window);
+	status->mouseLastPos.x = xpos;
+	status->mouseLastPos.y = ypos;
 	status->info = status->Picking();
 }
 

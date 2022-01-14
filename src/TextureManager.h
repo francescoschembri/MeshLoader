@@ -21,4 +21,5 @@ public:
 	void BindTextures(std::vector<int>& texIndices, const Shader& shader);
 	// change the setting of stbi. Default flip = true;
 	void FlipTextures(bool flip);
+	void ClearTextures();
 };
