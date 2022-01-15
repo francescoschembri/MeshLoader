@@ -181,6 +181,8 @@ void RenderModelInfo(StatusManager& status)
 		return;
 	ImGui::Begin("Model", &showModel);
 
+	ImGui::Checkbox("Show Wireframe", &status.wireframeEnabled);
+
 	RenderMeshesInfo(status);
 	ImGui::End();
 }
@@ -308,11 +310,6 @@ void RenderRenderInfo(StatusManager& status)
 	if (!showRenderInfo)
 		return;
 	ImGui::Begin("Render Info", &showRenderInfo);
-	ImGui::Checkbox("Show Wireframe", &status.wireframeEnabled);
-	std::string fps = "Current FPS: " + std::to_string(1.0f / status.deltaTime);
-	ImGui::Text(fps.c_str());
-	std::string winSize = "Window size: " + std::to_string(status.width) + ", " + std::to_string(status.height);
-	ImGui::Text(winSize.c_str());
 	ImGui::End();
 }
 

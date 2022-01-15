@@ -54,10 +54,8 @@ void StatusManager::Pause()
 	pause = !pause;
 	if (pause)
 		BakeModel();
-	else {
+	else 
 		UnbakeModel();
-		lastFrame = glfwGetTime();
-	}
 }
 
 void StatusManager::SetPivot()
@@ -83,9 +81,9 @@ void StatusManager::UpdateDeltaTime()
 
 void StatusManager::Update()
 {
+	UpdateDeltaTime();
 	if (pause)
 		return;
-	UpdateDeltaTime();
 	animator.UpdateAnimation(deltaTime);
 }
 
