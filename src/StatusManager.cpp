@@ -13,14 +13,18 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	HVBO(0),
 	SVAO(0),
 	SVBO(0),
-	modelShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs", "./Shaders/animated_model_loading.gs")),
+	lightingMode(Mode_Flat),
+	modelFlatShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs", "./Shaders/animated_model_loading.gs")),
+	modelNoLightShader(Shader("./Shaders/no_lighting_shader.vs", "./Shaders/no_lighting_shader.fs")),
+	modelSmoothShader(Shader("./Shaders/smooth_lighting_shader.vs", "./Shaders/smooth_lighting_shader.fs")),
 	wireframeShader(Shader("./Shaders/wireframe.vs", "./Shaders/wireframe.fs")),
 	mouseShader(Shader("./Shaders/mouse_shader.vs", "./Shaders/mouse_shader.fs")),
 	hoverShader(Shader("./Shaders/hover.vs", "./Shaders/hover.fs")),
 	selectedShader(Shader("./Shaders/selected.vs", "./Shaders/selected.fs")),
 	numBonesShader(Shader("./Shaders/num_bones_visualization.vs", "./Shaders/num_bones_visualization.fs")),
 	currentBoneShader(Shader("./Shaders/influence_of_single_bone.vs", "./Shaders/influence_of_single_bone.fs")),
-	currentChange(Change(selectedVerticesPointers))
+	currentChange(Change(selectedVerticesPointers)),
+	changeIndex(-1)
 {
 	// setup selected vertices vao
 	glGenVertexArrays(1, &SVAO);
@@ -197,8 +201,8 @@ void StatusManager::DrawSelectedVertices()
 }
 
 void StatusManager::Undo()
-{
-	if (changeIndex > 0) {
+{ // CHANGE INDEX DOESN'T CHANGE WITH -- ???????
+	if (changeIndex >= 0) {
 		assert(changeIndex < changes.size());
 		changes[changeIndex--].Undo();
 		animatedModel.value().Reload();
@@ -363,13 +367,13 @@ void StatusManager::StartChange()
 	}
 
 	currentChange = Change(selectedVerticesPointers);
+	info = PickingInfo{};
 }
 
 void StatusManager::EndChange()
 {
 	changes.push_back(currentChange);
 	changeIndex++;
-	info.hitPoint.value() += currentChange.offset;
 }
 
 void StatusManager::TweakSelectedVertices()
@@ -420,15 +424,24 @@ void StatusManager::Render()
 	if (!animatedModel)
 		return;
 	Update();
+
 	// draw wireframe if enabled
 	if (wireframeEnabled)
 		DrawWireframe();
+
 	// draw model
-	DrawModel();
+	if (lightingMode == Mode_Flat)
+		DrawModel(modelFlatShader);
+	else if (lightingMode == Mode_Smooth)
+		DrawModel(modelSmoothShader);
+	else
+		DrawModel(modelNoLightShader);
+
 	// render selected vertices
 	DrawSelectedVertices();
 	if (!info.hitPoint)
 		return;
+
 	//DrawHotPoint();
 	if (selectionMode == Mode_Vertex)
 		DrawHoveredPoint();
@@ -454,11 +467,10 @@ void StatusManager::DrawWireframe() {
 	animatedModel.value().Draw(wireframeShader);
 }
 
-void StatusManager::DrawModel() {
+void StatusManager::DrawModel(Shader& modelShader) {
 	modelShader.use();
 	// model/view/projection transformations
-	glm::mat4 modelView = camera.viewMatrix;
-	modelShader.setMat4("modelView", modelView);
+	modelShader.setMat4("modelView", camera.viewMatrix);
 	modelShader.setMat4("projection", projection);
 	//currentBoneShader.setInt("currentBoneID", currentBoneID);
 

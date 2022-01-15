@@ -14,6 +14,7 @@ void RenderGUI(StatusManager& status)
 	RenderSelectionInfo(status);
 	RenderAnimatorInfo(status);
 	RenderRenderInfo(status);
+	RenderLightingInfo(status);
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -344,6 +345,18 @@ void RenderSelectionInfo(StatusManager& status)
 	if (ImGui::RadioButton("Edge", status.selectionMode == Mode_Edge)) { status.selectionMode = Mode_Edge; }
 	if (ImGui::RadioButton("Face", status.selectionMode == Mode_Face)) { status.selectionMode = Mode_Face; }
 	ImGui::Checkbox("Remove if double", &status.removeIfDouble);
+	ImGui::End();
+}
+
+void RenderLightingInfo(StatusManager& status)
+{
+	if (!showLighting)
+		return;
+	ImGui::Begin("Lighting", &showLighting);
+	ImGui::Text("Lighting mode:");
+	if (ImGui::RadioButton("Flat", status.lightingMode == Mode_Flat)) { status.lightingMode = Mode_Flat; }
+	if (ImGui::RadioButton("Smooth", status.lightingMode == Mode_Smooth)) { status.lightingMode = Mode_Smooth; }
+	if (ImGui::RadioButton("No lighting", status.lightingMode == Mode_None)) { status.lightingMode = Mode_None; }
 	ImGui::End();
 }
 

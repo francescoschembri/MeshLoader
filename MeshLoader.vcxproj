@@ -214,10 +214,14 @@
     <None Include="Shaders\influence_of_single_bone.vs" />
     <None Include="Shaders\mouse_shader.fs" />
     <None Include="Shaders\mouse_shader.vs" />
+    <None Include="Shaders\no_lighting_shader.fs" />
+    <None Include="Shaders\no_lighting_shader.vs" />
     <None Include="Shaders\num_bones_visualization.fs" />
     <None Include="Shaders\screen_shader.fs" />
     <None Include="Shaders\selected.fs" />
     <None Include="Shaders\selected.vs" />
+    <None Include="Shaders\smooth_lighting_shader.fs" />
+    <None Include="Shaders\smooth_lighting_shader.vs" />
     <None Include="Shaders\wireframe.fs" />
     <None Include="Shaders\wireframe.vs" />
   </ItemGroup>

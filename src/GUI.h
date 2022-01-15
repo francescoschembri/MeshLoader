@@ -21,6 +21,7 @@ static bool showCamera = true;
 static bool showAnimator = true;
 static bool showRenderInfo = true;
 static bool showSelection = true;
+static bool showLighting = true;
 
 static std::vector<int> panelTex;
 
@@ -38,6 +39,7 @@ void RenderWindowMenuSection(StatusManager& status);
 void RenderModelInfo(StatusManager& status);
 void RenderMeshesInfo(StatusManager& status);
 void RenderSelectionInfo(StatusManager& status);
+void RenderLightingInfo(StatusManager& status);
 void RenderCameraInfo(StatusManager& status);
 void RenderMeshTextureInfo(Mesh& mesh, int meshIndex, int textureIndex, TextureManager& texMan);
 void ShowTextureInPanel(int m, int textureIndex, ImTextureID id, int width, int height);

@@ -15,11 +15,18 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
-enum Mode
+enum SelectionMode
 {
 	Mode_Vertex,
 	Mode_Edge,
 	Mode_Face
+};
+
+enum LightingMode
+{
+	Mode_Smooth,
+	Mode_Flat,
+	Mode_None
 };
 
 class StatusManager
@@ -54,7 +61,10 @@ public:
 	GLuint HVBO, HVAO;
 	GLuint SVBO, SVAO;
 	//shaders to render the model and the gizmos
-	Shader modelShader;
+	LightingMode lightingMode;
+	Shader modelFlatShader;
+	Shader modelSmoothShader;
+	Shader modelNoLightShader;
 	Shader wireframeShader;
 	Shader mouseShader;
 	Shader hoverShader;
@@ -102,7 +112,7 @@ public:
 private:
 	// rendering functions
 	void DrawWireframe();
-	void DrawModel();
+	void DrawModel(Shader& modelShader);
 	void DrawSelectedVertices();
 	void DrawHoveredFace();
 	void DrawHoveredLine();

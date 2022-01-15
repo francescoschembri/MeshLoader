@@ -1,0 +1,17 @@
+#version 330 core
+out vec4 FragColor;
+
+in vec2 TexCoords;
+in vec3 Normal;
+
+uniform sampler2D texture_diffuse;
+uniform sampler2D texture_specular;
+
+const vec3 LIGHT_POS = vec3(0.0, 0.0, 1.0);
+
+void main()
+{    
+    float diffuse = abs(dot(Normal, LIGHT_POS));
+    FragColor = texture(texture_diffuse, TexCoords) * diffuse;
+}
+

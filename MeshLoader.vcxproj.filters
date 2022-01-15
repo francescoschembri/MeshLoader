@@ -235,6 +235,18 @@
     <None Include="Shaders\influence_of_single_bone.vs">
       <Filter>File di risorse\Shaders</Filter>
     </None>
+    <None Include="Shaders\no_lighting_shader.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\no_lighting_shader.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\smooth_lighting_shader.vs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
+    <None Include="Shaders\smooth_lighting_shader.fs">
+      <Filter>File di risorse\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\screen_shader.vs">
