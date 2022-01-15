@@ -25,6 +25,7 @@ public:
 	// render data 
 	unsigned int VAO;
 	unsigned int VBO, EBO;
+	bool enabled = true;
 
 	// constructors
 	Mesh() = default;

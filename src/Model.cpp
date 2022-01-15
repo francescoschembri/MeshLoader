@@ -21,6 +21,7 @@ Model Model::Bake(std::vector<glm::mat4>& matrices)
 void Model::Draw(const Shader& shader)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
+		if (!meshes[i].enabled) continue;
 		// Bind textures for the mesh
 		texMan.BindTextures(meshes[i].texIndices, shader);
 		// Draw the mesh

@@ -324,8 +324,9 @@ void RenderMeshesInfo(StatusManager& status)
 	for (Mesh& m : status.animatedModel->meshes)
 	{
 		std::string header = "Mesh " + std::to_string(++meshIndex);
-		if (!ImGui::CollapsingHeader(header.c_str()))
-			continue;
+		if (!ImGui::CollapsingHeader(header.c_str())) continue;
+		std::string enabled = header + " enabled";
+		ImGui::Checkbox(enabled.c_str(), &m.enabled);
 		for (int i = 0; i < m.texIndices.size(); i++)
 		{
 			RenderMeshTextureInfo(m, meshIndex, i, status.texMan);

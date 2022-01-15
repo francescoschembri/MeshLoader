@@ -137,6 +137,7 @@ PickingInfo StatusManager::Picking()
 	for (int i = 0; i < bakedModel->meshes.size(); i++)
 	{
 		Mesh& m = bakedModel->meshes[i];
+		if (!animatedModel->meshes[i].enabled) continue;
 		for (Face& f : m.faces)
 		{
 			Vertex& ver1 = m.vertices[f.indices[0]];
@@ -486,6 +487,8 @@ void StatusManager::DrawModel(Shader& modelShader) {
 }
 
 void StatusManager::DrawHoveredFace() {
+	assert(bakedModel.has_value());
+	assert(info.hitPoint.has_value());
 	Mesh& m = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 
@@ -516,6 +519,8 @@ void StatusManager::DrawHoveredFace() {
 }
 
 void StatusManager::DrawHoveredPoint() {
+	assert(bakedModel.has_value());
+	assert(info.hitPoint.has_value());
 	Mesh& m = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 	int index = getClosestVertexIndex(info.hitPoint.value(), m, f);
@@ -579,6 +584,8 @@ void StatusManager::UpdateSelectedVertices()
 
 
 void StatusManager::DrawHoveredLine() {
+	assert(bakedModel.has_value());
+	assert(info.hitPoint.has_value());
 	Mesh& m = bakedModel.value().meshes[info.meshIndex];
 	Face& f = info.face.value();
 	auto line = getClosestLineIndex(info.hitPoint.value(), m, f);

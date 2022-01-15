@@ -5,7 +5,8 @@ Mesh::Mesh(std::vector<Vertex>&& vertices, std::vector<Face>&& faces, std::vecto
 	:
 	vertices(std::move(vertices)),
 	faces(std::move(faces)),
-	texIndices(std::move(texIndices))
+	texIndices(std::move(texIndices)),
+	enabled(true)
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
 	glGenVertexArrays(1, &VAO);
@@ -20,7 +21,8 @@ Mesh::Mesh(const Mesh& m) :
 	vertices(m.vertices),
 	faces(m.faces),
 	texIndices(m.texIndices),
-	graph(m.graph)
+	graph(m.graph),
+	enabled(true)
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);

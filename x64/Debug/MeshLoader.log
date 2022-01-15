@@ -1,8 +1,13 @@
-﻿  GUI.cpp
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(85,1): warning C4312: 'cast di tipo': conversione da 'GLuint' a 'void *', di dimensioni maggiori
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(89,1): warning C4311: 'cast di tipo': troncamento puntatore da 'void *' a 'GLuint'
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(89,1): warning C4302: 'cast di tipo': troncamento da 'void *' a 'GLuint'
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(218,33): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(218,26): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\GUI.cpp(267,46): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+﻿  StatusManager.cpp
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(7,11): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(59,26): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(79,21): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(199,52): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(255,12): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(278,13): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(292,13): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(317,13): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(331,13): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(345,13): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\franc\Desktop\Mesh Loader\MeshLoader\src\StatusManager.cpp(365,31): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
   MeshLoader.vcxproj -> C:\Users\franc\Desktop\Mesh Loader\MeshLoader\x64\Debug\MeshLoader.exe
