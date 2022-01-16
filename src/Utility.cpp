@@ -37,7 +37,7 @@ IntersectionInfo rayTriangleIntersection(const glm::vec3 rayOrigin, const glm::v
 	// (x-x0)*a + (y-y0)*b + (z-z0)*c = 0 ---> ax + by + cz - dot(P0, normal) = 0, so d=- dot(P0, normal) 
 	float d = -glm::dot(normalPlane, v1.Position);
 
-	// the intersection point is the solution of this sistem
+	// the intersection point is the solution of this system
 	// P-P0 = t*rayDirection <---> P(t) = P0+t*raydir , P0 is the ray origin
 	// a*Px + b*Py + c*Pz + d = 0 <----> dot(normal, P) + d = 0
 	// 
@@ -56,11 +56,13 @@ IntersectionInfo rayTriangleIntersection(const glm::vec3 rayOrigin, const glm::v
 	// while if B in on the right of A, dot(cross(A,B), normal)<0
 	// if instead of B we use the intersection point P, than we have to check for each edge if P is on the left of the edge
 
-	bool checkEdge1 = glm::dot(glm::normalize(glm::cross(e12, intersectionPoint - v1.Position)), normalPlane) < 0.9f;
+	bool checkEdge1 = glm::dot(glm::normalize(glm::cross(e12, intersectionPoint - v1.Position)), normalPlane) < 1.0f - FLT_EPSILON;
 	if (checkEdge1) return result;
-	bool checkEdge2 = glm::dot(glm::normalize(glm::cross(e23, intersectionPoint - v2.Position)), normalPlane) < 0.9f;
+
+	bool checkEdge2 = glm::dot(glm::normalize(glm::cross(e23, intersectionPoint - v2.Position)), normalPlane) < 1.0f - FLT_EPSILON;
 	if (checkEdge2) return result;
-	bool checkEdge3 = glm::dot(glm::normalize(glm::cross(e31, intersectionPoint - v3.Position)), normalPlane) < 0.9f;
+
+	bool checkEdge3 = glm::dot(glm::normalize(glm::cross(e31, intersectionPoint - v3.Position)), normalPlane) < 1.0f - FLT_EPSILON;
 	if (checkEdge3) return result;
 
 	result.distance = distFollowingRayDirFromRayOrigin;

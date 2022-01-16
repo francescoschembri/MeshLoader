@@ -13,7 +13,6 @@ void RenderGUI(StatusManager& status)
 	RenderCameraInfo(status);
 	RenderSelectionInfo(status);
 	RenderAnimatorInfo(status);
-	RenderRenderInfo(status);
 	RenderLightingInfo(status);
 	// Rendering
 	ImGui::Render();
@@ -203,7 +202,7 @@ void RenderMeshTextureInfo(Mesh& mesh, int mIndex, int tIndex, TextureManager& t
 	}
 	ImGui::PopID();
 	ImGui::SameLine();
-	std::string removeBtnName = "Remove##" + std::to_string(mIndex * 100 + tex.id);
+	std::string removeBtnName = "Enable##" + std::to_string(mIndex * 100 + tex.id);
 	if (ImGui::Button(removeBtnName.c_str())) {
 		mesh.texIndices.erase(mesh.texIndices.begin() + tIndex);
 	}
@@ -305,13 +304,13 @@ void ShowAnimationNInfo(Animator& animator, int n) {
 	ImGui::Text(ticks.c_str());
 }
 
-void RenderRenderInfo(StatusManager& status)
-{
-	if (!showRenderInfo)
-		return;
-	ImGui::Begin("Render Info", &showRenderInfo);
-	ImGui::End();
-}
+//void RenderRenderInfo(StatusManager& status)
+//{
+//	if (!showRenderInfo)
+//		return;
+//	ImGui::Begin("Render Info", &showRenderInfo);
+//	ImGui::End();
+//}
 
 void RenderMeshesInfo(StatusManager& status)
 {
@@ -355,6 +354,7 @@ void RenderLightingInfo(StatusManager& status)
 	if (ImGui::RadioButton("Flat", status.lightingMode == Mode_Flat)) { status.lightingMode = Mode_Flat; }
 	if (ImGui::RadioButton("Smooth", status.lightingMode == Mode_Smooth)) { status.lightingMode = Mode_Smooth; }
 	if (ImGui::RadioButton("No lighting", status.lightingMode == Mode_None)) { status.lightingMode = Mode_None; }
+	ImGui::InputFloat3("Light position", glm::value_ptr(status.lightPos));
 	ImGui::End();
 }
 

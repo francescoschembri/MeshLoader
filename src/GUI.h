@@ -45,5 +45,5 @@ void RenderMeshTextureInfo(Mesh& mesh, int meshIndex, int textureIndex, TextureM
 void ShowTextureInPanel(int m, int textureIndex, ImTextureID id, int width, int height);
 void RenderAnimatorInfo(StatusManager& status);
 void ShowAnimationNInfo(Animator& animator, int n);
-void RenderRenderInfo(StatusManager& status);
+//void RenderRenderInfo(StatusManager& status);
 //void RenderScenePanel(StatusManager& stauts);

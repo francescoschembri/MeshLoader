@@ -74,6 +74,7 @@ public:
 	int currentBoneID = -1;
 	int selectionMode = 0;
 	bool removeIfDouble = false;
+	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	StatusManager(float screenWidth, float screenHeight);
 

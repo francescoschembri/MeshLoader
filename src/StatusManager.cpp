@@ -471,6 +471,7 @@ void StatusManager::DrawModel(Shader& modelShader) {
 	// model/view/projection transformations
 	modelShader.setMat4("modelView", camera.viewMatrix);
 	modelShader.setMat4("projection", projection);
+	modelShader.setVec3("light_pos", lightPos);
 	//currentBoneShader.setInt("currentBoneID", currentBoneID);
 
 	// pass bones matrices to the shader
@@ -481,7 +482,10 @@ void StatusManager::DrawModel(Shader& modelShader) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0, 1.0);
-	animatedModel.value().Draw(modelShader);
+	if (pause)
+		bakedModel.value().Draw(modelShader);
+	else
+		animatedModel.value().Draw(modelShader);
 }
 
 void StatusManager::DrawHoveredFace() {

@@ -30,9 +30,9 @@ vec3 GetNormal()
 void main() {    
     vec3 normal = GetNormal();
     vec3 other_normal = normalize(gs_in[0].normal + gs_in[1].normal + gs_in[2].normal);
-    if(dot(normal,other_normal)<0.3f)
+    if(dot(normal,other_normal)<0.9f)
     {
-        normal = -normal;
+        normal = other_normal;
     }
 
     adjust_vertex(gl_in[0].gl_Position, normal, gs_in[0].texCoords);
