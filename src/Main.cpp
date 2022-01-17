@@ -45,7 +45,7 @@ int main()
 	glEnable(GL_BLEND);
 
 	// TEST - load a model and an animation - remove in the final app
-	std::string modelPath = std::string("./Animations/Capoeira/Capoeira.dae");
+	std::string modelPath = std::string("./Animations/Nonna/Capoeira/Capoeira.dae");
 	status.LoadModel(modelPath);
 	status.AddAnimation(modelPath.c_str());
 

@@ -14,6 +14,7 @@ void RenderGUI(StatusManager& status)
 	RenderSelectionInfo(status);
 	RenderAnimatorInfo(status);
 	RenderLightingInfo(status);
+	RenderVisualModeInfo(status);
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -280,6 +281,22 @@ void RenderAnimatorInfo(StatusManager& status)
 		ShowAnimationNInfo(status.animator, i);
 		ImGui::Separator();
 	}
+	ImGui::End();
+}
+
+void RenderVisualModeInfo(StatusManager& status)
+{
+	if (!showVisualMode) return;
+	ImGui::Begin("Visual mode", &showVisualMode);
+	ImGui::Text("Visual mode:");
+	if (ImGui::RadioButton("Normal", status.visualMode == Mode_Texture)) { status.visualMode = Mode_Texture; }
+	if (ImGui::RadioButton("Num bones influece", status.visualMode == Mode_NumBones)) { status.visualMode = Mode_NumBones; }
+	if (ImGui::RadioButton("Current Bone ID", status.visualMode == Mode_CurrentBoneIDInfluence)) { status.visualMode = Mode_CurrentBoneIDInfluence; }
+	ImGui::InputInt("Current bone ID", &status.currentBoneID);
+	ImGui::SameLine();
+	if (ImGui::Button("+")) { status.currentBoneID++; }
+	ImGui::SameLine();
+	if (ImGui::Button("-")) { status.currentBoneID--; }
 	ImGui::End();
 }
 

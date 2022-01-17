@@ -22,6 +22,7 @@ static bool showAnimator = true;
 static bool showRenderInfo = true;
 static bool showSelection = true;
 static bool showLighting = true;
+static bool showVisualMode = true;
 
 static std::vector<int> panelTex;
 
@@ -44,6 +45,7 @@ void RenderCameraInfo(StatusManager& status);
 void RenderMeshTextureInfo(Mesh& mesh, int meshIndex, int textureIndex, TextureManager& texMan);
 void ShowTextureInPanel(int m, int textureIndex, ImTextureID id, int width, int height);
 void RenderAnimatorInfo(StatusManager& status);
+void RenderVisualModeInfo(StatusManager& status);
 void ShowAnimationNInfo(Animator& animator, int n);
 //void RenderRenderInfo(StatusManager& status);
 //void RenderScenePanel(StatusManager& stauts);

@@ -7,7 +7,8 @@ Animation::Animation(const std::string& animationPath, Model& model) : speed(1.0
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
 	auto animation = scene->mAnimations[0];
-	name = animation->mName.C_Str();
+	int start = animationPath.find_last_of("/") + 1;
+	name = animationPath.substr(start, animationPath.find_last_of(".") - start);
 	endAt = m_Duration = animation->mDuration;
 	m_TicksPerSecond = animation->mTicksPerSecond;
 	ReadHeirarchyData(m_RootNode, scene->mRootNode);
@@ -36,7 +37,7 @@ glm::mat4 Animation::GetNodeTransform(const AssimpNodeData* node, float currentT
 	auto iter = std::find_if(std::begin(m_Bones), std::end(m_Bones), [&node](const auto& bone) {
 		return bone.GetBoneName() == node->name;
 		});
-	if (iter == std::end(m_Bones)) 
+	if (iter == std::end(m_Bones))
 		return node->transformation;
 	iter->Update(currentTime);
 	return iter->GetLocalTransform();

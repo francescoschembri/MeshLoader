@@ -29,6 +29,13 @@ enum LightingMode
 	Mode_None
 };
 
+enum VisualMode
+{
+	Mode_Texture,
+	Mode_CurrentBoneIDInfluence,
+	Mode_NumBones
+};
+
 class StatusManager
 {
 public:
@@ -62,6 +69,7 @@ public:
 	GLuint SVBO, SVAO;
 	//shaders to render the model and the gizmos
 	LightingMode lightingMode;
+	VisualMode visualMode;
 	Shader modelFlatShader;
 	Shader modelSmoothShader;
 	Shader modelNoLightShader;

@@ -14,6 +14,7 @@ StatusManager::StatusManager(float screenWidth, float screenHeight)
 	SVAO(0),
 	SVBO(0),
 	lightingMode(Mode_Flat),
+	visualMode(Mode_Texture),
 	modelFlatShader(Shader("./Shaders/animated_model_loading.vs", "./Shaders/animated_model_loading.fs", "./Shaders/animated_model_loading.gs")),
 	modelNoLightShader(Shader("./Shaders/no_lighting_shader.vs", "./Shaders/no_lighting_shader.fs")),
 	modelSmoothShader(Shader("./Shaders/smooth_lighting_shader.vs", "./Shaders/smooth_lighting_shader.fs")),
@@ -54,7 +55,7 @@ void StatusManager::Pause()
 	pause = !pause;
 	if (pause)
 		BakeModel();
-	else 
+	else
 		UnbakeModel();
 }
 
@@ -104,7 +105,7 @@ void StatusManager::BakeModel() {
 
 void StatusManager::UnbakeModel()
 {
-	assert(bakedModel);
+	//assert(bakedModel);
 	info.hitPoint.reset();
 	bakedModel.reset();
 	selectedVertices.clear();
@@ -229,13 +230,14 @@ bool StatusManager::IsChanging()
 
 void StatusManager::LoadModel(std::string& path)
 {
-	animatedModel.reset();
-	bakedModel.reset();
-	pause = false;
 	animator.animations.clear();
 	animator.currentAnimationIndex = 0;
 	texMan.ClearTextures();
 	animatedModel.emplace(path, texMan);
+	if (pause)
+		BakeModel();
+	else
+		UnbakeModel();
 }
 
 bool StatusManager::SelectHoveredVertex()
@@ -427,14 +429,22 @@ void StatusManager::Render()
 	// draw wireframe if enabled
 	if (wireframeEnabled)
 		DrawWireframe();
-
-	// draw model
-	if (lightingMode == Mode_Flat)
-		DrawModel(modelFlatShader);
-	else if (lightingMode == Mode_Smooth)
-		DrawModel(modelSmoothShader);
+	if (visualMode == Mode_Texture) {
+		// draw model
+		if (lightingMode == Mode_Flat)
+			DrawModel(modelFlatShader);
+		else if (lightingMode == Mode_Smooth)
+			DrawModel(modelSmoothShader);
+		else
+			DrawModel(modelNoLightShader);
+	}
+	else if (visualMode == Mode_CurrentBoneIDInfluence) {
+		DrawModel(currentBoneShader);
+	}
 	else
-		DrawModel(modelNoLightShader);
+	{
+		DrawModel(numBonesShader);
+	}
 
 	// render selected vertices
 	DrawSelectedVertices();
@@ -471,8 +481,10 @@ void StatusManager::DrawModel(Shader& modelShader) {
 	// model/view/projection transformations
 	modelShader.setMat4("modelView", camera.viewMatrix);
 	modelShader.setMat4("projection", projection);
-	modelShader.setVec3("light_pos", lightPos);
-	//currentBoneShader.setInt("currentBoneID", currentBoneID);
+	if (visualMode == Mode_Texture)
+		modelShader.setVec3("light_pos", lightPos);
+	else if (visualMode == Mode_CurrentBoneIDInfluence)
+		modelShader.setInt("currentBoneID", currentBoneID);
 
 	// pass bones matrices to the shader
 	auto transforms = animator.GetFinalBoneMatrices();
@@ -482,10 +494,10 @@ void StatusManager::DrawModel(Shader& modelShader) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0, 1.0);
-	if (pause)
+	/*if (pause)
 		bakedModel.value().Draw(modelShader);
-	else
-		animatedModel.value().Draw(modelShader);
+	else*/
+	animatedModel.value().Draw(modelShader);
 }
 
 void StatusManager::DrawHoveredFace() {
