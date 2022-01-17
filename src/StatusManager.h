@@ -89,6 +89,7 @@ public:
 	//loading functions
 	void AddAnimation(const char* path);
 	void LoadModel(std::string& path);
+	void CompleteLoad(std::string& path);
 
 	//animation management
 	void Pause();

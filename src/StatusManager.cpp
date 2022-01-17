@@ -238,6 +238,7 @@ void StatusManager::LoadModel(std::string& path)
 		BakeModel();
 	else
 		UnbakeModel();
+	AddAnimation(path.c_str());
 }
 
 bool StatusManager::SelectHoveredVertex()
