@@ -241,6 +241,30 @@ void StatusManager::LoadModel(std::string& path)
 	AddAnimation(path.c_str());
 }
 
+void StatusManager::CompleteLoad(std::string& path)
+{
+	animator.animations.clear();
+	animator.currentAnimationIndex = 0;
+	texMan.ClearTextures();
+	animatedModel.emplace(path, texMan);
+	if (pause)
+		BakeModel();
+	else
+		UnbakeModel();
+	std::string dir_name = path.substr(0, path.find_last_of("/"));
+	dir_name = dir_name.substr(0, dir_name.find_last_of("/"));
+	auto dir = std::filesystem::recursive_directory_iterator(dir_name);
+	for (auto animation : dir) {
+		if (animation.path().extension().u8string().compare(".dae") != 0)
+			continue;
+		dir_name = animation.path().u8string();
+		std::replace(dir_name.begin(), dir_name.end(), '\\', '/');
+		std::cout << dir_name << "\n";
+		AddAnimation(dir_name.c_str());
+	}
+	
+}
+
 bool StatusManager::SelectHoveredVertex()
 {
 	assert(info.hitPoint.has_value());

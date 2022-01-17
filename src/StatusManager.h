@@ -11,6 +11,7 @@
 #include <utility>
 #include <algorithm>
 #include <cassert>
+#include <filesystem>
 
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
